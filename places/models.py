@@ -1,3 +1,16 @@
 from django.db import models
 
-# Create your models here.
+
+class World(models.Model):
+
+    name = models.CharField(max_length=100)
+
+
+class Continent(models.Model):
+
+    name = models.CharField(max_length=100)
+
+
+class Nation(models.Model):
+
+    name = models.CharField(max_length=100)
