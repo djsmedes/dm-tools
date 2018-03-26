@@ -1,4 +1,5 @@
 from django.db import models
+from django.shortcuts import reverse
 
 
 class Person(models.Model):
@@ -102,3 +103,6 @@ class God(models.Model):
         'people.Population',
         related_name='gods_followed',
     )
+
+    def get_absolute_url(self):
+        return reverse('god-update', kwargs={'pk': self.pk})
