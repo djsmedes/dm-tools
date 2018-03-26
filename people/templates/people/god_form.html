@@ -1,11 +1,32 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 
-{% block title %}Add a God{% endblock %}
+{% block title %}
+  {% if object %}
+    Edit {{ object.name }}
+  {% else %}
+    Add a God
+  {% endif %}
+{% endblock %}
 
 {% block content %}
-  <form method="post" action="{% url 'gods-add' %}">
+  <form method="post" action="
+    {% if object.pk %}
+      {% url form_action pk=object.pk %}
+    {% else %}
+      {% url form_action %}
+    {% endif %}
+  ">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button>GO</button>
+    {% for field in form %}
+      <div class="form-group">
+        {{ field.label_tag }}
+        {{ field|add_class:'form-control' }}
+      </div>
+    {% endfor %}
+    {% if object %}
+      <a class="btn btn-secondary" href="{{ object.get_absolute_url }}">Cancel</a>
+    {% endif %}
+    <input type="submit" class="btn btn-primary" value="Save"/>
   </form>
 {% endblock %}

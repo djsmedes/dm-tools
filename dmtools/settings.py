@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # other third party apps
-    # ...
+    'widget_tweaks',
 
     # local apps
     'places.apps.PlacesConfig',

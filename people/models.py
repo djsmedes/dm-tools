@@ -1,4 +1,5 @@
 from django.db import models
+from django.forms import ModelForm
 from django.shortcuts import reverse
 
 
@@ -99,20 +100,27 @@ class Population(NamedModel):
 
 class God(NamedModel):
 
-    description = models.TextField(null=True)
-    gender = models.IntegerField(choices=Person.GENDER_CHOICES)
-    patron_of = models.CharField(max_length=255, null=True)
+    description = models.TextField(null=True, blank=True)
+    gender = models.IntegerField(choices=Person.GENDER_CHOICES, null=True, blank=True)
+    patron_of = models.CharField(max_length=255, null=True, blank=True)
 
     # todo: install django-multiselectfield and switch cleric domains to this
-    cleric_domains = models.CharField(max_length=255, null=True)
+    cleric_domains = models.CharField(max_length=255, null=True, blank=True)
 
     follower_populations = models.ManyToManyField(
         'people.Population',
         related_name='gods_followed',
+        blank=True
     )
 
     def get_absolute_url(self):
-        return reverse('gods-update', kwargs={'pk': self.pk})
+        return reverse('god-view', kwargs={'pk': self.pk})
 
     def get_create_url(self):
-        return reverse('gods-add')
+        return reverse('god-add')
+
+
+class GodForm(ModelForm):
+    class Meta:
+        model = God
+        fields = '__all__'
