@@ -3,5 +3,28 @@
 {% block title %}People{% endblock %}
 
 {% block content %}
-  <p>People home</p>
+  <div class="row">
+    <div class="col-4">
+      <div class="list-group" id="list-tab" role="tablist">
+        <a class="list-group-item list-group-item-action active" id="list-gods-list" data-toggle="list"
+           href="#list-gods" role="tab" aria-controls="gods">
+          Gods
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-npcs-list" data-toggle="list"
+           href="#list-npcs" role="tab" aria-controls="npcs">
+          NPCs
+        </a>
+      </div>
+    </div>
+    <div class="col-8">
+      <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane active" id="list-gods" role="tabpanel" aria-labelledby="list-gods-list">
+          {% include 'people/_list_widget.html' with model=god_model object_list=god_list %}
+        </div>
+        <div class="tab-pane" id="list-npcs" role="tabpanel" aria-labelledby="list-npcs-list">
+          {% include 'people/_list_widget.html' with model=npc_model object_list=npc_list %}
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}

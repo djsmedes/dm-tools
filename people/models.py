@@ -142,7 +142,10 @@ class GodForm(ModelForm):
 
     # ModelMultipleChoiceField for a field defined on another model and auto generated
     # https://stackoverflow.com/questions/2216974/django-modelform-for-many-to-many-fields
-    follower_orgs = ModelMultipleChoiceField(queryset=Organization.objects.all())
+    follower_orgs = ModelMultipleChoiceField(
+        queryset=Organization.objects.all(),
+        required=False,
+    )
 
     def __init__(self, *args, **kwargs):
         follower_orgs_query = models.Q(god_followed__isnull=True)

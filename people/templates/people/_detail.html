@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}{{ object.name }}{% endblock %}
+
+{% block content %}
+  {% for field in form %}
+    <div class="form-group">
+      {{ field.label_tag }}
+      {{ field|add_class:'form-control form-control-plaintext'|append_attr:'readonly' }}
+    </div>
+  {% endfor %}
+  {% with edit_url=object.meta.verbose_name|add:"-edit" %}
+    <a class="btn btn-secondary" href="{% url edit_url pk=object.pk %}">Edit</a>
+  {% endwith %}
+{% endblock %}
