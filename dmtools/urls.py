@@ -17,10 +17,20 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic.base import TemplateView
 
+breadcrumbs = [
+    {'href': '/', 'text': 'Home'},
+]
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', TemplateView.as_view(template_name='home.html')),
+    path(
+        '',
+        TemplateView.as_view(
+            template_name='home.html',
+            extra_context={'breadcrumbs': breadcrumbs}
+        ),
+        name='home',
+    ),
     path('places/', include('places.urls')),
     path('people/', include('people.urls')),
     path('plot/', include('plot.urls')),

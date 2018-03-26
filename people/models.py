@@ -112,7 +112,7 @@ class God(NamedModel):
     )
 
     def get_absolute_url(self):
-        return reverse('god-update', kwargs={'pk': self.pk})
+        return reverse('gods-update', kwargs={'pk': self.pk})
 
     def get_create_url(self):
-        return reverse('god-add')
+        return reverse('gods-add')

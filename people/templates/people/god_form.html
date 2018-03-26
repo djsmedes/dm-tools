@@ -3,7 +3,7 @@
 {% block title %}Add a God{% endblock %}
 
 {% block content %}
-  <form method="post" action="{% url 'god-add' %}">
+  <form method="post" action="{% url 'gods-add' %}">
     {% csrf_token %}
     {{ form.as_p }}
     <button>GO</button>
