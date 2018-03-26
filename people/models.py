@@ -3,18 +3,28 @@ from django.forms import ModelForm, ModelMultipleChoiceField
 from django.shortcuts import reverse
 
 
-class NamedModel(models.Model):
+class BaseModel(models.Model):
 
     name = models.CharField(max_length=255)
 
     def __str__(self):
         return self.name
 
+    def meta(self):
+        return self._meta
+
     class Meta:
         abstract = True
+        ordering = ['name']
+
+    def get_absolute_url(self):
+        return reverse('{}-view'.format(self._meta.verbose_name), kwargs={'pk': self.pk})
+
+    def get_create_url(self):
+        return reverse('{}-add'.format(self._meta.verbose_name))
 
 
-class Person(NamedModel):
+class Person(BaseModel):
 
     description = models.TextField(null=True)
     race = models.ForeignKey(
@@ -42,8 +52,12 @@ class Person(NamedModel):
     ]
     gender = models.IntegerField(choices=GENDER_CHOICES)
 
+    class Meta:
+        verbose_name = 'npc'
+        verbose_name_plural = 'npcs'
 
-class Organization(NamedModel):
+
+class Organization(BaseModel):
 
     description = models.TextField(null=True)
     parent_org = models.ForeignKey(
@@ -83,7 +97,7 @@ class Organization(NamedModel):
     )
 
 
-class Population(NamedModel):
+class Population(BaseModel):
 
     description = models.TextField(null=True)
     member_count = models.IntegerField(
@@ -98,7 +112,7 @@ class Population(NamedModel):
     )
 
 
-class God(NamedModel):
+class God(BaseModel):
 
     description = models.TextField(null=True, blank=True)
     gender = models.IntegerField(choices=Person.GENDER_CHOICES, null=True, blank=True)
@@ -113,11 +127,11 @@ class God(NamedModel):
         blank=True
     )
 
-    def get_absolute_url(self):
-        return reverse('god-view', kwargs={'pk': self.pk})
 
-    def get_create_url(self):
-        return reverse('god-add')
+class PersonForm(ModelForm):
+    class Meta:
+        model = Person
+        fields = '__all__'
 
 
 class GodForm(ModelForm):
@@ -131,7 +145,7 @@ class GodForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         follower_orgs_query = models.Q(god_followed__isnull=True)
-        if 'instance' in kwargs:
+        if kwargs.get('instance'):
             initial = kwargs.setdefault('initial', {})
             initial['follower_orgs'] = [o.pk for o in kwargs['instance'].follower_orgs.all()]
             follower_orgs_query |= models.Q(god_followed=kwargs['instance'])

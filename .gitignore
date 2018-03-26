@@ -11,3 +11,6 @@ staticfiles/
 
 # PyCharm stuff
 .idea/
+
+# my specific files
+run-on-network.sh

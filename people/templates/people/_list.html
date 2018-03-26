@@ -3,12 +3,19 @@
 {% block title %}Entity List{% endblock %}
 
 {% block content %}
-  <ul>
-    {% for object in object_list %}
-      <li><a href="{{ object.get_absolute_url }}">{{ object.name }}</a></li>
-      {% if forloop.last %}
-        <li><a href="{{ object.get_create_url }}">Add...</a></li>
-      {% endif %}
-    {% endfor %}
-  </ul>
+  <div class="card">
+    <div class="card-header text-white bg-primary">
+      {{ model.meta.verbose_name_plural|title }}
+    </div>
+    <div class="list-group list-group-flush">
+      {% for object in object_list %}
+        <a href="{{ object.get_absolute_url }}" class="list-group-item list-group-item-action">
+          {{ object.name }}
+        </a>
+      {% endfor %}
+    </div>
+    <div class="card-footer">
+      <a href="{{ model.get_create_url }}" class="btn btn-light">Add a new {{ model.meta.verbose_name }}</a>
+    </div>
+  </div>
 {% endblock %}
