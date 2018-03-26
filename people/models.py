@@ -26,31 +26,32 @@ class BaseModel(models.Model):
 
 class Person(BaseModel):
 
-    description = models.TextField(null=True)
+    description = models.TextField(null=True, blank=True)
     race = models.ForeignKey(
         'people.Population',
         on_delete=models.SET_NULL,
         related_name='members_of_race',
         null=True,
+        blank=True,
     )
     organizations_in = models.ManyToManyField(
         'people.Organization',
         related_name='members',
+        blank=True,
     )
     populations_in = models.ManyToManyField(
         'people.Population',
         related_name='members',
+        blank=True,
     )
 
     MALE = 1
     FEMALE = 2
-    OTHER = 3
     GENDER_CHOICES = [
         (MALE, 'Male'),
         (FEMALE, 'Female'),
-        (OTHER, 'Other'),
     ]
-    gender = models.IntegerField(choices=GENDER_CHOICES)
+    gender = models.IntegerField(choices=GENDER_CHOICES, null=True, blank=True)
 
     class Meta:
         verbose_name = 'npc'
