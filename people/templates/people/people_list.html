@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Entity List{% endblock %}
+
+{% block content %}
+  <ul>
+    {% for object in object_list %}
+      <li><a href="{{ object.get_absolute_url }}">{{ object.name }}</a></li>
+      {% if forloop.last %}
+        <li><a href="{{ object.get_create_url }}">Add...</a></li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+{% endblock %}

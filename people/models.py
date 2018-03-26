@@ -2,9 +2,19 @@ from django.db import models
 from django.shortcuts import reverse
 
 
-class Person(models.Model):
+class NamedModel(models.Model):
 
     name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        abstract = True
+
+
+class Person(NamedModel):
+
     description = models.TextField(null=True)
     race = models.ForeignKey(
         'people.Population',
@@ -32,9 +42,8 @@ class Person(models.Model):
     gender = models.IntegerField(choices=GENDER_CHOICES)
 
 
-class Organization(models.Model):
+class Organization(NamedModel):
 
-    name = models.CharField(max_length=255)
     description = models.TextField(null=True)
     parent_org = models.ForeignKey(
         'self',
@@ -73,9 +82,8 @@ class Organization(models.Model):
     )
 
 
-class Population(models.Model):
+class Population(NamedModel):
 
-    name = models.CharField(max_length=255)
     description = models.TextField(null=True)
     member_count = models.IntegerField(
         help_text='Including unnamed members not in the database.',
@@ -89,9 +97,8 @@ class Population(models.Model):
     )
 
 
-class God(models.Model):
+class God(NamedModel):
 
-    name = models.CharField(max_length=255)
     description = models.TextField(null=True)
     gender = models.IntegerField(choices=Person.GENDER_CHOICES)
     patron_of = models.CharField(max_length=255, null=True)
@@ -106,3 +113,6 @@ class God(models.Model):
 
     def get_absolute_url(self):
         return reverse('god-update', kwargs={'pk': self.pk})
+
+    def get_create_url(self):
+        return reverse('god-add')
