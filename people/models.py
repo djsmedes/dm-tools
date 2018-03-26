@@ -1,5 +1,5 @@
 from django.db import models
-from django.forms import ModelForm
+from django.forms import ModelForm, ModelMultipleChoiceField
 from django.shortcuts import reverse
 
 
@@ -124,3 +124,33 @@ class GodForm(ModelForm):
     class Meta:
         model = God
         fields = '__all__'
+
+    # ModelMultipleChoiceField for a field defined on another model and auto generated
+    # https://stackoverflow.com/questions/2216974/django-modelform-for-many-to-many-fields
+    follower_orgs = ModelMultipleChoiceField(queryset=Organization.objects.all())
+
+    def __init__(self, *args, **kwargs):
+        follower_orgs_query = models.Q(god_followed__isnull=True)
+        if 'instance' in kwargs:
+            initial = kwargs.setdefault('initial', {})
+            initial['follower_orgs'] = [o.pk for o in kwargs['instance'].follower_orgs.all()]
+            follower_orgs_query |= models.Q(god_followed=kwargs['instance'])
+        super(GodForm, self).__init__(*args, **kwargs)
+        self.fields['follower_orgs'].queryset = Organization.objects.filter(follower_orgs_query)
+
+    def save(self, commit=True):
+        instance = ModelForm.save(self, False)
+        old_save_m2m = self.save_m2m
+
+        def save_m2m():
+            old_save_m2m()
+            instance.follower_orgs.clear()
+            for org in self.cleaned_data['follower_orgs']:
+                instance.follower_orgs.add(org)
+        self.save_m2m = save_m2m
+
+        if commit:
+            instance.save()
+            self.save_m2m()
+
+        return instance
