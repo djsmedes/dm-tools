@@ -1,0 +1,5 @@
+{% extends 'people/_confirm_delete.html' %}
+
+{% block post-to %}
+  {% url 'god-delete' pk=object.pk %}
+{% endblock %}

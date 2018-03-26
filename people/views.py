@@ -17,4 +17,4 @@ class GodUpdate(UpdateView):
 
 class GodDelete(DeleteView):
     model = God
-    success_url = reverse_lazy('author-list')
+    success_url = reverse_lazy('gods-list')

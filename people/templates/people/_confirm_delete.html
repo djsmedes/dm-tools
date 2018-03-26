@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirm delete{% endblock %}
+
+{% block content %}
+  <form method="post" action="{% block post-to %}{% endblock %}">
+    {% csrf_token %}
+    <p>Do you really want to delete {{ object.name }}?</p>
+    <button>Yes, delete {{ object.name }}</button>
+  </form>
+{% endblock %}

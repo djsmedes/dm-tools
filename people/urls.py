@@ -6,10 +6,10 @@ from .models import God
 from .views import GodCreate, GodDelete, GodUpdate
 
 gods_patterns = [
-    path('', ListView.as_view(model=God, template_name='people/people_list.html')),
+    path('', ListView.as_view(model=God, template_name='people/people_list.html'), name='gods-list'),
     path('add/', GodCreate.as_view(), name='god-add'),
     path('<int:pk>/', GodUpdate.as_view(), name='god-update'),
-    path('<int:pk/delete/', GodDelete.as_view(), name='god-delete'),
+    path('<int:pk>/delete/', GodDelete.as_view(), name='god-delete'),
 ]
 
 
