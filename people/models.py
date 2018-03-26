@@ -41,23 +41,28 @@ class Organization(models.Model):
         related_name='child_orgs',
         null=True,
     )
+    member_count = models.IntegerField(
+        help_text='Including unnamed members not in the database.',
+        null=True,
+    )
 
-    FAMILY = 1
-    RELIGION = 2
-    POLITICAL = 3
-    MILITARY = 4
-    CLAN = 5
-    OTHER = 99
-    ORG_TYPE_CHOICES = [
-        (FAMILY, 'Family'),
-        (RELIGION, 'Religion'),
-        (POLITICAL, 'Political'),
-        (MILITARY, 'Military'),
-        (CLAN, 'Clan'),
-
-        (OTHER, 'Other'),
-    ]
-    org_type = models.IntegerField(choices=ORG_TYPE_CHOICES)
+    # todo: implement organization type... probably as a subclass? for now this can go in description
+    # FAMILY = 1
+    # RELIGION = 2
+    # POLITICAL = 3
+    # MILITARY = 4
+    # CLAN = 5
+    # OTHER = 99
+    # ORG_TYPE_CHOICES = [
+    #     (FAMILY, 'Family'),
+    #     (RELIGION, 'Religion'),
+    #     (POLITICAL, 'Political'),
+    #     (MILITARY, 'Military'),
+    #     (CLAN, 'Clan'),
+    #
+    #     (OTHER, 'Other'),
+    # ]
+    # org_type = models.IntegerField(choices=ORG_TYPE_CHOICES)
 
     god_followed = models.ForeignKey(
         'people.God',
@@ -71,6 +76,10 @@ class Population(models.Model):
 
     name = models.CharField(max_length=255)
     description = models.TextField(null=True)
+    member_count = models.IntegerField(
+        help_text='Including unnamed members not in the database.',
+        null=True,
+    )
     sub_population_of = models.ForeignKey(
         'self',
         on_delete=models.SET_NULL,
