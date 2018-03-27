@@ -28,8 +28,10 @@ class PeopleHomeView(TemplateView):
 
 
 class PeopleListView(ListView):
-    template_name = 'people/_list.html'
+    template_name = 'people/_table.html'
     extra_breadcrumbs = []
+    table_headers = []
+    table_data_accessors = []
 
     def get(self, *args, **kwargs):
         if kwargs.get('base_breadcrumbs'):
@@ -41,15 +43,31 @@ class PeopleListView(ListView):
         if hasattr(self, 'base_breadcrumbs'):
             context['breadcrumbs'] = self.base_breadcrumbs + self.extra_breadcrumbs
         context['model'] = self.model
+        context['table_headers'] = self.table_headers
+        context['table_data_accessors'] = self.table_data_accessors
         return context
 
 
 class GodList(PeopleListView):
     model = God
+    table_headers = [
+        'Name',
+        'Patron of',
+    ]
+    table_data_accessors = [
+        'name',
+        'patron_of',
+    ]
 
 
 class PersonList(PeopleListView):
     model = Person
+    table_headers = [
+        'Name',
+    ]
+    table_data_accessors = [
+        'name',
+    ]
 
 
 class PeopleCreateView(CreateView):
