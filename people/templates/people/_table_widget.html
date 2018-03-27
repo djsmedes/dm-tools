@@ -1,7 +1,7 @@
 {% load people_tags %}
 
 <div class="card">
-    <table id="data_table" class="table table-striped table-hover" cellspacing="0" style="width:100%;">
+    <table id="data_table" class="table table-striped table-hover" cellspacing="0">
       <thead class="bg-primary text-white">
       <tr>
         {% for header in table_headers %}
@@ -13,7 +13,7 @@
       {% for object in object_list %}
         <tr class="clickable-row" data-href="{{ object.get_absolute_url }}">
           {% for accessor in table_data_accessors %}
-            <td {% if forloop.first %} class="sorting_1" {% endif %}>
+            <td>
               {{ object|get_attr:accessor }}
             </td>
           {% endfor %}
