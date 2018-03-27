@@ -100,16 +100,18 @@ class Organization(BaseModel):
 
 class Population(BaseModel):
 
-    description = models.TextField(null=True)
+    description = models.TextField(null=True, blank=True)
     member_count = models.IntegerField(
         help_text='Including unnamed members not in the database.',
         null=True,
+        blank=True,
     )
     sub_population_of = models.ForeignKey(
         'self',
         on_delete=models.SET_NULL,
         related_name='sub_populations',
-        null=True
+        null=True,
+        blank=True,
     )
 
 
@@ -132,6 +134,12 @@ class God(BaseModel):
 class PersonForm(ModelForm):
     class Meta:
         model = Person
+        fields = '__all__'
+
+
+class PopulationForm(ModelForm):
+    class Meta:
+        model = Population
         fields = '__all__'
 
 

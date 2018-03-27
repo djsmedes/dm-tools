@@ -5,7 +5,7 @@ from django.views.generic.base import TemplateView
 from django.urls import reverse_lazy
 from django.http import Http404
 
-from .models import God, GodForm, Person, PersonForm, Organization, Population
+from .models import God, GodForm, Person, PersonForm, Population, PopulationForm
 
 
 class PeopleHomeView(TemplateView):
@@ -70,6 +70,18 @@ class PersonList(PeopleListView):
     ]
 
 
+class PopulationList(PeopleListView):
+    model = Population
+    table_headers = [
+        'Name',
+        'Subpopulation of',
+    ]
+    table_data_accessors = [
+        'name',
+        'sub_population_of',
+    ]
+
+
 class PeopleCreateView(CreateView):
     extra_breadcrumbs = [{'text': 'Add'}]
     template_name = 'people/_form.html'
@@ -96,6 +108,11 @@ class GodAdd(PeopleCreateView):
 class PersonAdd(PeopleCreateView):
     model = Person
     form_class = PersonForm
+
+
+class PopulationAdd(PeopleCreateView):
+    model = Population
+    form_class = PopulationForm
 
 
 class PeopleUpdateView(UpdateView):
@@ -132,6 +149,11 @@ class PersonEdit(PeopleUpdateView):
     form_class = PersonForm
 
 
+class PopulationEdit(PeopleUpdateView):
+    model = Population
+    form_class = PopulationForm
+
+
 class PeopleDeleteView(DeleteView):
     template_name = 'people/_confirm_delete.html'
 
@@ -162,6 +184,11 @@ class PersonDelete(PeopleDeleteView):
     success_url = reverse_lazy('npcs-home')
 
 
+class PopulationDelete(PeopleDeleteView):
+    model = Population
+    success_url = reverse_lazy('populations-home')
+
+
 class PeopleDetailView(DetailView):
     template_name = 'people/_detail.html'
     form_class = lambda instance: exec('raise Http404')
@@ -190,3 +217,8 @@ class GodDetail(PeopleDetailView):
 class PersonDetail(PeopleDetailView):
     model = Person
     form_class = PersonForm
+
+
+class PopulationDetail(PeopleDetailView):
+    model = Population
+    form_class = PopulationForm

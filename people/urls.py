@@ -3,7 +3,8 @@ from django.views.generic.base import TemplateView
 
 from .views import PeopleHomeView,\
     GodList, GodAdd, GodDetail, GodEdit, GodDelete,\
-    PersonList, PersonAdd, PersonDetail, PersonEdit, PersonDelete
+    PersonList, PersonAdd, PersonDetail, PersonEdit, PersonDelete,\
+    PopulationList, PopulationAdd, PopulationDetail, PopulationEdit, PopulationDelete
 from dmtools.urls import breadcrumbs as core_breadcrumbs
 
 breadcrumbs = core_breadcrumbs + [{'href': reverse_lazy('people-home'), 'text': 'People'}]
@@ -28,8 +29,19 @@ npcs_patterns = [
     path('<int:pk>/delete/', PersonDelete.as_view(), name='npc-delete'),
 ]
 
+populations_breadcrumbs = breadcrumbs + [{'href': reverse_lazy('populations-home'), 'text': 'Populations'}]
+
+populations_patterns = [
+    path('', PopulationList.as_view(), name='populations-home'),
+    path('add/', PopulationAdd.as_view(), name='population-add'),
+    path('<int:pk>/', PopulationDetail.as_view(), name='population-view'),
+    path('<int:pk>/edit/', PopulationEdit.as_view(), name='population-edit'),
+    path('<int:pk>/delete/', PopulationDelete.as_view(), name='population-delete'),
+]
+
 urlpatterns = [
     path('', PeopleHomeView.as_view(), {'base_breadcrumbs': breadcrumbs}, name='people-home'),
     path('gods/', include(gods_patterns), {'base_breadcrumbs': gods_breadcrumbs}),
     path('npcs/', include(npcs_patterns), {'base_breadcrumbs': npcs_breadcrumbs}),
+    path('populations/', include(populations_patterns), {'base_breadcrumbs': populations_breadcrumbs})
 ]
