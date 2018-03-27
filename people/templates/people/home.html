@@ -4,32 +4,15 @@
 
 {% block content %}
   <div class="card">
-    <div class="card-header">
-      <ul class="nav nav-tabs card-header-tabs">
-        <li class="nav-item">
-          <a class="nav-link active"
-             data-toggle="list"
-             href="#list-gods">
-            Gods
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="list-npcs-list" data-toggle="list"
-             href="#list-npcs" role="tab" aria-controls="npcs">
-            NPCs
-          </a>
-        </li>
-      </ul>
-    </div>
-    <div class="card-body">
-      <div class="tab-content" id="nav-tabContent">
-        <div class="tab-pane active" id="list-gods" role="tabpanel" aria-labelledby="list-gods-list">
-          {% include 'people/_list_widget.html' with model=god_model object_list=god_list %}
-        </div>
-        <div class="tab-pane" id="list-npcs" role="tabpanel" aria-labelledby="list-npcs-list">
-          {% include 'people/_list_widget.html' with model=npc_model object_list=npc_list %}
-        </div>
-      </div>
+    <div class="list-group list-group-flush">
+      <a class="list-group-item list-group-item-action"
+         href="{% url 'gods-home' %}">
+        Gods
+      </a>
+      <a class="list-group-item list-group-item-action"
+         href="{% url 'npcs-home' %}">
+        NPCs
+      </a>
     </div>
   </div>
 {% endblock %}
