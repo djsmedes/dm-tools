@@ -5,7 +5,14 @@
     <a class="nav-link" href="{% url 'npcs-home' %}">NPCs</a>
     <a class="nav-link" href="{% url 'monsters-home' %}">Monsters</a>
     <a class="nav-link" href="{% url 'populations-home' %}">Populations</a>
-    <a class="nav-link" href="#">Places</a>
-    <a class="nav-link" href="#">Plot</a>
+    <div class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
+        Less common...
+      </a>
+      <div class="dropdown-menu bg-dark">
+        <a class="dropdown-item text-muted" href="#">Places</a>
+        <a class="dropdown-item text-muted" href="#">Plot</a>
+      </div>
+    </div>
   </div>
 </nav>
