@@ -1,7 +1,7 @@
 from django.urls import path, include, reverse_lazy
 
 from .views import \
-    MonsterList
+    MonsterList, MonsterAdd, MonsterDetail, MonsterEdit, MonsterDelete
 
 from dmtools.urls import breadcrumbs as core_breadcrumbs
 
@@ -11,11 +11,10 @@ monsters_breadcrumbs = breadcrumbs + [{'href': reverse_lazy('monsters-home'), 't
 
 monsters_patterns = [
     path('', MonsterList.as_view(), name='monsters-home'),
-    # path('', MonsterList.as_view(), name='monsters-home'),
-    # path('add/', MonsterAdd.as_view(), name='monster-add'),
-    # path('<int:pk>/', MonsterDetail.as_view(), name='monster-view'),
-    # path('<int:pk>/edit/', MonsterEdit.as_view(), name='monster-edit'),
-    # path('<int:pk>/delete/', MonsterDelete.as_view(), name='monster-delete'),
+    path('add/', MonsterAdd.as_view(), name='monster-add'),
+    path('<int:pk>/', MonsterDetail.as_view(), name='monster-view'),
+    path('<int:pk>/edit/', MonsterEdit.as_view(), name='monster-edit'),
+    path('<int:pk>/delete/', MonsterDelete.as_view(), name='monster-delete'),
 ]
 
 urlpatterns = [

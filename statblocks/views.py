@@ -1,6 +1,8 @@
-from .models import Monster
+from django.urls import reverse_lazy
 
-from base.views import BaseListView
+from .models import Monster, MonsterForm
+
+from base.views import BaseListView, BaseCreateView, BaseUpdateView, BaseDeleteView, BaseDetailView
 
 
 class MonsterList(BaseListView):
@@ -11,3 +13,23 @@ class MonsterList(BaseListView):
     table_data_accessors = [
         'name',
     ]
+
+
+class MonsterAdd(BaseCreateView):
+    model = Monster
+    form_class = MonsterForm
+
+
+class MonsterEdit(BaseUpdateView):
+    model = Monster
+    form_class = MonsterForm
+
+
+class MonsterDelete(BaseDeleteView):
+    model = Monster
+    success_url = reverse_lazy('monsters-home')
+
+
+class MonsterDetail(BaseDetailView):
+    model = Monster
+    form_class = MonsterForm
