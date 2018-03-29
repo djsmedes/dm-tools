@@ -23,6 +23,9 @@ class BaseModel(models.Model):
     def get_create_url(self):
         return reverse('{}-add'.format(self._meta.verbose_name))
 
+    def get_delete_url(self):
+        return reverse('{}-delete'.format(self._meta.verbose_name), kwargs={'pk': self.pk})
+
 
 class Person(BaseModel):
 

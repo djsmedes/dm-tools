@@ -1,47 +1,37 @@
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, ContextMixin
 from django.urls import reverse_lazy
 from django.http import Http404
 
 from .models import God, GodForm, Person, PersonForm, Population, PopulationForm
 
 
-class PeopleHomeView(TemplateView):
-    template_name = 'people/home.html'
+class BreadCrumbMixin(ContextMixin):
 
-    def get(self, *args, **kwargs):
-        if kwargs.get('base_breadcrumbs'):
-            self.base_breadcrumbs = kwargs['base_breadcrumbs']
-        return super().get(*args, **kwargs)
+    extra_breadcrumbs = []
+
+    def get_extra_breadcrumbs(self):
+        return self.extra_breadcrumbs
+
+    def get_breadcrumbs(self):
+        if hasattr(self, 'kwargs') and self.kwargs.get('base_breadcrumbs'):
+            return self.kwargs['base_breadcrumbs'] + self.get_extra_breadcrumbs()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['god_model'] = God
-        context['npc_model'] = Person
-        context['god_list'] = God.objects.all()
-        context['npc_list'] = Person.objects.all()
-        if hasattr(self, 'base_breadcrumbs'):
-            context['breadcrumbs'] = self.base_breadcrumbs
+        context['breadcrumbs'] = self.get_breadcrumbs()
         return context
 
 
-class PeopleListView(ListView):
+class PeopleListView(BreadCrumbMixin, ListView):
     template_name = 'people/_table.html'
-    extra_breadcrumbs = []
     table_headers = []
     table_data_accessors = []
 
-    def get(self, *args, **kwargs):
-        if kwargs.get('base_breadcrumbs'):
-            self.base_breadcrumbs = kwargs['base_breadcrumbs']
-        return super().get(*args, **kwargs)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if hasattr(self, 'base_breadcrumbs'):
-            context['breadcrumbs'] = self.base_breadcrumbs + self.extra_breadcrumbs
         context['model'] = self.model
         context['table_headers'] = self.table_headers
         context['table_data_accessors'] = self.table_data_accessors
@@ -82,20 +72,13 @@ class PopulationList(PeopleListView):
     ]
 
 
-class PeopleCreateView(CreateView):
+class PeopleCreateView(BreadCrumbMixin, CreateView):
     extra_breadcrumbs = [{'text': 'Add'}]
     template_name = 'people/_form.html'
-
-    def get(self, *args, **kwargs):
-        if kwargs.get('base_breadcrumbs'):
-            self.base_breadcrumbs = kwargs['base_breadcrumbs']
-        return super().get(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form_action'] = '{}-add'.format(self.model._meta.verbose_name)
-        if hasattr(self, 'base_breadcrumbs'):
-            context['breadcrumbs'] = self.base_breadcrumbs + self.extra_breadcrumbs
         context['model'] = self.model
         return context
 
@@ -115,7 +98,7 @@ class PopulationAdd(PeopleCreateView):
     form_class = PopulationForm
 
 
-class PeopleUpdateView(UpdateView):
+class PeopleUpdateView(BreadCrumbMixin, UpdateView):
     template_name = 'people/_form.html'
 
     def get_extra_breadcrumbs(self):
@@ -132,8 +115,6 @@ class PeopleUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if hasattr(self, 'base_breadcrumbs'):
-            context['breadcrumbs'] = self.base_breadcrumbs + self.get_extra_breadcrumbs()
         context['form_action'] = '{}-edit'.format(self.model._meta.verbose_name)
         context['form'] = self.form_class(instance=self.object)
         return context
@@ -154,7 +135,7 @@ class PopulationEdit(PeopleUpdateView):
     form_class = PopulationForm
 
 
-class PeopleDeleteView(DeleteView):
+class PeopleDeleteView(BreadCrumbMixin, DeleteView):
     template_name = 'people/_confirm_delete.html'
 
     def get_extra_breadcrumbs(self):
@@ -170,7 +151,6 @@ class PeopleDeleteView(DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['breadcrumbs'] = context['base_breadcrumbs'] + self.get_extra_breadcrumbs()
         return context
 
 
@@ -189,22 +169,15 @@ class PopulationDelete(PeopleDeleteView):
     success_url = reverse_lazy('populations-home')
 
 
-class PeopleDetailView(DetailView):
+class PeopleDetailView(BreadCrumbMixin, DetailView):
     template_name = 'people/_detail.html'
     form_class = lambda instance: exec('raise Http404')
 
     def get_extra_breadcrumbs(self):
         return [{'text': self.object.name}]
 
-    def get(self, *args, **kwargs):
-        if kwargs.get('base_breadcrumbs'):
-            self.base_breadcrumbs = kwargs['base_breadcrumbs']
-        return super().get(*args, **kwargs)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if hasattr(self, 'base_breadcrumbs'):
-            context['breadcrumbs'] = self.base_breadcrumbs + self.get_extra_breadcrumbs()
         context['form'] = self.form_class(instance=self.object)
         return context
 
