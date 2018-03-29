@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
 
     # local apps
+    'base.apps.BaseConfig',
     'places.apps.PlacesConfig',
     'people.apps.PeopleConfig',
     'plot.apps.PlotConfig',
