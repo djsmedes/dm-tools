@@ -1,0 +1,30 @@
+{% extends 'base/_form.html' %}
+{% load base %}
+
+{% block single_field %}
+  {% if field.name in object.multiselect_field_names %}
+    {{ field.label_tag }}
+    <div class="card" id="{{ field.id_for_label }}">
+      <div class="card-body">
+        {% for value, text in field.field.choices %}
+          <div class="form-check">
+            <input
+                class="form-check-input"
+                type="checkbox"
+                value="{{ value }}"
+                id="id_{{ field.name }}_{{ forloop.counter0 }}"
+                name="{{ field.name }}"
+                {% val_in_iterable_in_dict_under_key value form.initial field.name as val_in_list %}
+                {% if val_in_list %}checked="checked"{% endif %}
+            >
+            <label class="form-check-label" for="id_{{ field.name }}_{{ forloop.counter0 }}">
+              {{ text }}
+            </label>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    {{ block.super }}
+  {% endif %}
+{% endblock %}

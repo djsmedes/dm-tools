@@ -2,6 +2,7 @@ from django.db import models
 
 # Create your models here.
 from django.urls import reverse
+from multiselectfield import MultiSelectField
 
 
 class BaseModel(models.Model):
@@ -24,5 +25,12 @@ class BaseModel(models.Model):
     def get_create_url(self):
         return reverse('{}-add'.format(self._meta.verbose_name))
 
+    def get_edit_url(self):
+        return reverse('{}-edit'.format(self._meta.verbose_name), kwargs={'pk': self.pk})
+
     def get_delete_url(self):
         return reverse('{}-delete'.format(self._meta.verbose_name), kwargs={'pk': self.pk})
+
+    @property
+    def multiselect_field_names(self):
+        return [field.name for field in self._meta.fields if isinstance(field, MultiSelectField)]

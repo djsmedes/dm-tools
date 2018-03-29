@@ -9,6 +9,7 @@ from base.utils import Size, Alignment, Die, DamageType, Condition, Language
 
 
 class Monster(BaseModel):
+
     size = models.IntegerField(choices=Size.MODEL_CHOICES, null=True, blank=True)
     type = models.CharField(max_length=255, null=True, blank=True)
     alignment = models.IntegerField(choices=Alignment.MODEL_CHOICES, null=True, blank=True)

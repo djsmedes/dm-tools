@@ -67,7 +67,7 @@ class BaseUpdateView(BreadCrumbMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form_action'] = '{}-edit'.format(self.model._meta.verbose_name)
-        context['form'] = self.form_class(instance=self.object)
+        # context['form'] = self.form_class(instance=self.object)
         return context
 
 

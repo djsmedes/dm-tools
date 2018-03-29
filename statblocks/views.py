@@ -17,11 +17,22 @@ class MonsterList(BaseListView):
 
 class MonsterAdd(BaseCreateView):
     model = Monster
+    template_name = 'statblocks/monster_form.html'
     form_class = MonsterForm
+    extra_context = {
+        'multiselect_field_names': [
+            'damage_vulnerabilities',
+            'damage_resistances',
+            'damage_immunities',
+            'condition_immunities',
+            'languages',
+        ]
+    }
 
 
 class MonsterEdit(BaseUpdateView):
     model = Monster
+    template_name = 'statblocks/monster_form.html'
     form_class = MonsterForm
 
 
