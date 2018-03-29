@@ -1,6 +1,6 @@
 from .models import Monster
 
-from people.views import PeopleListView
+from base.views import PeopleListView
 
 
 class MonsterList(PeopleListView):
