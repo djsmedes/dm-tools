@@ -92,6 +92,7 @@ class Language:
     PRIMORDIAL, AURAN, AQUAN, IGNAN, TERRAN = 14, 15, 16, 17, 18
     UNDERCOMMON, DEEP_SPEECH = 19, 20
     DRUIDIC, THIEVES_CANT = 21, 22
+    TELEPATHY, TELEPATHY_30, TELEPATHY_60, TELEPATHY_120 = 23, 24, 25, 26
 
     MODEL_CHOICES = [
         (COMMON, 'Common'),
@@ -102,7 +103,9 @@ class Language:
         (DRACONIC, 'Draconic'), (SYLVAN, 'Sylvan'),
         (PRIMORDIAL, 'Primordial'), (AURAN, 'Auran'), (AQUAN, 'Aquan'), (IGNAN, 'Ignan'), (TERRAN, 'Terran'),
         (UNDERCOMMON, 'Undercommon'), (DEEP_SPEECH, 'Deep Speech'),
-        (DRUIDIC, 'Druidic'), (THIEVES_CANT, "Thieve's Cant")
+        (DRUIDIC, 'Druidic'), (THIEVES_CANT, "Thieve's Cant"),
+        (TELEPATHY, 'Telepathy'), (TELEPATHY_30, 'Telepathy 30 ft.'),
+        (TELEPATHY_60, 'Telepathy 60 ft.'), (TELEPATHY_120, 'Telepathy 120 ft.')
     ]
 
     class Script:
