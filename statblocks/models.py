@@ -83,7 +83,6 @@ class Monster(BaseModel):
         return int(con_mod_piece + hit_die_piece)
 
 
-
 class MonsterForm(ModelForm):
     class Meta:
         model = Monster

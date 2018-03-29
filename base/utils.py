@@ -5,11 +5,16 @@ class Size:
 
 
 class Alignment:
-    LAWFUL_GOOD, NEUTRAL_GOOD, CHAOTIC_GOOD, LAWFUL_NEUTRAL, NEUTRAL, CHAOTIC_NEUTRAL, LAWFUL_EVIL, NEUTRAL_EVIL, CHAOTIC_EVIL = 1, 2, 3, 4, 5, 6, 7, 8, 9
+    UNALIGNED = 0
+    LAWFUL_GOOD, NEUTRAL_GOOD, CHAOTIC_GOOD = 1, 2, 3
+    LAWFUL_NEUTRAL, NEUTRAL, CHAOTIC_NEUTRAL = 4, 5, 6
+    LAWFUL_EVIL, NEUTRAL_EVIL, CHAOTIC_EVIL = 7, 8, 9
+
     MODEL_CHOICES = [
-        (LAWFUL_GOOD, 'Lawful good'), (NEUTRAL_GOOD, 'Neutral good'), (CHAOTIC_GOOD, 'Chaotic good'),
-        (LAWFUL_NEUTRAL, 'Lawful neutral'), (NEUTRAL, 'Neutral'), (CHAOTIC_NEUTRAL, 'Chaotic neutral'),
-        (LAWFUL_EVIL, 'Lawful evil'), (NEUTRAL_EVIL, 'Neutral evil'), (CHAOTIC_EVIL, 'Chaotic evil')
+        (LAWFUL_GOOD, 'lawful good'), (NEUTRAL_GOOD, 'neutral good'), (CHAOTIC_GOOD, 'chaotic good'),
+        (LAWFUL_NEUTRAL, 'lawful neutral'), (NEUTRAL, 'neutral'), (CHAOTIC_NEUTRAL, 'chaotic neutral'),
+        (LAWFUL_EVIL, 'lawful evil'), (NEUTRAL_EVIL, 'neutral evil'), (CHAOTIC_EVIL, 'chaotic evil'),
+        (UNALIGNED, 'unaligned')
     ]
 
 
