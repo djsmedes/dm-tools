@@ -25,7 +25,7 @@ class BreadCrumbMixin(ContextMixin):
         return context
 
 
-class PeopleListView(BreadCrumbMixin, ListView):
+class BaseListView(BreadCrumbMixin, ListView):
     template_name = 'base/_table.html'
     table_headers = []
     table_data_accessors = []
@@ -38,7 +38,7 @@ class PeopleListView(BreadCrumbMixin, ListView):
         return context
 
 
-class PeopleCreateView(BreadCrumbMixin, CreateView):
+class BaseCreateView(BreadCrumbMixin, CreateView):
     extra_breadcrumbs = [{'text': 'Add'}]
     template_name = 'base/_form.html'
 
@@ -49,7 +49,7 @@ class PeopleCreateView(BreadCrumbMixin, CreateView):
         return context
 
 
-class PeopleUpdateView(BreadCrumbMixin, UpdateView):
+class BaseUpdateView(BreadCrumbMixin, UpdateView):
     template_name = 'base/_form.html'
 
     def get_extra_breadcrumbs(self):
@@ -71,7 +71,7 @@ class PeopleUpdateView(BreadCrumbMixin, UpdateView):
         return context
 
 
-class PeopleDeleteView(BreadCrumbMixin, DeleteView):
+class BaseDeleteView(BreadCrumbMixin, DeleteView):
     template_name = 'base/_confirm_delete.html'
 
     def get_extra_breadcrumbs(self):
@@ -90,7 +90,7 @@ class PeopleDeleteView(BreadCrumbMixin, DeleteView):
         return context
 
 
-class PeopleDetailView(BreadCrumbMixin, DetailView):
+class BaseDetailView(BreadCrumbMixin, DetailView):
     template_name = 'base/_detail.html'
     form_class = lambda instance: exec('raise Http404')
 

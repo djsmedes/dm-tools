@@ -1,11 +1,11 @@
 from django.urls import reverse_lazy
 
-from base.views import PeopleListView, PeopleCreateView, PeopleUpdateView, PeopleDeleteView, \
-    PeopleDetailView
+from base.views import BaseListView, BaseCreateView, BaseUpdateView, BaseDeleteView, \
+    BaseDetailView
 from .models import God, GodForm, Person, PersonForm, Population, PopulationForm
 
 
-class GodList(PeopleListView):
+class GodList(BaseListView):
     model = God
     table_headers = [
         'Name',
@@ -17,7 +17,7 @@ class GodList(PeopleListView):
     ]
 
 
-class PersonList(PeopleListView):
+class PersonList(BaseListView):
     model = Person
     table_headers = [
         'Name',
@@ -27,7 +27,7 @@ class PersonList(PeopleListView):
     ]
 
 
-class PopulationList(PeopleListView):
+class PopulationList(BaseListView):
     model = Population
     table_headers = [
         'Name',
@@ -39,61 +39,61 @@ class PopulationList(PeopleListView):
     ]
 
 
-class GodAdd(PeopleCreateView):
+class GodAdd(BaseCreateView):
     model = God
     form_class = GodForm
 
 
-class PersonAdd(PeopleCreateView):
+class PersonAdd(BaseCreateView):
     model = Person
     form_class = PersonForm
 
 
-class PopulationAdd(PeopleCreateView):
+class PopulationAdd(BaseCreateView):
     model = Population
     form_class = PopulationForm
 
 
-class GodEdit(PeopleUpdateView):
+class GodEdit(BaseUpdateView):
     model = God
     form_class = GodForm
 
 
-class PersonEdit(PeopleUpdateView):
+class PersonEdit(BaseUpdateView):
     model = Person
     form_class = PersonForm
 
 
-class PopulationEdit(PeopleUpdateView):
+class PopulationEdit(BaseUpdateView):
     model = Population
     form_class = PopulationForm
 
 
-class GodDelete(PeopleDeleteView):
+class GodDelete(BaseDeleteView):
     model = God
     success_url = reverse_lazy('gods-home')
 
 
-class PersonDelete(PeopleDeleteView):
+class PersonDelete(BaseDeleteView):
     model = Person
     success_url = reverse_lazy('npcs-home')
 
 
-class PopulationDelete(PeopleDeleteView):
+class PopulationDelete(BaseDeleteView):
     model = Population
     success_url = reverse_lazy('populations-home')
 
 
-class GodDetail(PeopleDetailView):
+class GodDetail(BaseDetailView):
     model = God
     form_class = GodForm
 
 
-class PersonDetail(PeopleDetailView):
+class PersonDetail(BaseDetailView):
     model = Person
     form_class = PersonForm
 
 
-class PopulationDetail(PeopleDetailView):
+class PopulationDetail(BaseDetailView):
     model = Population
     form_class = PopulationForm
