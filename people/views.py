@@ -29,7 +29,7 @@ class BreadCrumbMixin(ContextMixin):
 
 
 class PeopleListView(BreadCrumbMixin, ListView):
-    template_name = 'people/_table.html'
+    template_name = 'people/../base/templates/base/_table.html'
     table_headers = []
     table_data_accessors = []
 
@@ -77,7 +77,7 @@ class PopulationList(PeopleListView):
 
 class PeopleCreateView(BreadCrumbMixin, CreateView):
     extra_breadcrumbs = [{'text': 'Add'}]
-    template_name = 'people/_form.html'
+    template_name = 'people/../base/templates/base/_form.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -102,7 +102,7 @@ class PopulationAdd(PeopleCreateView):
 
 
 class PeopleUpdateView(BreadCrumbMixin, UpdateView):
-    template_name = 'people/_form.html'
+    template_name = 'people/../base/templates/base/_form.html'
 
     def get_extra_breadcrumbs(self):
         return [
@@ -139,7 +139,7 @@ class PopulationEdit(PeopleUpdateView):
 
 
 class PeopleDeleteView(BreadCrumbMixin, DeleteView):
-    template_name = 'people/_confirm_delete.html'
+    template_name = 'people/../base/templates/base/_confirm_delete.html'
 
     def get_extra_breadcrumbs(self):
         return [
@@ -173,7 +173,7 @@ class PopulationDelete(PeopleDeleteView):
 
 
 class PeopleDetailView(BreadCrumbMixin, DetailView):
-    template_name = 'people/_detail.html'
+    template_name = 'people/../base/templates/base/_detail.html'
     form_class = lambda instance: exec('raise Http404')
 
     def get_extra_breadcrumbs(self):
