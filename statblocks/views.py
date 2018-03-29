@@ -1,9 +1,9 @@
 from .models import Monster
 
-from people.views import PeopleListView
+from base.views import BaseListView
 
 
-class MonsterList(PeopleListView):
+class MonsterList(BaseListView):
     model = Monster
     table_headers = [
         'Name',
