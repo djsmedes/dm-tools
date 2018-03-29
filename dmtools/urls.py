@@ -26,7 +26,7 @@ urlpatterns = [
     re_path(
         r'^$',
         TemplateView.as_view(
-            template_name='home.html',
+            template_name='base/home.html',
             extra_context={'breadcrumbs': breadcrumbs}
         ),
         name='home',
