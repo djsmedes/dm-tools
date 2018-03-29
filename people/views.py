@@ -1,8 +1,11 @@
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
-from django.views.generic.base import TemplateView, ContextMixin
+from django.views.generic.base import ContextMixin
 from django.urls import reverse_lazy
+
+# importing this to be used in an exec in a lambda expression
+# noinspection PyUnresolvedReferences
 from django.http import Http404
 
 from .models import God, GodForm, Person, PersonForm, Population, PopulationForm

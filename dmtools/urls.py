@@ -32,6 +32,7 @@ urlpatterns = [
         name='home',
     ),
     path('', include('people.urls')),
+    path('', include('statblocks.urls')),
     path('places/', include('places.urls')),
     path('plot/', include('plot.urls')),
 ]

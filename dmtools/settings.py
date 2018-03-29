@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'places.apps.PlacesConfig',
     'people.apps.PeopleConfig',
     'plot.apps.PlotConfig',
+    'statblocks.apps.StatblocksConfig',
 ]
 
 MIDDLEWARE = [
