@@ -1,13 +1,12 @@
 from django.urls import path, include, reverse_lazy
-from django.views.generic.base import TemplateView
 
-from .views import PeopleHomeView,\
+from .views import \
     GodList, GodAdd, GodDetail, GodEdit, GodDelete,\
     PersonList, PersonAdd, PersonDetail, PersonEdit, PersonDelete,\
     PopulationList, PopulationAdd, PopulationDetail, PopulationEdit, PopulationDelete
 from dmtools.urls import breadcrumbs as core_breadcrumbs
 
-breadcrumbs = core_breadcrumbs + [{'href': reverse_lazy('people-home'), 'text': 'People'}]
+breadcrumbs = core_breadcrumbs
 
 gods_breadcrumbs = breadcrumbs + [{'href': reverse_lazy('gods-home'), 'text': 'Gods'}]
 
@@ -40,7 +39,6 @@ populations_patterns = [
 ]
 
 urlpatterns = [
-    path('', PeopleHomeView.as_view(), {'base_breadcrumbs': breadcrumbs}, name='people-home'),
     path('gods/', include(gods_patterns), {'base_breadcrumbs': gods_breadcrumbs}),
     path('npcs/', include(npcs_patterns), {'base_breadcrumbs': npcs_breadcrumbs}),
     path('populations/', include(populations_patterns), {'base_breadcrumbs': populations_breadcrumbs})

@@ -46,9 +46,11 @@ INSTALLED_APPS = [
     'widget_tweaks',
 
     # local apps
+    'base.apps.BaseConfig',
     'places.apps.PlacesConfig',
     'people.apps.PeopleConfig',
     'plot.apps.PlotConfig',
+    'statblocks.apps.StatblocksConfig',
 ]
 
 MIDDLEWARE = [
@@ -67,9 +69,7 @@ ROOT_URLCONF = 'dmtools.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            os.path.join(BASE_DIR, 'templates'),
-        ],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

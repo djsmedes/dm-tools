@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.views.generic.base import TemplateView
 
 breadcrumbs = [
@@ -23,15 +23,16 @@ breadcrumbs = [
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path(
-        '',
+    re_path(
+        r'^$',
         TemplateView.as_view(
-            template_name='home.html',
+            template_name='base/home.html',
             extra_context={'breadcrumbs': breadcrumbs}
         ),
         name='home',
     ),
+    path('', include('people.urls')),
+    path('', include('statblocks.urls')),
     path('places/', include('places.urls')),
-    path('people/', include('people.urls')),
     path('plot/', include('plot.urls')),
 ]

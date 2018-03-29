@@ -1,7 +1,7 @@
-{% extends 'base.html' %}
+{% extends 'base/base.html' %}
 
 {% block title %}{{ model.meta.verbose_name|title }} List{% endblock %}
 
 {% block content %}
-  {% include 'people/_table_widget.html' %}
+  {% include 'base/_table_widget.html' %}
 {% endblock %}

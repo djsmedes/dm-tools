@@ -1,12 +1,10 @@
-{% extends 'base.html' %}
+{% extends 'base/base.html' %}
 
 {% block title %}Confirm delete{% endblock %}
 
 {% block content %}
   <form method="post"
-        action="{% with delete_url=object.meta.verbose_name|add:"-delete" %}
-                  {% url delete_url pk=object.pk %}
-                {% endwith %}">
+        action="{{ object.get_delete_url }}">
     {% csrf_token %}
     <p>Do you really want to delete {{ object.name }}?</p>
     <button>Yes, delete {{ object.name }}</button>
