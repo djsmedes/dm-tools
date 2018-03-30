@@ -3,5 +3,41 @@
 {% block title %}DMTOOLS{% endblock %}
 
 {% block content %}
-  It's the homepage
+  <div class="card-deck">
+    {% for pc in pc_list %}
+      <div class="card">
+        <div class="card-header bg-{{ pc.color }}">
+          <h5 class="card-title">{{ pc.name }}</h5>
+        </div>
+        <div class="card-body">
+          {% for buff in pc.buffs %}
+            <span class="badge badge-success">
+              <strong>{{ buff }}</strong>
+            </span>
+            <br>
+          {% endfor %}
+          {% for debuff in pc.debuffs %}
+            <span class="badge badge-danger">
+              <strong>{{ debuff }}</strong>
+            </span>
+            <br>
+          {% endfor %}
+          {% for effect in pc.other_effects %}
+            <span class="badge badge-secondary">
+              <strong>{{ effect }}</strong>
+            </span>
+            <br>
+          {% endfor %}
+        </div>
+        <div class="card-footer
+                  {% if pc.is_turn %}
+                    text-white bg-dark
+                  {% elif pc.on_deck %}
+                    text-white bg-secondary
+                  {% endif %}">
+          <strong>Initiative</strong> {{ pc.initiative }}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
 {% endblock %}

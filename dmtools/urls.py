@@ -15,7 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
-from django.views.generic.base import TemplateView
+
+from base.views import HomepageView
 
 breadcrumbs = [
     {'href': '/', 'text': 'Home'},
@@ -23,14 +24,7 @@ breadcrumbs = [
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    re_path(
-        r'^$',
-        TemplateView.as_view(
-            template_name='base/home.html',
-            extra_context={'breadcrumbs': breadcrumbs}
-        ),
-        name='home',
-    ),
+    path('', HomepageView.as_view(extra_context={'breadcrumbs': breadcrumbs}), name='home'),
     path('', include('people.urls')),
     path('', include('statblocks.urls')),
     path('places/', include('places.urls')),

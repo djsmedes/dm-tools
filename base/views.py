@@ -5,7 +5,7 @@ from django.http import Http404
 # Create your views here.
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
-from django.views.generic.base import ContextMixin
+from django.views.generic.base import ContextMixin, TemplateView
 
 
 class BreadCrumbMixin(ContextMixin):
@@ -107,3 +107,55 @@ class BaseDetailView(BreadCrumbMixin, DetailView):
         if self.form_class:
             context['form'] = self.get_form()
         return context
+
+
+class HomepageView(TemplateView):
+    template_name = 'base/home.html'
+    pc_list = [
+        {
+            'color': 'primary',
+            'name': 'Duncan',
+            'initiative': 15,
+            'buffs': ['bless', 'd10 inspiration'],
+            'debuffs': [],
+            'other_effects': [],
+            'is_turn': True
+        },
+        {
+            'color': 'warning',
+            'name': 'Grinz',
+            'initiative': 12,
+            'buffs': [],
+            'debuffs': ['exhaustion 1', 'poisoned'],
+            'other_effects': [],
+            'on_deck': True
+        },
+        {
+            'color': 'danger',
+            'name': 'Eustice',
+            'initiative': 10,
+            'buffs': ['invisible'],
+            'debuffs': [],
+            'other_effects': ['concentration']
+        },
+        {
+            'color': 'info',
+            'name': 'Barilla',
+            'initiative': 18,
+            'buffs': ['bless'],
+            'debuffs': '',
+            'other_effects': []
+        },
+        {
+            'color': 'success',
+            'name': 'Kheilaz',
+            'initiative': 8,
+            'buffs': ['bless'],
+            'debuffs': ['poisoned'],
+            'other_effects': []
+        },
+    ]
+
+    def get_context_data(self, **kwargs):
+        kwargs['pc_list'] = sorted(self.pc_list, key=lambda pc: pc['initiative'], reverse=True)
+        return super().get_context_data(**kwargs)
