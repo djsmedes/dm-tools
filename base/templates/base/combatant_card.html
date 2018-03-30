@@ -1,4 +1,4 @@
-<div class="card combatant-context-hide-unmatch" data-combatant="{{ combatant.name }}">
+<div class="card combatant-context-hide-unmatch" data-combatant="{{ combatant.id }}">
   <div class="card-header p-0">
     <div class="dropdown apply-context-hide">
       <button type="button" class="btn btn-block btn-{{ combatant.color }} dropdown-toggle" id="dropdownMenuButton"
@@ -6,9 +6,11 @@
         <strong>{{ combatant.name }}</strong>
       </button>
       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <a class="dropdown-item combatant-context-enter combatant-context-hide" data-combatant="{{ combatant.name }}" href="#">
+        <a class="dropdown-item combatant-context-enter combatant-context-hide" data-combatant="{{ combatant.id }}"
+           href="#">
           Play as {{ combatant.name }}</a>
-        <a class="dropdown-item combatant-context-leave combatant-context-show" data-combatant="{{ combatant.name }}" href="#"
+        <a class="dropdown-item combatant-context-leave combatant-context-show" data-combatant="{{ combatant.id }}"
+           href="#"
            style="display: none;">
           Stop playing as {{ combatant.name }}</a>
         {% if user.is_authenticated and combatant.statblock %}
@@ -22,7 +24,7 @@
       <button
           type="button"
           class="btn btn-block btn-outline-{{ combatant.color }} apply-context-activatable"
-          data-combatant="{{ combatant.name }}"
+          data-combatant="{{ combatant.id }}"
       >
         <strong>{{ combatant.name }}&nbsp;&nbsp;&nbsp;&nbsp;</strong>
       </button>
@@ -31,20 +33,20 @@
   <div class="card-body">
     {% for buff in combatant.buffs %}
       <span class="badge badge-success">
-        <strong>{{ buff }}</strong>
-      </span>
+          <strong>{{ buff }}</strong>
+        </span>
       <br>
     {% endfor %}
     {% for debuff in combatant.debuffs %}
       <span class="badge badge-danger">
-        <strong>{{ debuff }}</strong>
-      </span>
+          <strong>{{ debuff }}</strong>
+        </span>
       <br>
     {% endfor %}
     {% for effect in combatant.other_effects %}
       <span class="badge badge-secondary">
-        <strong>{{ effect }}</strong>
-      </span>
+          <strong>{{ effect }}</strong>
+        </span>
       <br>
     {% endfor %}
   </div>
@@ -58,7 +60,7 @@
 
       <form class="dropdown-menu p-2">
         <div class="form-group mb-0">
-          <input type="number" class="form-control mb-2" id="form-initiative-{{ combatant.name }}" name="initiative"
+          <input type="number" class="form-control mb-2" id="form-initiative-{{ combatant.id }}" name="initiative"
                  placeholder="New roll">
 
           <button type="submit" class="btn btn-outline-success btn-block">Submit</button>

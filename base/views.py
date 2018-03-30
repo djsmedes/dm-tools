@@ -1,12 +1,12 @@
 # importing this to be used in an exec in a lambda expression
 # noinspection PyUnresolvedReferences
-from django.http import Http404
-
-# Create your views here.
+from django.http import Http404, JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.views.generic.base import ContextMixin, TemplateView
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render_to_response
+
+from multiselectfield.db.fields import MSFList
 
 from people.models import Combatant
 from .forms import EffectForm
@@ -116,26 +116,43 @@ class BaseDetailView(BreadCrumbMixin, DetailView):
 class HomepageView(TemplateView):
     template_name = 'base/home.html'
 
-    @staticmethod
-    def get_effects(request):
-        effects = {}
-        post_effects = dict(request.POST)
-        for key, value in post_effects.items():
-            if str(key).endswith(('_buff', '_debuff', '_other')):
-                effects[key] = value
-        return effects
-
-    def save_field(self, request, field):
-        pass
-
-    def post(self, request, *args, **kwargs):
-        extra_fields = self.get_effects(request)
-        form = EffectForm(request.POST, extra=extra_fields)
-        if form.is_valid():
-            for field in form.extra_fields():
-                self.save_field(request, field)
-        return redirect(reverse_lazy('home'))
-
     def get_context_data(self, **kwargs):
         kwargs['combatant_list'] = Combatant.objects.all()
         return super().get_context_data(**kwargs)
+
+
+def get_effects(request):
+    effects = {}
+    for key in request.POST:
+        if str(key).endswith(('_buff', '_debuff', '_other')):
+            effects[key] = request.POST[key]
+    return effects
+
+
+def save_field(name, value):
+    if not value:
+        return
+    name_pieces = name.split('_')
+    object_pk = int(name_pieces[1])
+    effect_kind = name_pieces[2]
+    combatant = Combatant.objects.get(id=object_pk)
+    if effect_kind == 'buff':
+        combatant.buffs.append(value)
+    elif effect_kind == 'debuff':
+        combatant.debuffs.append(value)
+    else:  # other
+        combatant.other_effects.append(value)
+    combatant.save()
+
+
+def update_effect_list(request):
+    effects = get_effects(request)
+    form = EffectForm(request.POST, extra=effects)
+    if form.is_valid():
+        for name in form.changed_data:
+            save_field(name, form.cleaned_data[name])
+    return render_to_response(
+        'base/combatant_card_deck.html', {
+            'combatant_list': Combatant.objects.all()
+        }
+    )

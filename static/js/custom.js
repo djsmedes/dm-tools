@@ -70,6 +70,23 @@ $(document).ready(function () {
         var id = '#' + combatant + '-' + localStorage.getItem('effect-context');
         $(id).val(effect);
     });
+
+    var frm = $('#effect-add-form');
+    frm.submit( function () {
+        $.ajax({
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: frm.serialize(),
+            success: function (data) {
+                $("#combatant-card-deck").html(data);
+            },
+            error: function(data) {
+                // $("#MESSAGE-DIV").html("Something went wrong!");
+            }
+        });
+        exit_apply_context();
+        return false;
+    });
 });
 
 function exit_apply_context() {

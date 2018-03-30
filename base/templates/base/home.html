@@ -25,9 +25,9 @@
         </button>
       </div>
 
-      <form action="{% url 'home' %}" method="post">
+      <form action="{% url 'ajax-update-effect-list' %}" method="post" id="effect-add-form">
         {% csrf_token %}
-        <button class="btn btn-primary btn-block apply-context-show exit-apply-context mt-0"
+        <button class="btn btn-primary btn-block apply-context-show mt-0"
                 type="button"
                 style="display: none;"
                 id="apply-button"
@@ -37,20 +37,20 @@
         {% for combatant in combatant_list %}
           <input
               type="hidden"
-              name="{{ combatant.name }}_buff"
-              id="{{ combatant.name }}-buff"
+              name="effect_{{ combatant.id }}_buff"
+              id="{{ combatant.id }}-buff"
               class="effect-input"
           >
           <input
               type="hidden"
-              name="{{ combatant.name }}_debuff"
-              id="{{ combatant.name }}-debuff"
+              name="effect_{{ combatant.id }}_debuff"
+              id="{{ combatant.id }}-debuff"
               class="effect-input"
           >
           <input
               type="hidden"
-              name="{{ combatant.name }}_other"
-              id="{{ combatant.name }}-other"
+              name="effect_{{ combatant.id }}_other"
+              id="{{ combatant.id }}-other"
               class="effect-input"
           >
         {% endfor %}
@@ -70,10 +70,8 @@
     </div>
   </div>
 
-  <div class="card-deck">
-    {% for combatant in combatant_list %}
-      {% include 'base/combatant_card.html' %}
-    {% endfor %}
+  <div class="card-deck" id="combatant-card-deck">
+    {% include 'base/combatant_card_deck.html' %}
   </div>
 
   <div class="btn-toolbar combatant-context-show" role="toolbar" aria-label="Toolbar with combatant buttons"

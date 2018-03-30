@@ -10,7 +10,7 @@ class EffectForm(forms.Form):
             extra_fields = {}
         super().__init__(*args, **kwargs)
         for key, val in extra_fields.items():
-            self.fields['effect_{}'.format(key)] = forms.CharField(label=key)
+            self.fields[key] = forms.CharField(label=key, required=False)
 
     def extra_fields(self):
         for name, value in self.cleaned_data.items():
