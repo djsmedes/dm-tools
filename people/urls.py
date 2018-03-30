@@ -3,7 +3,8 @@ from django.urls import path, include, reverse_lazy
 from .views import \
     GodList, GodAdd, GodDetail, GodEdit, GodDelete,\
     PersonList, PersonAdd, PersonDetail, PersonEdit, PersonDelete,\
-    PopulationList, PopulationAdd, PopulationDetail, PopulationEdit, PopulationDelete
+    PopulationList, PopulationAdd, PopulationDetail, PopulationEdit, PopulationDelete, \
+    CombatantAdd
 from dmtools.urls import breadcrumbs as core_breadcrumbs
 
 breadcrumbs = core_breadcrumbs
@@ -41,5 +42,6 @@ populations_patterns = [
 urlpatterns = [
     path('gods/', include(gods_patterns), {'base_breadcrumbs': gods_breadcrumbs}),
     path('npcs/', include(npcs_patterns), {'base_breadcrumbs': npcs_breadcrumbs}),
-    path('populations/', include(populations_patterns), {'base_breadcrumbs': populations_breadcrumbs})
+    path('populations/', include(populations_patterns), {'base_breadcrumbs': populations_breadcrumbs}),
+    path('add-combatant/', CombatantAdd.as_view(), {'base_breadcrumbs': breadcrumbs}, name='combatant-add'),
 ]

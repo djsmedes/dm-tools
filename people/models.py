@@ -134,6 +134,7 @@ class Combatant(BaseModel):
         (ENEMY, 'enemy'),
     ]
 
+    name = models.CharField(primary_key=True, max_length=100)
     color = models.CharField(max_length=7, choices=COLOR_CHOICES, null=True, blank=True)
     initiative = models.IntegerField(null=True, blank=True)
     buffs = MultiSelectField(null=True, blank=True)
@@ -145,6 +146,15 @@ class Combatant(BaseModel):
         null=True,
         blank=True,
     )
+
+    def get_absolute_url(self):
+        return '/'
+
+    def get_delete_url(self):
+        return '/'
+
+    def get_edit_url(self):
+        return '/'
 
 
 class PersonForm(ModelForm):
@@ -201,4 +211,4 @@ class GodForm(ModelForm):
 class CombatantForm(ModelForm):
     class Meta:
         model = Combatant
-        fields = '__all__'
+        fields = ['name', 'color', 'initiative', 'statblock']

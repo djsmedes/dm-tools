@@ -60,6 +60,7 @@ class PopulationAdd(BaseCreateView):
 class CombatantAdd(BaseCreateView):
     model = Combatant
     form_class = CombatantForm
+    extra_breadcrumbs = [{'text': 'Add combatant'}]
 
 
 class GodEdit(BaseUpdateView):

@@ -3,15 +3,33 @@
 {% block title %}DMTOOLS{% endblock %}
 
 {% block content %}
+  <div class="d-flex pb-2">
+    <div class="input-group">
+      <input type="text" class="form-control" placeholder="Apply effect" aria-label="Apply effect">
+      <div class="input-group-append">
+        <button class="btn btn-outline-success" type="button">Buff</button>
+        <button class="btn btn-outline-danger" type="button">Debuff</button>
+        <button class="btn btn-outline-secondary" type="button">Other</button>
+      </div>
+    </div>
+      <a href="{% url 'combatant-add' %}" class="btn btn-outline-success mr-2 ml-5 align-self-end combatant-context-hide">
+        Add a combatant
+      </a>
+      <a href="#" class="btn btn-outline-danger align-self-end combatant-context-hide">
+        Remove combatants
+      </a>
+  </div>
+
   <div class="card-deck">
-    {% for pc in pc_list %}
-      {% include 'base/combatant_card.html' with combatant=pc %}
+    {% for combatant in combatant_list %}
+      {% include 'base/combatant_card.html' %}
     {% endfor %}
   </div>
 
-  <div class="btn-toolbar combatant-context-show" role="toolbar" aria-label="Toolbar with combatant buttons" style="display: none;">
-    {% for pc in pc_list %}
-      {% include 'base/combatant_button.html' with combatant=pc %}
+  <div class="btn-toolbar combatant-context-show" role="toolbar" aria-label="Toolbar with combatant buttons"
+       style="display: none;">
+    {% for combatant in combatant_list %}
+      {% include 'base/combatant_button.html' %}
     {% endfor %}
   </div>
 
