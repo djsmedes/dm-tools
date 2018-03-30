@@ -1,7 +1,10 @@
 from django.db import models
 from django.forms import ModelForm, ModelMultipleChoiceField
 
+from multiselectfield import MultiSelectField
+
 from base.models import BaseModel
+from statblocks.models import Monster
 
 
 class Person(BaseModel):
@@ -111,6 +114,39 @@ class God(BaseModel):
     )
 
 
+class Combatant(BaseModel):
+
+    class Meta:
+        ordering = ['-initiative']
+
+    BLUE = 'primary'
+    TEAL = 'info'
+    YELLOW = 'warning'
+    RED = 'danger'
+    GREEN = 'success'
+    ENEMY = 'dark'
+    COLOR_CHOICES = [
+        (BLUE, 'blue'),
+        (TEAL, 'teal'),
+        (YELLOW, 'yellow'),
+        (RED, 'red'),
+        (GREEN, 'green'),
+        (ENEMY, 'enemy'),
+    ]
+
+    color = models.CharField(max_length=7, choices=COLOR_CHOICES, null=True, blank=True)
+    initiative = models.IntegerField(null=True, blank=True)
+    buffs = MultiSelectField(null=True, blank=True)
+    debuffs = MultiSelectField(null=True, blank=True)
+    other_effects = MultiSelectField(null=True, blank=True)
+    statblock = models.ForeignKey(
+        'statblocks.Monster',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
+
 class PersonForm(ModelForm):
     class Meta:
         model = Person
@@ -160,3 +196,9 @@ class GodForm(ModelForm):
             self.save_m2m()
 
         return instance
+
+
+class CombatantForm(ModelForm):
+    class Meta:
+        model = Combatant
+        fields = '__all__'

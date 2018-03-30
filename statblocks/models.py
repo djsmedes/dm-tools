@@ -28,27 +28,45 @@ class Monster(BaseModel):
 
     @property
     def str_mod(self):
-        return (self.str - 10) // 2
+        if self.str:
+            return (self.str - 10) // 2
+        else:
+            return -5
 
     @property
     def dex_mod(self):
-        return (self.dex - 10) // 2
+        if self.dex:
+            return (self.dex - 10) // 2
+        else:
+            return -5
 
     @property
     def con_mod(self):
-        return (self.con - 10) // 2
+        if self.con:
+            return (self.con - 10) // 2
+        else:
+            return -5
 
     @property
     def int_mod(self):
-        return (self.int - 10) // 2
+        if self.int:
+            return (self.int - 10) // 2
+        else:
+            return -5
 
     @property
     def wis_mod(self):
-        return (self.wis - 10) // 2
+        if self.wis:
+            return (self.wis - 10) // 2
+        else:
+            return -5
 
     @property
     def cha_mod(self):
-        return (self.cha - 10) // 2
+        if self.cha:
+            return (self.cha - 10) // 2
+        else:
+            return -5
 
     saving_throws = models.CharField(max_length=50, null=True, blank=True)
     skills = models.CharField(max_length=255, null=True, blank=True)
@@ -71,9 +89,9 @@ class Monster(BaseModel):
 
     @property
     def rand_hp(self):
-        hp = self.num_hit_die * self.con_mod
+        hp = 0
         for _ in range(self.num_hit_die):
-            hp += randint(1, self.hit_die_size)
+            hp += max(randint(1, self.hit_die_size) + self.con_mod, 1)
         return hp
 
     @property
@@ -81,7 +99,7 @@ class Monster(BaseModel):
         con_mod_piece = self.num_hit_die * self.con_mod
         hit_die_avg = (self.hit_die_size + 1) / 2.0
         hit_die_piece = self.num_hit_die * hit_die_avg // 1
-        return int(con_mod_piece + hit_die_piece)
+        return max(int(con_mod_piece + hit_die_piece), 1)
 
 
 class MonsterForm(ModelForm):

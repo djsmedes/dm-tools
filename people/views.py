@@ -2,7 +2,10 @@ from django.urls import reverse_lazy
 
 from base.views import BaseListView, BaseCreateView, BaseUpdateView, BaseDeleteView, \
     BaseDetailView
-from .models import God, GodForm, Person, PersonForm, Population, PopulationForm
+from .models import God, GodForm, \
+    Person, PersonForm, \
+    Population, PopulationForm, \
+    Combatant, CombatantForm
 
 
 class GodList(BaseListView):
@@ -52,6 +55,11 @@ class PersonAdd(BaseCreateView):
 class PopulationAdd(BaseCreateView):
     model = Population
     form_class = PopulationForm
+
+
+class CombatantAdd(BaseCreateView):
+    model = Combatant
+    form_class = CombatantForm
 
 
 class GodEdit(BaseUpdateView):

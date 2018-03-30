@@ -5,10 +5,19 @@
   <div class="card" style="width: 40rem">
     {#  <img class="card-img-top" src="{{ object.image?? }}">#}
     <div class="card-header bg-primary text-white">
-      <h1 class="card-title">{{ object.name }}</h1>
-      <h6 class="card-subtitle mb-1">
-        {{ object.get_size_display|capfirst }} {{ object.type }}, {{ object.get_alignment_display }}
-      </h6>
+      <div class="form-row align-items-center">
+        <div class="col-10">
+          <h1 class="card-title">{{ object.name }}</h1>
+          <h6 class="card-subtitle mb-1">
+            {{ object.get_size_display|capfirst }} {{ object.type }}, {{ object.get_alignment_display }}
+          </h6>
+        </div>
+        <div class="col-2">
+          <a class="btn btn-lg btn-outline-light align-middle" href="{{ object.get_edit_url }}">
+            Edit
+          </a>
+        </div>
+      </div>
     </div>
     <div class="card-body">
       <p class="card-text mb-0">
@@ -23,7 +32,11 @@
           {{ object.gen_hp }}
         {% endif %}
         ({{ object.num_hit_die }}{{ object.get_hit_die_size_display }}
-        + {{ object.num_hit_die|multiply:object.con_mod }})
+        {% if object.con_mod > 0 %}
+          + {{ object.num_hit_die|multiply:object.con_mod }})
+        {% elif object.con_mod < 0 %}
+          - {{ object.num_hit_die|multiply:object.con_mod|multiply:-1 }})
+        {% endif %}
       </p>
       <p class="card-text mb-0">
         <strong>Speed</strong>
