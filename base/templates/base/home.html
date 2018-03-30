@@ -3,21 +3,56 @@
 {% block title %}DMTOOLS{% endblock %}
 
 {% block content %}
-  <div class="d-flex pb-2">
-    <div class="input-group">
-      <input type="text" class="form-control" placeholder="Apply effect" aria-label="Apply effect">
-      <div class="input-group-append">
-        <button class="btn btn-outline-success" type="button">Buff</button>
-        <button class="btn btn-outline-danger" type="button">Debuff</button>
-        <button class="btn btn-outline-secondary" type="button">Other</button>
-      </div>
+  <div class="row">
+    <div class="col-sm pb-2">
+      <input type="text"
+             class="form-control"
+             placeholder="Apply effect"
+             aria-label="Effect to apply"
+             id="effect-to-apply"
+      >
     </div>
-      <a href="{% url 'combatant-add' %}" class="btn btn-outline-success mr-2 ml-5 align-self-end combatant-context-hide">
-        Add a combatant
-      </a>
-      <a href="#" class="btn btn-outline-danger align-self-end combatant-context-hide">
-        Remove combatants
-      </a>
+    <div class="col-sm pb-2">
+      <div class="btn-group btn-block apply-context-hide" role="group" aria-label="apply effect buttons">
+        <button class="btn btn-outline-success enter-buff-apply-context" type="button" style="width: 33.3%;">
+          Buff
+        </button>
+        <button class="btn btn-outline-danger enter-debuff-apply-context" type="button" style="width: 33.3%;">
+          Debuff
+        </button>
+        <button class="btn btn-outline-secondary enter-other-apply-context" type="button" style="width: 33.3%;">
+          Other
+        </button>
+      </div>
+
+      <form action="" method="post">
+        {% csrf_token %}
+        <button class="btn btn-primary btn-block apply-context-show exit-apply-context mt-0"
+                type="button"
+                style="display: none;"
+                id="apply-button"
+        >
+          Cancel
+        </button>
+        {% for combatant in combatant_list %}
+          <input type="hidden" name="{{ combatant.name }}_buff" id="{{ combatant.name }}-buff">
+          <input type="hidden" name="{{ combatant.name }}_debuff" id="{{ combatant.name }}-debuff">
+          <input type="hidden" name="{{ combatant.name }}_other" id="{{ combatant.name }}-other">
+        {% endfor %}
+      </form>
+    </div>
+
+    <div class="col-sm pb-2 d-flex justify-content-between">
+      {% if user.is_authenticated %}
+        <a href="{% url 'combatant-add' %}"
+           class="btn btn-outline-success mr-2 combatant-context-hide">
+          Add a combatant
+        </a>
+        <a href="#" class="btn btn-outline-danger combatant-context-hide">
+          Remove combatants
+        </a>
+      {% endif %}
+    </div>
   </div>
 
   <div class="card-deck">
