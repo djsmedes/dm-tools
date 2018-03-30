@@ -41,13 +41,25 @@
             <br>
           {% endfor %}
         </div>
-        <div class="card-footer
-                  {% if pc.is_turn %}
-                    text-white bg-dark
-                  {% elif pc.on_deck %}
-                    text-white bg-secondary
-                  {% endif %}">
-          <small>Initiative {{ pc.initiative }}</small>
+        <div class="card-footer p-0 bg-light">
+          <div class="dropdown">
+            <button class="btn btn-light btn-block dropdown-toggle" type="button" id="initiative-dropdown"
+                    data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+              <small>Initiative {{ pc.initiative }}</small>
+            </button>
+
+            <form class="dropdown-menu p-2">
+              <div class="form-group mb-0">
+                <input type="number" class="form-control mb-2" id="form-initiative-{{ pc.name }}" name="initiative"
+                       placeholder="Enter new initiative">
+
+                <button type="submit" class="btn btn-outline-success btn-block">Submit</button>
+              </div>
+            </form>
+
+          </div>
+
         </div>
       </div>
     {% endfor %}
