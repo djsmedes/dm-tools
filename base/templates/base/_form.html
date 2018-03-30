@@ -19,10 +19,12 @@
   ">
     {% csrf_token %}
     {% for field in form %}
-      <div class="form-group">
-        {{ field.label_tag }}
-        {{ field|add_class:'form-control' }}
-      </div>
+      {% block single_field %}
+        <div class="form-group">
+          {{ field.label_tag }}
+          {{ field|add_class:'form-control' }}
+        </div>
+      {% endblock %}
     {% endfor %}
     {% if object %}
       <a class="btn btn-secondary" href="{{ object.get_absolute_url }}">Cancel</a>

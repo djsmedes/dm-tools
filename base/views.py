@@ -67,7 +67,7 @@ class BaseUpdateView(BreadCrumbMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form_action'] = '{}-edit'.format(self.model._meta.verbose_name)
-        context['form'] = self.form_class(instance=self.object)
+        # context['form'] = self.form_class(instance=self.object)
         return context
 
 
@@ -92,12 +92,18 @@ class BaseDeleteView(BreadCrumbMixin, DeleteView):
 
 class BaseDetailView(BreadCrumbMixin, DetailView):
     template_name = 'base/_detail.html'
-    form_class = lambda instance: exec('raise Http404')
+    form_class = None
+
+    def get_form(self):
+        if self.form_class:
+            return self.form_class(instance=self.object)
+        return None
 
     def get_extra_breadcrumbs(self):
         return [{'text': self.object.name}]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = self.form_class(instance=self.object)
+        if self.form_class:
+            context['form'] = self.get_form()
         return context
