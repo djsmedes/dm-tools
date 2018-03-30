@@ -134,7 +134,6 @@ class Combatant(BaseModel):
         (ENEMY, 'enemy'),
     ]
 
-    name = models.CharField(primary_key=True, max_length=100)
     color = models.CharField(max_length=7, choices=COLOR_CHOICES, null=True, blank=True)
     initiative = models.IntegerField(null=True, blank=True)
     buffs = MultiSelectField(null=True, blank=True)
