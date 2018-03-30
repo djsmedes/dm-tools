@@ -116,7 +116,7 @@ class HomepageView(TemplateView):
             'color': 'primary',
             'name': 'Duncan',
             'initiative': 15,
-            'buffs': ['bless', 'd10 inspiration'],
+            'buffs': ['bless', 'd10 insp'],
             'debuffs': [],
             'other_effects': [],
             'is_turn': True

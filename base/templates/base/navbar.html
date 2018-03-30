@@ -1,17 +1,23 @@
 <nav role="navigation" class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" href="/">DMTOOLS</a>
-  <div class="navbar-nav">
-    <a class="nav-link" href="{% url 'gods-home' %}">Gods</a>
-    <a class="nav-link" href="{% url 'npcs-home' %}">NPCs</a>
-    <a class="nav-link" href="{% url 'monsters-home' %}">Monsters</a>
-    <a class="nav-link" href="{% url 'populations-home' %}">Populations</a>
-    <div class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
-        Less common...
-      </a>
-      <div class="dropdown-menu bg-dark">
-        <a class="dropdown-item text-muted" href="#">Places</a>
-        <a class="dropdown-item text-muted" href="#">Plot</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+          aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div class="navbar-nav">
+      <a class="nav-link" href="{% url 'gods-home' %}">Gods</a>
+      <a class="nav-link" href="{% url 'npcs-home' %}">NPCs</a>
+      <a class="nav-link" href="{% url 'monsters-home' %}">Monsters</a>
+      <a class="nav-link" href="{% url 'populations-home' %}">Populations</a>
+      <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
+          Less common...
+        </a>
+        <div class="dropdown-menu bg-dark">
+          <a class="dropdown-item text-muted" href="#">Places</a>
+          <a class="dropdown-item text-muted" href="#">Plot</a>
+        </div>
       </div>
     </div>
   </div>

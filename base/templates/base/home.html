@@ -5,9 +5,21 @@
 {% block content %}
   <div class="card-deck">
     {% for pc in pc_list %}
-      <div class="card">
-        <div class="card-header bg-{{ pc.color }}">
-          <h5 class="card-title">{{ pc.name }}</h5>
+      <div class="card pc-context-hide-unmatch" data-pc="{{ pc.name }}">
+        <div class="card-header p-0 bg-{{ pc.color }}">
+          <div class="dropdown">
+            <button type="button" class="btn btn-block btn-{{ pc.color }} dropdown-toggle" id="dropdownMenuButton"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <strong>{{ pc.name }}</strong>
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item pc-context-enter pc-context-hide" data-pc="{{ pc.name }}" href="#">
+                Play as {{ pc.name }}</a>
+              <a class="dropdown-item pc-context-leave pc-context-show" data-pc="{{ pc.name }}" href="#"
+                 style="display: none;">
+                Stop playing as {{ pc.name }}</a>
+            </div>
+          </div>
         </div>
         <div class="card-body">
           {% for buff in pc.buffs %}
@@ -35,9 +47,22 @@
                   {% elif pc.on_deck %}
                     text-white bg-secondary
                   {% endif %}">
-          <strong>Initiative</strong> {{ pc.initiative }}
+          <small>Initiative {{ pc.initiative }}</small>
         </div>
       </div>
     {% endfor %}
   </div>
+
+  <div class="btn-toolbar pc-context-show" role="toolbar" aria-label="Toolbar with pc buttons" style="display: none;">
+    {% for pc in pc_list %}
+      <div class="btn-group my-2 mr-2 pc-context-hide-match" role="group"
+           data-pc="{{ pc.name }}"
+           aria-label="Group {{ forloop.counter1 }}">
+        <button type="button" class="btn btn-{{ pc.color }}">
+          {{ pc.name }}
+        </button>
+      </div>
+    {% endfor %}
+  </div>
+
 {% endblock %}
