@@ -43,4 +43,4 @@ class MonsterDelete(BaseDeleteView):
 
 class MonsterDetail(BaseDetailView):
     model = Monster
-    form_class = MonsterForm
+    template_name = 'statblocks/monster_detail.html'

@@ -31,3 +31,8 @@ def val_in_iterable_in_dict_under_key(val, _dict, key):
             if str(item) == str(val):
                 return True
     return False
+
+
+@register.filter
+def multiply(value, arg):
+    return value * arg

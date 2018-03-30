@@ -1,2 +1,129 @@
 {% extends 'base/base.html' %}
+{% load base %}
 
+{% block content %}
+  <div class="card" style="width: 40rem">
+    {#  <img class="card-img-top" src="{{ object.image?? }}">#}
+    <div class="card-header bg-primary text-white">
+      <h1 class="card-title">{{ object.name }}</h1>
+      <h6 class="card-subtitle mb-1">
+        {{ object.get_size_display|capfirst }} {{ object.type }}, {{ object.get_alignment_display }}
+      </h6>
+    </div>
+    <div class="card-body">
+      <p class="card-text mb-0">
+        <strong>Armor Class</strong>
+        {{ object.armor_class }}{% if object.armor_kind %} ({{ object.armor_kind }}){% endif %}
+      </p>
+      <p class="card-text mb-0">
+        <strong>Hit Points</strong>
+        {% if object.hit_points %}
+          {{ object.hit_points }}
+        {% else %}
+          {{ object.gen_hp }}
+        {% endif %}
+        ({{ object.num_hit_die }}{{ object.get_hit_die_size_display }}
+        + {{ object.num_hit_die|multiply:object.con_mod }})
+      </p>
+      <p class="card-text mb-0">
+        <strong>Speed</strong>
+        {{ object.speed }}
+      </p>
+      <hr>
+      <div class="row">
+        <div class="col text-center">
+          <strong>STR</strong>
+          <br>
+          {{ object.str }} ({% if object.str_mod > -1 %}+{% endif %}{{ object.str_mod }})
+        </div>
+        <div class="col text-center">
+          <strong>DEX</strong>
+          <br>
+          {{ object.dex }} ({% if object.dex_mod > -1 %}+{% endif %}{{ object.dex_mod }})
+        </div>
+        <div class="col text-center">
+          <strong>CON</strong>
+          <br>
+          {{ object.con }} ({% if object.con_mod > -1 %}+{% endif %}{{ object.con_mod }})
+        </div>
+        <div class="col text-center">
+          <strong>INT</strong>
+          <br>
+          {{ object.int }} ({% if object.int_mod > -1 %}+{% endif %}{{ object.int_mod }})
+        </div>
+        <div class="col text-center">
+          <strong>WIS</strong>
+          <br>
+          {{ object.wis }} ({% if object.wis_mod > -1 %}+{% endif %}{{ object.wis_mod }})
+        </div>
+        <div class="col text-center">
+          <strong>CHA</strong>
+          <br>
+          {{ object.cha }} ({% if object.cha_mod > -1 %}+{% endif %}{{ object.cha_mod }})
+        </div>
+      </div>
+      <hr>
+      {% if object.saving_throws %}
+        <p class="card-text mb-0 hanging-indent">
+          <strong>Saving Throws</strong>
+          {{ object.saving_throws }}
+        </p>
+      {% endif %}
+      {% if object.skills %}
+        <p class="card-text mb-0 hanging-indent">
+          <strong>Skills</strong>
+          {{ object.skills }}
+        </p>
+      {% endif %}
+      {% if object.damage_vulnerabilities %}
+        <p class="card-text mb-0 hanging-indent">
+          <strong>Damage Vulnerabilities</strong>
+          {{ object.get_damage_vulnerabilities_display }}
+        </p>
+      {% endif %}
+      {% if object.damage_resistances %}
+        <p class="card-text mb-0 hanging-indent">
+          <strong>Damage Resistances</strong>
+          {{ object.get_damage_resistances_display }}
+        </p>
+      {% endif %}
+      {% if object.damage_immunities %}
+        <p class="card-text mb-0 hanging-indent">
+          <strong>Damage Immunities</strong>
+          {{ object.get_damage_immunities_display }}
+        </p>
+      {% endif %}
+      {% if object.condition_immunities %}
+        <p class="card-text mb-0 hanging-indent">
+          <strong>Condition Immunities</strong>
+          {{ object.get_condition_immunities_display }}
+        </p>
+      {% endif %}
+      <p class="card-text mb-0 hanging-indent">
+        <strong>Senses</strong>
+        {{ object.senses }}
+      </p>
+      <p class="card-text mb-0 hanging-indent">
+        <strong>Languages</strong>
+        {{ object.get_languages_display }}
+      </p>
+      <p class="card-text mb-0 hanging-indent">
+        <strong>Challenge</strong>
+        {{ object.challenge }}
+      </p>
+      <hr>
+      <p class="card-text">
+        <strong><em>Special Quality.</em></strong>
+        {% lorem %}
+      </p>
+      <h3 class="mt-2 mb-0">
+        Actions
+      </h3>
+      <hr class="mt-0">
+      <p class="card-text">
+        <strong><em>Action name.</em></strong>
+        {% lorem %}
+      </p>
+    </div>
+  </div>
+{% endblock %}
