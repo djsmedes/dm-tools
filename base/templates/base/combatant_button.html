@@ -1,7 +1,14 @@
-<div class="btn-group my-2 mr-2 combatant-context-hide-match" role="group"
-     data-combatant="{{ combatant.name }}"
-     aria-label="Group {{ forloop.counter1 }}">
-  <button type="button" class="btn btn-{{ combatant.color }}">
+<div class="my-2 mr-2 combatant-context-hide-match"
+     data-combatant="{{ combatant.name }}">
+  <button type="button" class="btn btn-{{ combatant.color }} apply-context-hide">
+    {{ combatant.name }}
+  </button>
+  <button
+      class="btn btn-outline-{{ combatant.color }} apply-context-show apply-context-activatable"
+      data-combatant="{{ combatant.name }}"
+      style="display: none;"
+  >
     {{ combatant.name }}
   </button>
 </div>
+

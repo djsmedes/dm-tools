@@ -6,8 +6,10 @@ from django.http import Http404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.views.generic.base import ContextMixin, TemplateView
+from django.shortcuts import redirect
 
 from people.models import Combatant
+from .forms import EffectForm
 
 
 class BreadCrumbMixin(ContextMixin):
@@ -113,6 +115,26 @@ class BaseDetailView(BreadCrumbMixin, DetailView):
 
 class HomepageView(TemplateView):
     template_name = 'base/home.html'
+
+    @staticmethod
+    def get_effects(request):
+        effects = {}
+        post_effects = dict(request.POST)
+        for key, value in post_effects.items():
+            if str(key).endswith(('_buff', '_debuff', '_other')):
+                effects[key] = value
+        return effects
+
+    def save_field(self, request, field):
+        pass
+
+    def post(self, request, *args, **kwargs):
+        extra_fields = self.get_effects(request)
+        form = EffectForm(request.POST, extra=extra_fields)
+        if form.is_valid():
+            for field in form.extra_fields():
+                self.save_field(request, field)
+        return redirect(reverse_lazy('home'))
 
     def get_context_data(self, **kwargs):
         kwargs['combatant_list'] = Combatant.objects.all()

@@ -50,17 +50,13 @@ $(document).ready(function () {
         $('.apply-context-show').show();
         localStorage.setItem('effect-context', 'other');
     });
-    $('.exit-apply-context').click(function () {
-        $('.apply-context-hide').show();
-        $('.apply-context-show').hide();
-        localStorage.setItem('effect-context', '');
-    });
+    $('.exit-apply-context').click( exit_apply_context );
 
     $('#effect-to-apply').on("change paste keyup", function () {
         if ($(this).val() === '') {
-            $('#apply-button').html('Cancel').prop('type', 'button')
+            $('#apply-button').html('Cancel').prop('type', 'button').addClass('exit-apply-context')
         } else {
-            $('#apply-button').html('Apply').prop('type', 'submit')
+            $('#apply-button').html('Apply').prop('type', 'submit').removeClass('exit-apply-context')
         }
     });
 
@@ -75,3 +71,11 @@ $(document).ready(function () {
         $(id).val(effect);
     });
 });
+
+function exit_apply_context() {
+    $('.apply-context-hide').show();
+    $('.apply-context-show').hide();
+    localStorage.setItem('effect-context', '');
+    $('.effect-input').val('');
+    $('.apply-context-activatable').removeClass('active');
+}
