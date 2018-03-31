@@ -44,10 +44,11 @@
       </button>
 
       <form class="dropdown-menu p-2 update-initiative-form"
-            action="{{ 'ajax-update-initiative' }}"
+            action="{% url 'ajax-update-initiative' %}"
             method="post"
-            data-combatant="{{ combatant.id }}"
       >
+        {% csrf_token %}
+        <input type="hidden" value="{{ combatant.id }}" name="combatant_id">
         <div class="form-group mb-0">
           <input type="number" class="form-control mb-2" id="form-initiative-{{ combatant.id }}" name="initiative"
                  placeholder="New roll">

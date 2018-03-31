@@ -14,7 +14,8 @@
       >
     </div>
     <div class="col-sm pb-2">
-      <div class="btn-group btn-block apply-context-hide remove-context-hide" role="group" aria-label="apply effect buttons">
+      <div class="btn-group btn-block apply-context-hide remove-context-hide" role="group"
+           aria-label="apply effect buttons">
         <button class="btn btn-outline-success enter-buff-apply-context" type="button" style="width: 33.3%;">
           Buff
         </button>
@@ -28,13 +29,22 @@
 
       <form action="{% url 'ajax-update-effect-list' %}" method="post" id="effect-add-form">
         {% csrf_token %}
-        <button class="btn btn-primary btn-block apply-context-show mt-0"
-                type="button"
-                style="display: none;"
-                id="apply-button"
-        >
-          Cancel
-        </button>
+        <div class="btn-group btn-block apply-context-show" role="group" aria-label="apply effect cancel and submit"
+             style="display: none;">
+          <button class="btn btn-outline-primary exit-apply-context w-50"
+                  type="button"
+                  id="cancel-apply-button"
+          >
+            Cancel
+          </button>
+          <button class="btn btn-primary w-50"
+                  type="submit"
+                  id="apply-button"
+                  disabled
+          >
+            Apply
+          </button>
+        </div>
         {% for combatant in combatant_list %}
           <input
               type="hidden"

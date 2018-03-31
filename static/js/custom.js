@@ -70,21 +70,10 @@ $(document).ready(function () {
 
     $('#effect-to-apply').on("change paste keyup", function () {
         if ($(this).val() === '') {
-            $('#apply-button').html('Cancel').prop('type', 'button').addClass('exit-apply-context')
-        } else {
-            $('#apply-button').html('Apply').prop('type', 'submit').removeClass('exit-apply-context')
+            $('#apply-button').prop('disabled', true);
+        } else if ($('.context-activatable.active').length) {
+            $('#apply-button').prop('disabled', false);
         }
-    });
-
-    $('.context-activatable').click(function () {
-        $(this).toggleClass('active');
-        var effect = '';
-        if ($(this).hasClass('active')) {
-            effect = $('#effect-to-apply').val()
-        }
-        var combatant = $(this).data('combatant');
-        var id = '#' + combatant + '-' + $('#context').html();
-        $(id).val(effect);
     });
 
     var frm = $('#effect-add-form');
@@ -105,6 +94,7 @@ $(document).ready(function () {
             }
         });
         exit_apply_context();
+        $('#effect-to-apply').val('');
         return false;
     });
 
@@ -158,29 +148,60 @@ $(document).ready(function () {
         }
     });
     $('body').on('click', '.context-activatable', function () {
-        if ($('#context').html() === 'remove') {
-            localStorage.setItem('to-remove', localStorage.getItem('to-remove') + ',' + $(this).data('combatant'));
+        $(this).toggleClass('active');
+        var context = $('#context').html();
+        var combatant = $(this).data('combatant');
+        if (context === 'remove') {
+            localStorage.setItem('to-remove', localStorage.getItem('to-remove') + ',' + combatant);
+        } else if (context !== '') {
+            var effect = '';
+            if ($(this).hasClass('active')) {
+                effect = $('#effect-to-apply').val()
+            }
+            var id = '#' + combatant + '-' + context;
+            $(id).val(effect);
+            if ($('#effect-to-apply').val() !== '') {
+                if ($('.context-activatable.active').length) {
+                    $('#apply-button').prop('disabled', false);
+                } else  {
+                    $('#apply-button').prop('disabled', true);
+                }
+            }
         }
     });
     $('body').on('click', '#cancel-remove', exit_remove_context);
+    $('body').on('submit', '.update-initiative-form', function () {
+        $.ajax({
+            type: $(this).attr('method'),
+            url: $(this).attr('action'),
+            data: $(this).serialize(),
+            success: function (return_html) {
+                if (return_html === '') {
+                    return
+                }
+                $("#combatant-card-deck").html(return_html)
+            },
+            error: function (data) {
+                // $("#MESSAGE-DIV").html("Something went wrong!");
+            }
+        });
+        return false;
+    })
 });
 
 function exit_apply_context() {
     $('.apply-context-hide').show();
     $('.apply-context-show').hide();
-    console.log($('#context').html());
     $('#context').html('');
-    console.log($('#context').html());
     $('.effect-input').val('');
     $('.context-activatable').removeClass('active');
+    $('#apply-button').prop('disabled', true)
 }
 
 function exit_remove_context() {
     $('.remove-context-hide').show();
     $('.remove-context-show').hide();
-    console.log($('#context').html());
     $('#context').html('');
-    console.log($('#context').html());
     localStorage.setItem('to-remove', '');
     $('.context-activatable').removeClass('active');
     $('#add-combatant').html(

@@ -1,7 +1,7 @@
 # importing this to be used in an exec in a lambda expression
 # noinspection PyUnresolvedReferences
 from django.http import Http404, JsonResponse, HttpResponse
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
@@ -211,7 +211,8 @@ def update_initiative(request):
     c.initiative = int(request.POST['initiative'])
     c.save()
 
-    return render_to_response(
+    return render(
+        request,
         'base/combatant_card_deck.html',
         {'combatant_list': Combatant.objects.all()}
     )
