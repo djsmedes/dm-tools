@@ -183,3 +183,35 @@ def remove_effect(request):
         'base/combatant_card_body.html',
         {'combatant': combatant}
     )
+
+
+def remove_combatants(request):
+    if not request.POST.get('combatant_ids'):
+        return HttpResponse('')
+
+    combatant_ids = [int(cid) for cid in request.POST['combatant_ids'].split(',') if cid]
+    for cid in combatant_ids:
+        c = Combatant.objects.get(id=cid)
+        c.delete()
+    return render_to_response(
+        'base/combatant_card_deck.html',
+        {'combatant_list': Combatant.objects.all()}
+    )
+
+
+def update_initiative(request):
+    if not (
+        request.POST.get('combatant_id') and
+        request.POST.get('initiative')
+    ):
+        return HttpResponse('')
+
+    # update combatant initiative
+    c = Combatant.objects.get(id=int(request.POST['combatant_id']))
+    c.initiative = int(request.POST['initiative'])
+    c.save()
+
+    return render_to_response(
+        'base/combatant_card_deck.html',
+        {'combatant_list': Combatant.objects.all()}
+    )

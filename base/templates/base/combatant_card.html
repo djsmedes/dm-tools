@@ -1,6 +1,6 @@
 <div class="card combatant-context-hide-unmatch" data-combatant="{{ combatant.id }}">
   <div class="card-header p-0">
-    <div class="dropdown apply-context-hide">
+    <div class="dropdown apply-context-hide remove-context-hide">
       <button type="button" class="btn btn-block btn-{{ combatant.color }} dropdown-toggle" id="dropdownMenuButton"
               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <strong>{{ combatant.name }}</strong>
@@ -20,10 +20,10 @@
         {% endif %}
       </div>
     </div>
-    <div class="apply-context-show" style="display: none;">
+    <div class="apply-context-show remove-context-show" style="display: none;">
       <button
           type="button"
-          class="btn btn-block btn-outline-{{ combatant.color }} apply-context-activatable"
+          class="btn btn-block btn-outline-{{ combatant.color }} context-activatable"
           data-combatant="{{ combatant.id }}"
       >
         <strong>{{ combatant.name }}&nbsp;&nbsp;&nbsp;&nbsp;</strong>
@@ -43,7 +43,11 @@
         <small>Initiative {{ combatant.initiative }}</small>
       </button>
 
-      <form class="dropdown-menu p-2">
+      <form class="dropdown-menu p-2 update-initiative-form"
+            action="{{ 'ajax-update-initiative' }}"
+            method="post"
+            data-combatant="{{ combatant.id }}"
+      >
         <div class="form-group mb-0">
           <input type="number" class="form-control mb-2" id="form-initiative-{{ combatant.id }}" name="initiative"
                  placeholder="New roll">
