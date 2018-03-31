@@ -1,6 +1,7 @@
 # importing this to be used in an exec in a lambda expression
 # noinspection PyUnresolvedReferences
-from django.http import Http404, JsonResponse
+from django.http import Http404, JsonResponse, HttpResponse
+from django.shortcuts import render_to_response
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
@@ -155,3 +156,30 @@ def update_effect_list(request):
                 'combatant': combatant
             })
     return JsonResponse(htmls)
+
+
+def remove_effect(request):
+    if not (
+            request.POST.get('index') and
+            request.POST.get('effect_type') and
+            request.POST.get('combatant')
+    ):
+        return HttpResponse('')
+
+    index = int(request.POST['index'])
+    effect_type = request.POST['effect_type']
+    combatant_id = int(request.POST['combatant'])
+
+    combatant = Combatant.objects.get(id=combatant_id)
+    if effect_type == 'buff':
+        combatant.buffs.pop(index)
+    elif effect_type == 'debuff':
+        combatant.debuffs.pop(index)
+    else:  # other
+        combatant.other_effects.pop(index)
+    combatant.save()
+
+    return render_to_response(
+        'base/combatant_card_body.html',
+        {'combatant': combatant}
+    )

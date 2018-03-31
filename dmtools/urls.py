@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, re_path
 
-from base.views import HomepageView, update_effect_list
+from base.views import HomepageView, update_effect_list, remove_effect
 
 breadcrumbs = [
     {'href': '/', 'text': 'Home'},
@@ -30,4 +30,5 @@ urlpatterns = [
     path('places/', include('places.urls')),
     path('plot/', include('plot.urls')),
     path('ajax/update-effect-list/', update_effect_list, name='ajax-update-effect-list'),
+    path('ajax/remove-effect/', remove_effect, name='ajax-remove-effect'),
 ]

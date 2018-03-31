@@ -50,7 +50,7 @@ $(document).ready(function () {
         $('.apply-context-show').show();
         localStorage.setItem('effect-context', 'other');
     });
-    $('.exit-apply-context').click( exit_apply_context );
+    $('.exit-apply-context').click(exit_apply_context);
 
     $('#effect-to-apply').on("change paste keyup", function () {
         if ($(this).val() === '') {
@@ -72,25 +72,65 @@ $(document).ready(function () {
     });
 
     var frm = $('#effect-add-form');
-    frm.submit( function () {
+    frm.submit(function () {
         $.ajax({
             type: frm.attr('method'),
             url: frm.attr('action'),
             data: frm.serialize(),
             success: function (data) {
-                $(".combatant-card-body").each(function() {
-                    var id= $(this).data('id');
+                $(".combatant-card-body").each(function () {
+                    var id = $(this).data('id');
                     $(this).html(data[id]);
                 });
 
             },
-            error: function(data) {
+            error: function (data) {
                 // $("#MESSAGE-DIV").html("Something went wrong!");
             }
         });
         exit_apply_context();
         return false;
     });
+
+    $('body').on('click', '.remove-effect', function () {
+        var index = $(this).data('index');
+        var effect_type = $(this).data('effect-type');
+        var combatant_id = $(this).data('combatant');
+        var csrftoken = $("[name=csrfmiddlewaretoken]").val();
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.ajax({
+            type: 'post',
+            url: '/ajax/remove-effect/',
+            data: {
+                'index': index,
+                'effect_type': effect_type,
+                'combatant': combatant_id
+            },
+            success: function (return_html) {
+                if (return_html === '') {
+                    return
+                }
+                $(".combatant-card-body").each(function () {
+                    if ($(this).data('id') === combatant_id) {
+                        $(this).html(return_html);
+                    }
+                });
+            }
+        })
+    })
 });
 
 function exit_apply_context() {

@@ -1,18 +1,37 @@
 {% for buff in combatant.buffs %}
-  <span class="badge badge-success">
-      <strong>{{ buff }}</strong>
-    </span>
-  <br>
+  <div>
+    <span class="badge badge-success"><strong>{{ buff }}</strong></span>
+    <button type="button"
+            class="close remove-effect" aria-label="Close"
+            data-index="{{ forloop.counter0 }}"
+            data-effect-type="buff"
+            data-combatant="{{ combatant.id }}"
+    >
+      <small><span aria-hidden="true">&times;</span></small>
+    </button>
+  </div>
 {% endfor %}
 {% for debuff in combatant.debuffs %}
-  <span class="badge badge-danger">
-      <strong>{{ debuff }}</strong>
-    </span>
-  <br>
+  <div>
+    <span class="badge badge-danger"><strong>{{ debuff }}</strong></span>
+    <button type="button" class="close remove-effect" aria-label="Close"
+            data-index="{{ forloop.counter0 }}"
+            data-effect-type="debuff"
+            data-combatant="{{ combatant.id }}"
+    >
+      <small><span aria-hidden="true">&times;</span></small>
+    </button>
+  </div>
 {% endfor %}
 {% for effect in combatant.other_effects %}
-  <span class="badge badge-secondary">
-      <strong>{{ effect }}</strong>
-    </span>
-  <br>
+  <div>
+    <span class="badge badge-secondary"><strong>{{ effect }}</strong></span>
+    <button type="button" class="close remove-effect" aria-label="Close"
+            data-index="{{ forloop.counter0 }}"
+            data-effect-type="other"
+            data-combatant="{{ combatant.id }}"
+    >
+      <small><span aria-hidden="true">&times;</span></small>
+    </button>
+  </div>
 {% endfor %}
