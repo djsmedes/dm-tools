@@ -78,7 +78,11 @@ $(document).ready(function () {
             url: frm.attr('action'),
             data: frm.serialize(),
             success: function (data) {
-                $("#combatant-card-deck").html(data);
+                $(".combatant-card-body").each(function() {
+                    var id= $(this).data('id');
+                    $(this).html(data[id]);
+                });
+
             },
             error: function(data) {
                 // $("#MESSAGE-DIV").html("Something went wrong!");

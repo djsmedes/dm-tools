@@ -1,0 +1,18 @@
+{% for buff in combatant.buffs %}
+  <span class="badge badge-success">
+      <strong>{{ buff }}</strong>
+    </span>
+  <br>
+{% endfor %}
+{% for debuff in combatant.debuffs %}
+  <span class="badge badge-danger">
+      <strong>{{ debuff }}</strong>
+    </span>
+  <br>
+{% endfor %}
+{% for effect in combatant.other_effects %}
+  <span class="badge badge-secondary">
+      <strong>{{ effect }}</strong>
+    </span>
+  <br>
+{% endfor %}

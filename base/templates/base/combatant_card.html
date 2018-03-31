@@ -30,26 +30,11 @@
       </button>
     </div>
   </div>
-  <div class="card-body">
-    {% for buff in combatant.buffs %}
-      <span class="badge badge-success">
-          <strong>{{ buff }}</strong>
-        </span>
-      <br>
-    {% endfor %}
-    {% for debuff in combatant.debuffs %}
-      <span class="badge badge-danger">
-          <strong>{{ debuff }}</strong>
-        </span>
-      <br>
-    {% endfor %}
-    {% for effect in combatant.other_effects %}
-      <span class="badge badge-secondary">
-          <strong>{{ effect }}</strong>
-        </span>
-      <br>
-    {% endfor %}
+
+  <div class="card-body combatant-card-body" data-id="{{ combatant.id }}">
+    {% include 'base/combatant_card_body.html' %}
   </div>
+
   <div class="card-footer p-0 bg-light">
     <div class="dropdown">
       <button class="btn btn-light btn-block dropdown-toggle" type="button" id="initiative-dropdown"

@@ -71,7 +71,9 @@
   </div>
 
   <div class="card-deck" id="combatant-card-deck">
-    {% include 'base/combatant_card_deck.html' %}
+    {% for combatant in combatant_list %}
+      {% include 'base/combatant_card.html' %}
+    {% endfor %}
   </div>
 
   <div class="btn-toolbar combatant-context-show" role="toolbar" aria-label="Toolbar with combatant buttons"

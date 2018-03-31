@@ -1,19 +1,16 @@
 # importing this to be used in an exec in a lambda expression
 # noinspection PyUnresolvedReferences
 from django.http import Http404, JsonResponse
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.views.generic.base import ContextMixin, TemplateView
-from django.shortcuts import redirect, render_to_response
-
-from multiselectfield.db.fields import MSFList
 
 from people.models import Combatant
 from .forms import EffectForm
 
 
 class BreadCrumbMixin(ContextMixin):
-
     extra_breadcrumbs = []
 
     def get_extra_breadcrumbs(self):
@@ -151,8 +148,10 @@ def update_effect_list(request):
     if form.is_valid():
         for name in form.changed_data:
             save_field(name, form.cleaned_data[name])
-    return render_to_response(
-        'base/combatant_card_deck.html', {
-            'combatant_list': Combatant.objects.all()
-        }
-    )
+    htmls = {}
+    for combatant in Combatant.objects.all():
+        htmls[combatant.id] = render_to_string(
+            'base/combatant_card_body.html', {
+                'combatant': combatant
+            })
+    return JsonResponse(htmls)
