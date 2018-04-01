@@ -16,7 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, re_path
 
-from base.views import HomepageView, update_effect_list, remove_effect, remove_combatants, update_initiative
+from base.views import HomepageView, \
+    update_effect_list, remove_effect, remove_combatants, update_initiative, ajax_poll
 
 breadcrumbs = [
     {'href': '/', 'text': 'Home'},
@@ -33,5 +34,6 @@ urlpatterns = [
     path('ajax/remove-effect/', remove_effect, name='ajax-remove-effect'),
     path('ajax/remove-combatants/', remove_combatants, name='ajax-remove-combatants'),
     path('ajax/update-initiative/', update_initiative, name='ajax-update-initiative'),
+    path('ajax/poll/', ajax_poll, name='ajax-poll'),
 
 ]

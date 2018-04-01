@@ -186,7 +186,8 @@ $(document).ready(function () {
             }
         });
         return false;
-    })
+    });
+    setTimeout(poll_server, 2000);
 });
 
 function exit_apply_context() {
@@ -214,4 +215,20 @@ function exit_remove_context() {
         'href', $(this).data('url')
     );
     $('#remove-combatants').removeClass('btn-danger').addClass('btn-outline-danger');
+}
+
+function poll_server() {
+    $.ajax({
+        type: 'get',
+        url: '/ajax/poll/',
+        data: {
+            time: new Date().getTime()
+        },
+        success: function (return_data) {
+
+        },
+        complete: function (data) {
+            setTimeout(poll_server, 2000)
+        }
+    })
 }

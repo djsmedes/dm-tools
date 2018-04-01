@@ -9,6 +9,7 @@ from django.views.generic.base import ContextMixin, TemplateView
 
 from people.models import Combatant
 from .forms import EffectForm
+from .utils import update_last_updated
 
 
 class BreadCrumbMixin(ContextMixin):
@@ -216,3 +217,10 @@ def update_initiative(request):
         'base/combatant_card_deck.html',
         {'combatant_list': Combatant.objects.all()}
     )
+
+
+def ajax_poll(request):
+    if not request.GET.get('time'):
+        return JsonResponse({})
+
+    return JsonResponse({})

@@ -1,3 +1,28 @@
+from datetime import datetime
+from pytz import utc
+from django.db.models import base, Model
+
+from .models import TableMetaData
+
+
+def update_last_updated(model: Model):
+    table_name = model._meta.db_table
+    metadata = None
+    try:
+        metadata = TableMetaData.objects.get(which_table=table_name)
+    except base.ObjectDoesNotExist as e:
+        metadata = TableMetaData(which_table=table_name)
+
+    if metadata is None:
+        return None
+
+    now = datetime.utcnow()
+    now = utc.localize(now)
+    metadata.last_updated = now
+    metadata.save()
+    return now
+
+
 class Size:
     TINY, SMALL, MEDIUM, LARGE, HUGE, GARGANTUAN, COLOSSAL = 1, 2, 3, 4, 5, 6, 7
     MODEL_CHOICES = [(TINY, 'Tiny'), (SMALL, 'Small'), (MEDIUM, 'Medium'), (LARGE, 'Large'), (HUGE, 'Huge'),
