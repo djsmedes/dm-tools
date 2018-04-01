@@ -4,6 +4,7 @@ from django.forms import ModelForm, ModelMultipleChoiceField
 from multiselectfield import MultiSelectField
 
 from base.models import BaseModel
+from base.utils import update_last_updated
 from statblocks.models import Monster
 
 
@@ -154,6 +155,10 @@ class Combatant(BaseModel):
 
     def get_edit_url(self):
         return '/'
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        update_last_updated(self)
 
 
 class PersonForm(ModelForm):

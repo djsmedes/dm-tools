@@ -6,9 +6,12 @@ from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.views.generic.base import ContextMixin, TemplateView
+from datetime import datetime
+from pytz import utc
 
 from people.models import Combatant
 from .forms import EffectForm
+from .utils import get_last_updated
 
 
 class BreadCrumbMixin(ContextMixin):
@@ -211,8 +214,31 @@ def update_initiative(request):
     c.initiative = int(request.POST['initiative'])
     c.save()
 
+    return update_all_combatants(request)
+
+
+def update_all_combatants(request):
     return render(
         request,
         'base/combatant_card_deck.html',
         {'combatant_list': Combatant.objects.all()}
     )
+
+
+def poll_for_combatant_updates(request):
+    resp = {}
+    if not request.GET.get('last_updated'):
+        return JsonResponse(resp)
+
+    page_last_updated = datetime.utcfromtimestamp(
+        float(request.GET['last_updated'])/1000.
+    )
+    page_last_updated = utc.localize(page_last_updated)
+    combatants_last_updated = get_last_updated(Combatant)
+    if combatants_last_updated is None:
+        # never updated, so whatever the page loaded the first time is fine
+        pass
+    elif page_last_updated < combatants_last_updated:
+        resp['needs_update'] = True
+
+    return JsonResponse(resp)
