@@ -214,6 +214,10 @@ def update_initiative(request):
     c.initiative = int(request.POST['initiative'])
     c.save()
 
+    return update_all_combatants(request)
+
+
+def update_all_combatants(request):
     return render(
         request,
         'base/combatant_card_deck.html',

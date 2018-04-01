@@ -17,7 +17,9 @@ from django.contrib import admin
 from django.urls import path, include
 
 from base.views import HomepageView, \
-    update_effect_list, remove_effect, remove_combatants, update_initiative, poll_for_combatant_updates
+    update_effect_list, remove_effect, remove_combatants, \
+    update_initiative, poll_for_combatant_updates, \
+    update_all_combatants
 
 breadcrumbs = [
     {'href': '/', 'text': 'Home'},
@@ -35,5 +37,6 @@ urlpatterns = [
     path('ajax/remove-combatants/', remove_combatants, name='ajax-remove-combatants'),
     path('ajax/update-initiative/', update_initiative, name='ajax-update-initiative'),
     path('ajax/poll/', poll_for_combatant_updates, name='ajax-poll-update-combatants'),
+    path('ajax/update-all-combatants/', update_all_combatants, name='ajax-update-all-combatants'),
 
 ]

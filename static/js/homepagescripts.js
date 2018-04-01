@@ -223,16 +223,29 @@ function poll_server(last_updated) {
         },
         success: function (return_data) {
             if (return_data.needs_update) {
-            //     // do update
-                console.log('needed update');
+                update_all_combatants();
                 last_updated = new Date().getTime();
             }
         },
         complete: function (data) {
-
             setTimeout(function () {
                 poll_server(last_updated)
             }, 2500);
         }
     })
+}
+
+function update_all_combatants() {
+    var url = '/ajax/update-all-combatants/';
+    $.ajax({
+            type: 'post',
+            url: url,
+            data: {},
+            success: function (return_html) {
+                if (return_html === '') {
+                    return
+                }
+                $("#combatant-card-deck").html(return_html)
+            }
+        });
 }
