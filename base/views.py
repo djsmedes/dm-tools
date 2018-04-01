@@ -6,10 +6,12 @@ from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.views.generic.base import ContextMixin, TemplateView
+from datetime import datetime
+from pytz import utc
 
 from people.models import Combatant
 from .forms import EffectForm
-from .utils import update_last_updated
+from .utils import get_last_updated
 
 
 class BreadCrumbMixin(ContextMixin):
@@ -219,8 +221,20 @@ def update_initiative(request):
     )
 
 
-def ajax_poll(request):
-    if not request.GET.get('time'):
-        return JsonResponse({})
+def poll_for_combatant_updates(request):
+    resp = {}
+    if not request.GET.get('last_updated'):
+        return JsonResponse(resp)
 
-    return JsonResponse({})
+    page_last_updated = datetime.utcfromtimestamp(
+        float(request.GET['last_updated'])/1000.
+    )
+    page_last_updated = utc.localize(page_last_updated)
+    combatants_last_updated = get_last_updated(Combatant)
+    if combatants_last_updated is None:
+        # never updated, so whatever the page loaded the first time is fine
+        pass
+    elif page_last_updated < combatants_last_updated:
+        resp['needs_update'] = True
+
+    return JsonResponse(resp)

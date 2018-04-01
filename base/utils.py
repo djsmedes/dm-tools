@@ -1,16 +1,17 @@
 from datetime import datetime
 from pytz import utc
+from typing import Type
 from django.db.models import base, Model
 
 from .models import TableMetaData
 
 
-def update_last_updated(model: Model):
+def update_last_updated(model: Type[Model]):
     table_name = model._meta.db_table
     metadata = None
     try:
         metadata = TableMetaData.objects.get(which_table=table_name)
-    except base.ObjectDoesNotExist as e:
+    except base.ObjectDoesNotExist:
         metadata = TableMetaData(which_table=table_name)
 
     if metadata is None:
@@ -21,6 +22,16 @@ def update_last_updated(model: Model):
     metadata.last_updated = now
     metadata.save()
     return now
+
+
+def get_last_updated(model: Model):
+    table_name = model._meta.db_table
+    try:
+        metadata = TableMetaData.objects.get(which_table=table_name)
+    except base.ObjectDoesNotExist:
+        return None
+    else:
+        return metadata.last_updated
 
 
 class Size:

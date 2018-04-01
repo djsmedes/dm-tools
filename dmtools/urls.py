@@ -14,10 +14,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include, re_path
+from django.urls import path, include
 
 from base.views import HomepageView, \
-    update_effect_list, remove_effect, remove_combatants, update_initiative, ajax_poll
+    update_effect_list, remove_effect, remove_combatants, update_initiative, poll_for_combatant_updates
 
 breadcrumbs = [
     {'href': '/', 'text': 'Home'},
@@ -34,6 +34,6 @@ urlpatterns = [
     path('ajax/remove-effect/', remove_effect, name='ajax-remove-effect'),
     path('ajax/remove-combatants/', remove_combatants, name='ajax-remove-combatants'),
     path('ajax/update-initiative/', update_initiative, name='ajax-update-initiative'),
-    path('ajax/poll/', ajax_poll, name='ajax-poll'),
+    path('ajax/poll/', poll_for_combatant_updates, name='ajax-poll-update-combatants'),
 
 ]

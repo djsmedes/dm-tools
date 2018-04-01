@@ -1,6 +1,11 @@
 {% extends 'base/base.html' %}
+{% load static %}
 
 {% block title %}DMTOOLS{% endblock %}
+
+{% block custom_scripts %}
+  <script src="{% static 'js/homepagescripts.js' %}"></script>
+{% endblock %}
 
 {% block content %}
   <span style="display: none;" id="context"></span>
