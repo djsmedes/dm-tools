@@ -1,12 +1,13 @@
-<div class="my-2 mr-2 combatant-context-hide-match"
-     data-combatant="{{ combatant.id }}">
+<div
+    class="my-2 mr-2 combatant-context-match-hide"
+    data-combatant="{{ combatant.id }}"
+>
   <button type="button" class="btn btn-{{ combatant.color }} apply-context-hide">
     {{ combatant.name }}
   </button>
   <button
-      class="btn btn-outline-{{ combatant.color }} apply-context-show context-activatable"
+      class="btn btn-outline-{{ combatant.color }} not-apply-context-hide context-activatable"
       data-combatant="{{ combatant.id }}"
-      style="display: none;"
   >
     {{ combatant.name }}
   </button>

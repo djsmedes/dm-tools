@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    var body = $('body');
 
     function csrfSafeMethod(method) {
         // these HTTP methods do not require CSRF protection
@@ -15,76 +16,52 @@ $(document).ready(function () {
         }
     });
 
-    $('.combatant-context-enter').click(function () {
-        var combatant = $(this).data("combatant");
-        $('.combatant-context-hide').hide();
-        $('.combatant-context-show').show();
-        $('.combatant-context-hide-unmatch').each(function () {
-            if ($(this).data("combatant") !== combatant) {
-                $(this).hide()
-            }
-        });
-        $('.combatant-context-hide-match').each(function () {
-            if ($(this).data("combatant") === combatant) {
-                $(this).hide()
-            }
+    body.on('click', '.combatant-context-enter', function () {
+        var combatant = $(this).data('combatant');
+        body.addClass('context-combatant').data('combatant', combatant);
+        label_matched_combatants()
+    });
+    body.on('click', '.combatant-context-leave', function () {
+        body.removeClass('context-combatant').data('combatant', '');
+        $('.context-combatant-match').each(function () {
+            $(this).removeClass('context-combatant-match');
         });
     });
-    $('.combatant-context-leave').click(function () {
-        var combatant = $(this).data("combatant");
-        $('.combatant-context-hide').show();
-        $('.combatant-context-show').hide();
-        $('.combatant-context-hide-unmatch').each(function () {
-            if ($(this).data("combatant") !== combatant) {
-                $(this).show()
-            }
-        });
-        $('.combatant-context-hide-match').each(function () {
-            if ($(this).data("combatant") === combatant) {
-                $(this).show()
-            }
-        });
+
+    $('.enter-apply-context').click(function () {
+        var which_context_type = $(this).data('apply-effect-type');
+        body.addClass('context-apply').data('apply-effect-type', which_context_type);
     });
-    $('.enter-buff-apply-context').click(function () {
-        $('.apply-context-hide').hide();
-        $('.apply-context-show').show();
-        $('#context').html('buff');
-    });
-    $('.enter-debuff-apply-context').click(function () {
-        $('.apply-context-hide').hide();
-        $('.apply-context-show').show();
-        $('#context').html('debuff');
-    });
-    $('.enter-other-apply-context').click(function () {
-        $('.apply-context-hide').hide();
-        $('.apply-context-show').show();
-        $('#context').html('other');
-    });
+
     $('.exit-apply-context').click(exit_apply_context);
 
     $('#effect-to-apply').on("change paste keyup", function () {
-        if ($(this).val() === '') {
+        var myval = $(this).val();
+        var active_combatant_buttons = $('.context-activatable.active');
+        if (myval === '') {
             $('#apply-button').prop('disabled', true);
-        } else if ($('.context-activatable.active').length) {
+        } else if (active_combatant_buttons.length) {
             $('#apply-button').prop('disabled', false);
         }
+        active_combatant_buttons.each(function () {
+            var combatant = $(this).data('combatant');
+            $('#' + combatant + '-' + body.data('apply-effect-type')).val(myval)
+        })
     });
 
-    var frm = $('#effect-add-form');
-    frm.submit(function () {
+    var effect_add_form = $('#effect-add-form');
+    effect_add_form.submit(function () {
         $.ajax({
-            type: frm.attr('method'),
-            url: frm.attr('action'),
-            data: frm.serialize(),
+            type: effect_add_form.attr('method'),
+            url: effect_add_form.attr('action'),
+            data: effect_add_form.serialize(),
             success: function (data) {
                 $(".combatant-card-body").each(function () {
+                    // todo change combatant card body data-id to data-combatant
                     var id = $(this).data('id');
                     $(this).html(data[id]);
                 });
 
-            },
-            error: function (data) {
-                // $("#MESSAGE-DIV").html("Something went wrong!");
             }
         });
         exit_apply_context();
@@ -92,7 +69,7 @@ $(document).ready(function () {
         return false;
     });
 
-    $('body').on('click', '.remove-effect', function () {
+    body.on('click', '.remove-effect', function () {
         var index = $(this).data('index');
         var effect_type = $(this).data('effect-type');
         var combatant_id = $(this).data('combatant');
@@ -117,44 +94,55 @@ $(document).ready(function () {
             }
         })
     });
-    $('body').on('click', '#remove-combatants', function () {
-        if ($('#context').html() !== 'remove') {
-            $('#context').html('remove');
-            $('#add-combatant').html('Cancel').removeClass('btn-outline-success').addClass('btn-success').removeProp('href');
-            $('#remove-combatants').removeClass('btn-outline-danger').addClass('btn-danger');
-            $('.remove-context-hide').hide();
-            $('.remove-context-show').show();
-        } else {
-            $.ajax({
-                type: 'post',
-                url: '/ajax/remove-combatants/',
-                data: {
-                    'combatant_ids': localStorage.getItem('to-remove')
-                },
-                success: function (return_html) {
-                    if (return_html === '') {
-                        return
-                    }
-                    $('#combatant-card-deck').html(return_html)
-                }
-            });
-            exit_remove_context()
-        }
+
+    body.on('click', '#enter-remove-context', function () {
+        body.addClass('context-remove');
     });
-    $('body').on('click', '.context-activatable', function () {
-        $(this).toggleClass('active');
-        var context = $('#context').html();
-        var combatant = $(this).data('combatant');
-        if (context === 'remove') {
-            localStorage.setItem('to-remove', localStorage.getItem('to-remove') + ',' + combatant);
-        } else if (context !== '') {
-            var effect = '';
-            if ($(this).hasClass('active')) {
-                effect = $('#effect-to-apply').val()
+
+    var remove_combatants_form = $('#remove-combatants-form');
+    remove_combatants_form.submit(function () {
+        $.ajax({
+            type: remove_combatants_form.attr('method'),
+            url: remove_combatants_form.attr('action'),
+            data: remove_combatants_form.serialize(),
+            success: function (return_html) {
+                if (return_html === '') {
+                    return
+                }
+                $('#combatant-card-deck').html(return_html);
+                label_matched_combatants();
             }
-            var id = '#' + combatant + '-' + context;
-            $(id).val(effect);
-            if ($('#effect-to-apply').val() !== '') {
+        });
+        exit_remove_context();
+        return false;
+    });
+
+
+    body.on('click', '.context-activatable', function () {
+        $(this).toggleClass('active');
+        var combatant = $(this).data('combatant');
+        if (body.hasClass('context-remove')) {
+            var combatant_to_remove_selector = $("#combatant-to-remove-" + combatant);
+            if ($(this).hasClass('active')) {
+                combatant_to_remove_selector.val('True')
+            } else {
+                combatant_to_remove_selector.val('')
+            }
+            if ($('.context-activatable.active').length) {
+                $('#confirm-remove-combatants-button').prop('disabled', false);
+            } else {
+                $('#confirm-remove-combatants-button').prop('disabled', true);
+            }
+        }
+        if (body.hasClass('context-apply')) {
+            var effect = '';
+            var effect_to_apply = $('#effect-to-apply').val();
+            var apply_effect_type = body.data('apply-effect-type');
+            if ($(this).hasClass('active')) {
+                effect = effect_to_apply
+            }
+            $('#' + combatant + '-' + apply_effect_type).val(effect);
+            if (effect_to_apply !== '') {
                 if ($('.context-activatable.active').length) {
                     $('#apply-button').prop('disabled', false);
                 } else {
@@ -163,8 +151,10 @@ $(document).ready(function () {
             }
         }
     });
-    $('body').on('click', '#cancel-remove', exit_remove_context);
-    $('body').on('submit', '.update-initiative-form', function () {
+
+    body.on('click', '#cancel-remove', exit_remove_context);
+
+    body.on('submit', '.update-initiative-form', function () {
         $.ajax({
             type: $(this).attr('method'),
             url: $(this).attr('action'),
@@ -173,10 +163,8 @@ $(document).ready(function () {
                 if (return_html === '') {
                     return
                 }
-                $("#combatant-card-deck").html(return_html)
-            },
-            error: function (data) {
-                // $("#MESSAGE-DIV").html("Something went wrong!");
+                $("#combatant-card-deck").html(return_html);
+                label_matched_combatants();
             }
         });
         return false;
@@ -188,30 +176,17 @@ $(document).ready(function () {
 });
 
 function exit_apply_context() {
-    $('.apply-context-hide').show();
-    $('.apply-context-show').hide();
-    $('#context').html('');
+    $('body').removeClass('context-apply');
     $('.effect-input').val('');
     $('.context-activatable').removeClass('active');
     $('#apply-button').prop('disabled', true)
 }
 
 function exit_remove_context() {
-    $('.remove-context-hide').show();
-    $('.remove-context-show').hide();
-    $('#context').html('');
-    localStorage.setItem('to-remove', '');
+    $('body').removeClass('context-remove');
+    $('.combatant-to-remove').val('');
     $('.context-activatable').removeClass('active');
-    $('#add-combatant').html(
-        'Add a combatant'
-    ).removeClass(
-        'btn-success'
-    ).addClass(
-        'btn-outline-success'
-    ).prop(
-        'href', $(this).data('url')
-    );
-    $('#remove-combatants').removeClass('btn-danger').addClass('btn-outline-danger');
+    $('#confirm-remove-combatants-button').prop('disabled', true)
 }
 
 function poll_server(last_updated) {
@@ -238,14 +213,29 @@ function poll_server(last_updated) {
 function update_all_combatants() {
     var url = '/ajax/update-all-combatants/';
     $.ajax({
-            type: 'post',
-            url: url,
-            data: {},
-            success: function (return_html) {
-                if (return_html === '') {
-                    return
-                }
-                $("#combatant-card-deck").html(return_html)
+        type: 'post',
+        url: url,
+        data: {},
+        success: function (return_html) {
+            if (return_html === '') {
+                return
             }
-        });
+            $("#combatant-card-deck").html(return_html);
+            label_matched_combatants();
+        }
+    });
+}
+
+function label_matched_combatants() {
+    var body = $('body');
+    if (body.hasClass('context-combatant')) {
+        var combatant = body.data('combatant');
+        if (combatant) {
+            $('.combatant-context-match-hide, .combatant-context-unmatch-hide').each(function () {
+                if ($(this).data('combatant') === combatant) {
+                    $(this).addClass('context-combatant-match')
+                }
+            });
+        }
+    }
 }

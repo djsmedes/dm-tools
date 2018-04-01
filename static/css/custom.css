@@ -2,3 +2,38 @@ p.hanging-indent {
     text-indent: -2em;
     padding-left: 2em;
 }
+
+
+body.context-combatant .combatant-context-hide {
+    display: none;
+}
+
+body:not(.context-combatant) .not-combatant-context-hide {
+    display: none;
+}
+
+body.context-combatant .combatant-context-match-hide.context-combatant-match {
+    display: none;
+}
+
+body.context-combatant .combatant-context-unmatch-hide:not(.context-combatant-match) {
+    display: none;
+}
+
+
+body.context-apply .apply-context-hide {
+    display: none;
+}
+
+body:not(.context-apply) .not-apply-context-hide {
+    display: none;
+}
+
+
+body.context-remove .remove-context-hide {
+    display: none;
+}
+
+body:not(.context-remove) .not-remove-context-hide {
+    display: none;
+}
