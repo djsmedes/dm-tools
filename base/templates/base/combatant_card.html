@@ -1,4 +1,6 @@
-<div class="card combatant-context-hide-unmatch" data-combatant="{{ combatant.id }}">
+<div class="card combatant-context-unmatch-hide"
+     data-combatant="{{ combatant.id }}"
+>
   <div class="card-header p-0">
     <div class="dropdown apply-context-hide remove-context-hide">
       <button type="button" class="btn btn-block btn-{{ combatant.color }} dropdown-toggle" id="dropdownMenuButton"
@@ -9,9 +11,9 @@
         <a class="dropdown-item combatant-context-enter combatant-context-hide" data-combatant="{{ combatant.id }}"
            href="#">
           Play as {{ combatant.name }}</a>
-        <a class="dropdown-item combatant-context-leave combatant-context-show" data-combatant="{{ combatant.id }}"
+        <a class="dropdown-item combatant-context-leave not-combatant-context-hide" data-combatant="{{ combatant.id }}"
            href="#"
-           style="display: none;">
+        >
           Stop playing as {{ combatant.name }}</a>
         {% if user.is_authenticated and combatant.statblock %}
           <a class="dropdown-item" href="{{ combatant.statblock.get_absolute_url }}">
@@ -20,7 +22,18 @@
         {% endif %}
       </div>
     </div>
-    <div class="apply-context-show remove-context-show" style="display: none;">
+    <div class="not-apply-context-hide">
+      <!-- duplicated below because should be shown in either context... derp -->
+      <button
+          type="button"
+          class="btn btn-block btn-outline-{{ combatant.color }} context-activatable"
+          data-combatant="{{ combatant.id }}"
+      >
+        <strong>{{ combatant.name }}&nbsp;&nbsp;&nbsp;&nbsp;</strong>
+      </button>
+    </div>
+    <div class="not-remove-context-hide">
+      <!-- duplicated above because should be shown in either context... derp -->
       <button
           type="button"
           class="btn btn-block btn-outline-{{ combatant.color }} context-activatable"

@@ -8,7 +8,6 @@
 {% endblock %}
 
 {% block content %}
-  <span style="display: none;" id="context"></span>
   <div class="row">
     <div class="col-sm pb-2">
       <input type="text"
@@ -21,21 +20,35 @@
     <div class="col-sm pb-2">
       <div class="btn-group btn-block apply-context-hide remove-context-hide" role="group"
            aria-label="apply effect buttons">
-        <button class="btn btn-outline-success enter-buff-apply-context" type="button" style="width: 33.3%;">
+        <button class="btn btn-outline-success enter-apply-context"
+                type="button"
+                style="width: 33.3%;"
+                data-apply-effect-type="buff"
+        >
           Buff
         </button>
-        <button class="btn btn-outline-danger enter-debuff-apply-context" type="button" style="width: 33.3%;">
+        <button class="btn btn-outline-danger enter-apply-context"
+                type="button"
+                style="width: 33.3%;"
+                data-apply-effect-type="debuff"
+        >
           Debuff
         </button>
-        <button class="btn btn-outline-secondary enter-other-apply-context" type="button" style="width: 33.3%;">
+        <button class="btn btn-outline-secondary enter-apply-context"
+                type="button"
+                style="width: 33.3%;"
+                data-apply-effect-type="other"
+        >
           Other
         </button>
       </div>
 
       <form action="{% url 'ajax-update-effect-list' %}" method="post" id="effect-add-form">
         {% csrf_token %}
-        <div class="btn-group btn-block apply-context-show" role="group" aria-label="apply effect cancel and submit"
-             style="display: none;">
+        <div class="btn-group btn-block not-apply-context-hide"
+             role="group"
+             aria-label="apply effect cancel and submit"
+        >
           <button class="btn btn-outline-primary exit-apply-context w-50"
                   type="button"
                   id="cancel-apply-button"
@@ -56,44 +69,71 @@
               name="effect_{{ combatant.id }}_buff"
               id="{{ combatant.id }}-buff"
               class="effect-input"
+              data-apply-effect-type="buff"
           >
           <input
               type="hidden"
               name="effect_{{ combatant.id }}_debuff"
               id="{{ combatant.id }}-debuff"
               class="effect-input"
+              data-apply-effect-type="debuff"
           >
           <input
               type="hidden"
               name="effect_{{ combatant.id }}_other"
               id="{{ combatant.id }}-other"
               class="effect-input"
+              data-apply-effect-type="other"
           >
         {% endfor %}
       </form>
     </div>
 
-    <div class="col-sm pb-2 d-flex justify-content-between">
+    <div class="col-sm pb-2 d-flex justify-content-between combatant-context-hide">
       {% if user.is_authenticated %}
         <a href="{% url 'combatant-add' %}"
-           class="btn btn-outline-success combatant-context-hide remove-context-hide"
+           class="btn btn-outline-success remove-context-hide"
            id="add-combatant"
            style="width: 48%;"
         >
           Add a combatant
         </a>
-        <button class="btn btn-success remove-context-show"
+        <button class="btn btn-success not-remove-context-hide"
                 id="cancel-remove"
-                style="width: 48%; display: none;">
+                style="width: 48%;"
+        >
           Cancel
         </button>
         <a href="#"
-           class="btn btn-outline-danger combatant-context-hide"
-           id="remove-combatants"
+           class="btn btn-outline-danger remove-context-hide"
+           id="enter-remove-context"
            style="width: 48%;"
         >
           Remove combatants
         </a>
+        <form id="remove-combatants-form"
+              method="post"
+              action="{% url 'ajax-remove-combatants' %}"
+              class="not-remove-context-hide"
+              style="width: 48%"
+        >
+          {% csrf_token %}
+          <button
+              class="btn btn-danger btn-block"
+              type="submit"
+              id="confirm-remove-combatants-button"
+              disabled
+          >
+            Remove
+          </button>
+          {% for combatant in combatant_list %}
+            <input type="hidden"
+                   name="{{ combatant.id }}"
+                   id="combatant-to-remove-{{ combatant.id }}"
+                   class="combatant-to-remove"
+            >
+          {% endfor %}
+        </form>
       {% endif %}
     </div>
   </div>
@@ -102,8 +142,10 @@
     {% include 'base/combatant_card_deck.html' %}
   </div>
 
-  <div class="btn-toolbar combatant-context-show" role="toolbar" aria-label="Toolbar with combatant buttons"
-       style="display: none;">
+  <div class="btn-toolbar not-combatant-context-hide"
+       role="toolbar"
+       aria-label="Toolbar with combatant buttons"
+  >
     {% for combatant in combatant_list %}
       {% include 'base/combatant_button.html' %}
     {% endfor %}

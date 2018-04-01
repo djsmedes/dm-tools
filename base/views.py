@@ -189,17 +189,24 @@ def remove_effect(request):
 
 
 def remove_combatants(request):
-    if not request.POST.get('combatant_ids'):
+    combatant_ids = []
+    for thing in request.POST:
+        if thing.isdigit() and bool(request.POST[thing]):
+            combatant_ids.append(int(thing))
+
+    if not combatant_ids:
         return HttpResponse('')
 
-    combatant_ids = [int(cid) for cid in request.POST['combatant_ids'].split(',') if cid]
+    # combatant_ids = [int(cid) for cid in request.POST['combatant_ids'].split(',') if cid]
     for cid in combatant_ids:
         c = Combatant.objects.get(id=cid)
         c.delete()
-    return render_to_response(
+    resp = render(
+        request,
         'base/combatant_card_deck.html',
         {'combatant_list': Combatant.objects.all()}
     )
+    return resp
 
 
 def update_initiative(request):

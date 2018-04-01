@@ -160,6 +160,10 @@ class Combatant(BaseModel):
         super().save(*args, **kwargs)
         update_last_updated(self)
 
+    def delete(self, using=None, keep_parents=False):
+        super().delete(using=using, keep_parents=keep_parents)
+        update_last_updated(self)
+
 
 class PersonForm(ModelForm):
     class Meta:
