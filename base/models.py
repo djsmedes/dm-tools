@@ -34,3 +34,9 @@ class BaseModel(models.Model):
     @property
     def multiselect_field_names(self):
         return [field.name for field in self._meta.fields if isinstance(field, MultiSelectField)]
+
+
+class TableMetaData(models.Model):
+
+    which_table = models.CharField(max_length=255, primary_key=True)
+    last_updated = models.DateTimeField(null=True, blank=True)
