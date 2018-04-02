@@ -3,6 +3,11 @@ from django import template
 register = template.Library()
 
 
+@register.simple_tag(takes_context=True)
+def breakpoint_with_context(context):
+    pass
+
+
 @register.filter
 def get_attr(obj, accessor):
     if hasattr(obj, accessor):

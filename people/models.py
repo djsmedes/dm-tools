@@ -150,12 +150,6 @@ class Combatant(BaseModel):
     def get_absolute_url(self):
         return '/'
 
-    def get_delete_url(self):
-        return '/'
-
-    def get_edit_url(self):
-        return '/'
-
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         update_last_updated(self)
@@ -163,6 +157,10 @@ class Combatant(BaseModel):
     def delete(self, using=None, keep_parents=False):
         super().delete(using=using, keep_parents=keep_parents)
         update_last_updated(self)
+
+    @classmethod
+    def login_protected_field_names(cls):
+        return ['statblock']
 
 
 class PersonForm(ModelForm):
