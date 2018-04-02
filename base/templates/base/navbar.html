@@ -8,7 +8,9 @@
     <div class="navbar-nav">
       <a class="nav-link" href="{% url 'gods-home' %}">Gods</a>
       <a class="nav-link" href="{% url 'npcs-home' %}">NPCs</a>
-      <a class="nav-link" href="{% url 'monsters-home' %}">Monsters</a>
+      {% if user.is_authenticated %}
+        <a class="nav-link" href="{% url 'monsters-home' %}">Monsters</a>
+      {% endif %}
       <a class="nav-link" href="{% url 'populations-home' %}">Populations</a>
       <div class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">

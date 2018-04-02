@@ -3,5 +3,7 @@
 {% block title %}{{ model.meta.verbose_name|title }} List{% endblock %}
 
 {% block content %}
-  {% include 'base/_table_widget.html' %}
+  <div class="container">
+    {% include 'base/_table_widget.html' %}
+  </div>
 {% endblock %}

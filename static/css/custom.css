@@ -37,3 +37,27 @@ body.context-remove .remove-context-hide {
 body:not(.context-remove) .not-remove-context-hide {
     display: none;
 }
+
+
+body.context-display-only .badge {
+    font-size: 1.5em;
+}
+
+body.context-display-only .combatant-card-container {
+    max-width: none;
+    padding-right: 100px;
+    padding-left: 100px;
+}
+
+body.context-display-only .display-only-context-hide {
+    display: none;
+}
+
+body:not(.context-display-only) .not-display-only-context-hide {
+    display: none;
+}
+
+body:not(.context-display-only) .combatant-card-body {
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+}

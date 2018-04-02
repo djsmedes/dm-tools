@@ -1,7 +1,7 @@
 <div class="card combatant-context-unmatch-hide"
      data-combatant="{{ combatant.id }}"
 >
-  <div class="card-header p-0">
+  <div class="card-header p-0 display-only-context-hide">
     <div class="dropdown apply-context-hide remove-context-hide">
       <button type="button" class="btn btn-block btn-{{ combatant.color }} dropdown-toggle" id="dropdownMenuButton"
               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -44,16 +44,25 @@
     </div>
   </div>
 
+  <div class="card-header p-0 not-display-only-context-hide">
+    <button class="btn btn-block btn-{{ combatant.color }}" style="font-size: 2.5em;">
+      {{ combatant.name }}
+    </button>
+  </div>
+
   <div class="card-body combatant-card-body" data-id="{{ combatant.id }}">
     {% include 'base/combatant_card_body.html' %}
   </div>
 
-  <div class="card-footer p-0 bg-light">
+  <div class="card-footer p-0 bg-light display-only-context-hide">
     <div class="dropdown">
       <button class="btn btn-light btn-block dropdown-toggle" type="button" id="initiative-dropdown"
               data-toggle="dropdown"
               aria-haspopup="true" aria-expanded="false">
-        <small>Initiative {{ combatant.initiative }}</small>
+        <small>
+          <span class="oi oi-timer" title="initiative" aria-hidden="true"></span>
+          {{ combatant.initiative }}
+        </small>
       </button>
 
       <form class="dropdown-menu p-2 update-initiative-form"
@@ -64,7 +73,7 @@
         <input type="hidden" value="{{ combatant.id }}" name="combatant_id">
         <div class="form-group mb-0">
           <input type="number" class="form-control mb-2" id="form-initiative-{{ combatant.id }}" name="initiative"
-                 placeholder="New roll">
+                 placeholder="Initiative">
 
           <button type="submit" class="btn btn-outline-success btn-block">Submit</button>
         </div>
@@ -72,5 +81,10 @@
 
     </div>
 
+  </div>
+
+  <div class="card-footer p-0 bg-light not-display-only-context-hide text-center" style="font-size: 2em;">
+    <span class="oi oi-timer" title="initiative" aria-hidden="true"></span>
+    {{ combatant.initiative }}
   </div>
 </div>

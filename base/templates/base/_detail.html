@@ -4,11 +4,13 @@
 {% block title %}{{ object.name }}{% endblock %}
 
 {% block content %}
-  {% for field in form %}
-    <div class="form-group">
-      {{ field.label_tag }}
-      {{ field|add_class:'form-control form-control-plaintext'|append_attr:'readonly' }}
-    </div>
-  {% endfor %}
-  <a class="btn btn-secondary" href="{{ object.get_edit_url }}">Edit</a>
+  <div class="container">
+    {% for field in form %}
+      <div class="form-group">
+        {{ field.label_tag }}
+        {{ field|add_class:'form-control form-control-plaintext'|append_attr:'readonly' }}
+      </div>
+    {% endfor %}
+    <a class="btn btn-secondary" href="{{ object.get_edit_url }}">Edit</a>
+  </div>
 {% endblock %}
