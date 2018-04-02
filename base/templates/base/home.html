@@ -7,11 +7,6 @@
   <script src="{% static 'js/homepagescripts.js' %}"></script>
 {% endblock %}
 
-{% block body_tag %}
-  <body {% if display_only_mode %}class="context-display-only"{% endif %}>
-{% endblock %}
-{# won't actually be rendered - just here to keep PyCharm happy #}</body>
-
 {% block content %}
   <div class="container combatant-card-container">
     <div class="row display-only-context-hide">

@@ -16,6 +16,11 @@ $(document).ready(function () {
         }
     });
 
+    $('#display-only-toggle-button').click(function() {
+        body.toggleClass('context-display-only');
+        $(this).toggleClass('text-muted')
+    });
+
     body.on('click', '.combatant-context-enter', function () {
         var combatant = $(this).data('combatant');
         body.addClass('context-combatant').data('combatant', combatant);

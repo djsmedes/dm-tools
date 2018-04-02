@@ -121,9 +121,6 @@ class HomepageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         kwargs['combatant_list'] = Combatant.objects.all()
-        # todo: replace the display_only_mode get param with a session variable toggleable from a menu or something
-        if self.request.GET.get('display_only_mode'):
-            kwargs['display_only_mode'] = True
         return super().get_context_data(**kwargs)
 
 

@@ -1,11 +1,16 @@
 <nav role="navigation" class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" href="/">DMTOOLS</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
-          aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+  <button class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNavAltMarkup"
+          aria-controls="navbarNavAltMarkup"
+          aria-expanded="false"
+          aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-    <div class="navbar-nav">
+    <div class="navbar-nav mr-auto">
       <a class="nav-link" href="{% url 'gods-home' %}">Gods</a>
       <a class="nav-link" href="{% url 'npcs-home' %}">NPCs</a>
       {% if user.is_authenticated %}
@@ -19,6 +24,40 @@
         <div class="dropdown-menu bg-dark">
           <a class="dropdown-item text-muted" href="#">Places</a>
           <a class="dropdown-item text-muted" href="#">Plot</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar-nav ml-auto">
+      {% if request.path == '/' %}
+        <button type="button"
+                id="display-only-toggle-button"
+                class="btn btn-dark d-none d-xl-inline-block text-muted mr-2"
+                data-toggle="button"
+                aria-pressed="false">
+          Display only mode
+        </button>
+      {% endif %}
+      <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle text-white" data-toggle="dropdown" href="#">
+          <span class="oi oi-person"></span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right bg-dark" id="navbar-login-logout">
+          {% if user.is_authenticated %}
+            <div class="px-3">
+              <a class="btn btn-block btn-outline-light" role="button" href="{% url 'logout' %}">Log out</a>
+            </div>
+          {% else %}
+            <form class="p-3" method="post" action="{% url 'login' %}">
+              {% csrf_token %}
+              <input type="text" class="form-control mb-3 text-white bg-dark"
+                     name="username" placeholder="Username">
+              <input type="password" class="form-control mb-3 text-white bg-dark"
+                     name="password" placeholder="Password">
+              <button type="submit" class="btn btn-block btn-outline-light">Log in</button>
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            </form>
+          {% endif %}
         </div>
       </div>
     </div>
