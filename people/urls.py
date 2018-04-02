@@ -1,10 +1,11 @@
 from django.urls import path, include, reverse_lazy
+from django.views.generic import RedirectView
 
 from .views import \
     GodList, GodAdd, GodDetail, GodEdit, GodDelete,\
     PersonList, PersonAdd, PersonDetail, PersonEdit, PersonDelete,\
     PopulationList, PopulationAdd, PopulationDetail, PopulationEdit, PopulationDelete, \
-    CombatantAdd
+    CombatantAdd, CombatantEdit, CombatantDelete
 from dmtools.urls import breadcrumbs as core_breadcrumbs
 
 breadcrumbs = core_breadcrumbs
@@ -39,9 +40,17 @@ populations_patterns = [
     path('<int:pk>/delete/', PopulationDelete.as_view(), name='population-delete'),
 ]
 
+combatants_patterns = [
+    path('', RedirectView.as_view(url=reverse_lazy('home'))),
+    path('add/', CombatantAdd.as_view(), name='combatant-add'),
+    path('<int:pk>/', RedirectView.as_view(url=reverse_lazy('combatant-edit'))),
+    path('<int:pk>/edit/', CombatantEdit.as_view(), name='combatant-edit'),
+    path('<int:pk>/delete/', CombatantDelete.as_view(), name='combatant-delete'),
+]
+
 urlpatterns = [
     path('gods/', include(gods_patterns), {'base_breadcrumbs': gods_breadcrumbs}),
     path('npcs/', include(npcs_patterns), {'base_breadcrumbs': npcs_breadcrumbs}),
     path('populations/', include(populations_patterns), {'base_breadcrumbs': populations_breadcrumbs}),
-    path('add-combatant/', CombatantAdd.as_view(), {'base_breadcrumbs': breadcrumbs}, name='combatant-add'),
+    path('combatants/', include(combatants_patterns), {'base_breadcrumbs': breadcrumbs}),
 ]

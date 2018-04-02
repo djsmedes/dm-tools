@@ -78,6 +78,14 @@ class PopulationEdit(BaseUpdateView):
     form_class = PopulationForm
 
 
+class CombatantEdit(BaseUpdateView):
+    model = Combatant
+    form_class = CombatantForm
+
+    def get_extra_breadcrumbs(self):
+        return [{'text': 'Edit {}'.format(self.object.name)}]
+
+
 class GodDelete(BaseDeleteView):
     model = God
     success_url = reverse_lazy('gods-home')
@@ -91,6 +99,14 @@ class PersonDelete(BaseDeleteView):
 class PopulationDelete(BaseDeleteView):
     model = Population
     success_url = reverse_lazy('populations-home')
+
+
+class CombatantDelete(BaseDeleteView):
+    model = Combatant
+    success_url = reverse_lazy('home')
+
+    def get_extra_breadcrumbs(self):
+        return [{'text': 'Delete {}'.format(self.object.name)}]
 
 
 class GodDetail(BaseDetailView):

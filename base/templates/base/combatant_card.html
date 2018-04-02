@@ -15,10 +15,16 @@
            href="#"
         >
           Stop playing as {{ combatant.name }}</a>
-        {% if user.is_authenticated and combatant.statblock %}
-          <a class="dropdown-item" href="{{ combatant.statblock.get_absolute_url }}">
-            Statblock
-          </a>
+        {% if user.is_authenticated %}
+          <a class="dropdown-item"
+             href="{{ combatant.get_edit_url }}"
+          >
+            Edit {{ combatant.name }}</a>
+          {% if combatant.statblock %}
+            <a class="dropdown-item" href="{{ combatant.statblock.get_absolute_url }}">
+              Statblock
+            </a>
+          {% endif %}
         {% endif %}
       </div>
     </div>

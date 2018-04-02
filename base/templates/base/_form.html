@@ -21,10 +21,17 @@
       {% csrf_token %}
       {% for field in form %}
         {% block single_field %}
-          <div class="form-group">
-            {{ field.label_tag }}
-            {{ field|add_class:'form-control' }}
-          </div>
+          {% if not field.name in object.login_protected_field_names and not field.name in model.login_protected_field_names %}
+            <div class="form-group">
+              {{ field.label_tag }}
+              {{ field|add_class:'form-control' }}
+            </div>
+          {% elif user.is_authenticated %}
+            <div class="form-group">
+              {{ field.label_tag }}
+              {{ field|add_class:'form-control' }}
+            </div>
+          {% endif %}
         {% endblock %}
       {% endfor %}
       {% if object %}

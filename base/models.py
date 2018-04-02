@@ -35,6 +35,10 @@ class BaseModel(models.Model):
     def multiselect_field_names(self):
         return [field.name for field in self._meta.fields if isinstance(field, MultiSelectField)]
 
+    @classmethod
+    def login_protected_field_names(cls) -> list:
+        return []
+
 
 class TableMetaData(models.Model):
 
