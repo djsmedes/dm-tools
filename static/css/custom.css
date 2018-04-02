@@ -61,3 +61,14 @@ body:not(.context-display-only) .combatant-card-body {
     padding-right: 0.5rem;
     padding-left: 0.5rem;
 }
+
+
+@media (max-width: 991.98px) {
+    .navbar .dropdown-menu {
+        border: none;
+    }
+
+    #navbar-login-logout {
+        max-width: 400px;
+    }
+}
