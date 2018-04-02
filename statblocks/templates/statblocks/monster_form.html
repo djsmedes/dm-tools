@@ -2,7 +2,7 @@
 {% load base %}
 
 {% block single_field %}
-  {% if field.name in object.multiselect_field_names %}
+  {% if field.name in object.multiselect_field_names or field.name in model.multiselect_field_names %}
     {{ field.label_tag }}
     <div class="card" id="{{ field.id_for_label }}">
       <div class="card-body">
