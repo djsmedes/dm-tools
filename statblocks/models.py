@@ -5,7 +5,7 @@ from django.forms import ModelForm
 from multiselectfield import MultiSelectField
 
 from base.models import BaseModel
-from base.utils import Size, Alignment, Die, DamageType, Condition, Language
+from base.utils import Size, Alignment, Die, DamageType, Condition, Language, AbilityScore
 
 
 class Monster(BaseModel):
@@ -25,6 +25,7 @@ class Monster(BaseModel):
     int = models.IntegerField(null=True, blank=True)
     wis = models.IntegerField(null=True, blank=True)
     cha = models.IntegerField(null=True, blank=True)
+    proficiency = models.IntegerField(null=True, blank=True)
 
     @property
     def str_mod(self):
@@ -84,7 +85,7 @@ class Monster(BaseModel):
         null=True, blank=True
     )
 
-    # special_properties = models.ManyToManyField()
+    special_properties = models.ManyToManyField('statblocks.SpecialProperty', blank=True)
     # actions = models.ManyToManyField
 
     @property
@@ -102,7 +103,45 @@ class Monster(BaseModel):
         return max(int(con_mod_piece + hit_die_piece), 1)
 
 
+class SpecialProperty(BaseModel):
+
+    description = models.TextField()
+
+
+class Action(BaseModel):
+
+    MELEE_WEAPON_ATTACK = 1
+    RANGED_WEAPON_ATTACK = 2
+    MELEE_SPELL_ATTACK = 3
+    RANGED_SPELL_ATTACK = 4
+    ATTACK_TYPE_CHOICES = [
+        (MELEE_WEAPON_ATTACK, 'melee weapon attack'),
+        (RANGED_WEAPON_ATTACK, 'ranged weapon attack'),
+        (MELEE_SPELL_ATTACK, 'melee spell attack'),
+        (RANGED_SPELL_ATTACK, 'ranged spell attack'),
+    ]
+
+    attack_type = models.IntegerField(choices=ATTACK_TYPE_CHOICES, null=True, blank=True)
+    attack_uses = models.CharField(max_length=3, choices=AbilityScore.MODEL_CHOICES, null=True, blank=True)
+    reach_range = models.IntegerField(choices=[(5*num, '{} ft.'.format(5*num)) for num in range(120)], null=True, blank=True)
+    range_secondary = models.IntegerField(choices=[(5*num, '{} ft.'.format(5*num)) for num in range(120)], null=True, blank=True)
+    num_targets = models.IntegerField(null=True, blank=True)
+    hit_num_damage_dice = models.IntegerField(null=True, blank=True)
+    hit_type_damage_dice = models.IntegerField(choices=Die.MODEL_CHOICES, null=True, blank=True)
+    hit_damage_type = models.IntegerField(choices=DamageType.MODEL_CHOICES, null=True, blank=True)
+    hit_addl_num_damage_dice = models.IntegerField(null=True, blank=True)
+    hit_addl_type_damage_dice = models.IntegerField(choices=Die.MODEL_CHOICES, null=True, blank=True)
+    hit_addl_damage_type = models.IntegerField(choices=DamageType.MODEL_CHOICES, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+
+
 class MonsterForm(ModelForm):
     class Meta:
         model = Monster
+        fields = '__all__'
+
+
+class SpecialPropertyForm(ModelForm):
+    class Meta:
+        model = SpecialProperty
         fields = '__all__'

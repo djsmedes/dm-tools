@@ -119,7 +119,11 @@
         </p>
         <p class="card-text mb-0 hanging-indent">
           <strong>Languages</strong>
-          {{ object.get_languages_display }}
+          {% if object.languages %}
+            {{ object.get_languages_display }}
+          {% else %}
+            &mdash;
+          {% endif %}
         </p>
         <p class="card-text mb-0 hanging-indent">
           <strong>Challenge</strong>
