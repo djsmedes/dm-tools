@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth import views as auth_views
 
 from base.views import HomepageView, \
     update_effect_list, remove_effect, remove_combatants, \
@@ -25,6 +26,20 @@ breadcrumbs = [
     {'href': '/', 'text': 'Home'},
 ]
 
+ajax_patterns = [
+    path('update-effect-list/', update_effect_list, name='ajax-update-effect-list'),
+    path('remove-effect/', remove_effect, name='ajax-remove-effect'),
+    path('remove-combatants/', remove_combatants, name='ajax-remove-combatants'),
+    path('update-initiative/', update_initiative, name='ajax-update-initiative'),
+    path('poll/', poll_for_combatant_updates, name='ajax-poll-update-combatants'),
+    path('update-all-combatants/', update_all_combatants, name='ajax-update-all-combatants'),
+]
+
+accounts_patterns = [
+    path('login/', auth_views.LoginView.as_view(template_name='base/accounts/login.html'), name='login'),
+    path('logout/', auth_views.logout, {'next_page': '/'}, name='logout')
+]
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', HomepageView.as_view(extra_context={'breadcrumbs': breadcrumbs}), name='home'),
@@ -32,11 +47,6 @@ urlpatterns = [
     path('', include('statblocks.urls')),
     path('places/', include('places.urls')),
     path('plot/', include('plot.urls')),
-    path('ajax/update-effect-list/', update_effect_list, name='ajax-update-effect-list'),
-    path('ajax/remove-effect/', remove_effect, name='ajax-remove-effect'),
-    path('ajax/remove-combatants/', remove_combatants, name='ajax-remove-combatants'),
-    path('ajax/update-initiative/', update_initiative, name='ajax-update-initiative'),
-    path('ajax/poll/', poll_for_combatant_updates, name='ajax-poll-update-combatants'),
-    path('ajax/update-all-combatants/', update_all_combatants, name='ajax-update-all-combatants'),
-
+    path('ajax/', include(ajax_patterns)),
+    path('accounts/', include(accounts_patterns)),
 ]

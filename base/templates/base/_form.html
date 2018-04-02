@@ -10,26 +10,28 @@
 {% endblock %}
 
 {% block content %}
-  <form method="post" action="
+  <div class="container">
+    <form method="post" action="
     {% if object.pk %}
       {% url form_action pk=object.pk %}
     {% else %}
       {% url form_action %}
     {% endif %}
   ">
-    {% csrf_token %}
-    {% for field in form %}
-      {% block single_field %}
-        <div class="form-group">
-          {{ field.label_tag }}
-          {{ field|add_class:'form-control' }}
-        </div>
-      {% endblock %}
-    {% endfor %}
-    {% if object %}
-      <a class="btn btn-secondary" href="{{ object.get_absolute_url }}">Cancel</a>
-      <a class="btn btn-outline-danger" href="{{ object.get_delete_url }}">Delete {{ object.name }}</a>
-    {% endif %}
-    <input type="submit" class="btn btn-primary" value="Save"/>
-  </form>
+      {% csrf_token %}
+      {% for field in form %}
+        {% block single_field %}
+          <div class="form-group">
+            {{ field.label_tag }}
+            {{ field|add_class:'form-control' }}
+          </div>
+        {% endblock %}
+      {% endfor %}
+      {% if object %}
+        <a class="btn btn-secondary" href="{{ object.get_absolute_url }}">Cancel</a>
+        <a class="btn btn-outline-danger" href="{{ object.get_delete_url }}">Delete {{ object.name }}</a>
+      {% endif %}
+      <input type="submit" class="btn btn-primary" value="Save"/>
+    </form>
+  </div>
 {% endblock %}

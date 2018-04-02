@@ -2,7 +2,7 @@
   <div>
     <span class="badge badge-success"><strong>{{ buff }}</strong></span>
     <button type="button"
-            class="close remove-effect" aria-label="Close"
+            class="close remove-effect display-only-context-hide" aria-label="Close"
             data-index="{{ forloop.counter0 }}"
             data-effect-type="buff"
             data-combatant="{{ combatant.id }}"
@@ -14,7 +14,7 @@
 {% for debuff in combatant.debuffs %}
   <div>
     <span class="badge badge-danger"><strong>{{ debuff }}</strong></span>
-    <button type="button" class="close remove-effect" aria-label="Close"
+    <button type="button" class="close remove-effect display-only-context-hide" aria-label="Close"
             data-index="{{ forloop.counter0 }}"
             data-effect-type="debuff"
             data-combatant="{{ combatant.id }}"
@@ -26,7 +26,7 @@
 {% for effect in combatant.other_effects %}
   <div>
     <span class="badge badge-secondary"><strong>{{ effect }}</strong></span>
-    <button type="button" class="close remove-effect" aria-label="Close"
+    <button type="button" class="close remove-effect display-only-context-hide" aria-label="Close"
             data-index="{{ forloop.counter0 }}"
             data-effect-type="other"
             data-combatant="{{ combatant.id }}"

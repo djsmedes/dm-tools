@@ -6,6 +6,8 @@ from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.views.generic.base import ContextMixin, TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from datetime import datetime
 from pytz import utc
 
@@ -43,7 +45,7 @@ class BaseListView(BreadCrumbMixin, ListView):
         return context
 
 
-class BaseCreateView(BreadCrumbMixin, CreateView):
+class BaseCreateView(LoginRequiredMixin, BreadCrumbMixin, CreateView):
     extra_breadcrumbs = [{'text': 'Add'}]
     template_name = 'base/_form.html'
 
@@ -54,7 +56,7 @@ class BaseCreateView(BreadCrumbMixin, CreateView):
         return context
 
 
-class BaseUpdateView(BreadCrumbMixin, UpdateView):
+class BaseUpdateView(LoginRequiredMixin, BreadCrumbMixin, UpdateView):
     template_name = 'base/_form.html'
 
     def get_extra_breadcrumbs(self):
@@ -76,7 +78,7 @@ class BaseUpdateView(BreadCrumbMixin, UpdateView):
         return context
 
 
-class BaseDeleteView(BreadCrumbMixin, DeleteView):
+class BaseDeleteView(LoginRequiredMixin, BreadCrumbMixin, DeleteView):
     template_name = 'base/_confirm_delete.html'
 
     def get_extra_breadcrumbs(self):
@@ -119,6 +121,9 @@ class HomepageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         kwargs['combatant_list'] = Combatant.objects.all()
+        # todo: replace the display_only_mode get param with a session variable toggleable from a menu or something
+        if self.request.GET.get('display_only_mode'):
+            kwargs['display_only_mode'] = True
         return super().get_context_data(**kwargs)
 
 
