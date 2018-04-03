@@ -89,6 +89,8 @@ class Monster(BaseModel):
 
     special_properties = models.ManyToManyField('statblocks.SpecialProperty', blank=True)
     actions = models.ManyToManyField('statblocks.Action', blank=True)
+    legendary_actions = models.ManyToManyField('statblocks.LegendaryAction', blank=True)
+    reactions = models.ManyToManyField('statblocks.Reaction', blank=True)
 
     @property
     def rand_hp(self):
@@ -188,6 +190,16 @@ class Action(StatblockBit):
         ordering = ['-sort_priority']
 
 
+class LegendaryAction(StatblockBit):
+    class Meta:
+        ordering = ['-sort_priority']
+
+
+class Reaction(StatblockBit):
+    class Meta:
+        ordering = ['-sort_priority']
+
+
 class MonsterForm(ModelForm):
     class Meta:
         model = Monster
@@ -213,6 +225,18 @@ class SpecialPropertyForm(ModelForm):
 
 
 class ActionForm(ModelForm):
+    class Meta:
+        model = Action
+        fields = '__all__'
+
+
+class LegendaryActionForm(ModelForm):
+    class Meta:
+        model = Action
+        fields = '__all__'
+
+
+class ReactionForm(ModelForm):
     class Meta:
         model = Action
         fields = '__all__'
