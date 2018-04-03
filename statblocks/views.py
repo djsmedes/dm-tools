@@ -22,6 +22,12 @@ class SpecialPropertyList(LoginRequiredMixin, BaseListView):
 
 class ActionList(LoginRequiredMixin, BaseListView):
     model = Action
+    table_headers = [
+        'Name', 'Monsters'
+    ]
+    table_data_accessors = [
+        'name', 'monsters_with'
+    ]
 
 
 class MonsterAdd(BaseCreateView):
