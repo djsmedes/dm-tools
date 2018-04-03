@@ -3,7 +3,9 @@ from django.urls import path, include, reverse_lazy
 from .views import \
     MonsterList, MonsterAdd, MonsterDetail, MonsterEdit, MonsterDelete, \
     SpecialPropertyList, SpecialPropertyAdd, SpecialPropertyDetail, SpecialPropertyEdit, SpecialPropertyDelete, \
-    ActionList, ActionAdd, ActionDetail, ActionEdit, ActionDelete
+    ActionList, ActionAdd, ActionDetail, ActionEdit, ActionDelete, \
+    LegendaryActionList, LegendaryActionAdd, LegendaryActionDetail, LegendaryActionEdit, LegendaryActionDelete, \
+    ReactionList, ReactionAdd, ReactionDetail, ReactionEdit, ReactionDelete
 
 from dmtools.urls import breadcrumbs as core_breadcrumbs
 
@@ -39,8 +41,30 @@ action_patterns = [
     path('<int:pk>/delete/', ActionDelete.as_view(), name='action-delete'),
 ]
 
+legaction_breadcrumbs = breadcrumbs + [{'href': reverse_lazy('legendaryactions-home'), 'text': 'Monster Legendary Actions'}]
+
+legaction_patterns = [
+    path('', LegendaryActionList.as_view(), name='legendaryactions-home'),
+    path('add/', LegendaryActionAdd.as_view(), name='legendaryaction-add'),
+    path('<int:pk>/', LegendaryActionDetail.as_view(), name='legendaryaction-view'),
+    path('<int:pk>/edit/', LegendaryActionEdit.as_view(), name='legendaryaction-edit'),
+    path('<int:pk>/delete/', LegendaryActionDelete.as_view(), name='legendaryaction-delete'),
+]
+
+reaction_breadcrumbs = breadcrumbs + [{'href': reverse_lazy('reactions-home'), 'text': 'Monster Reactions'}]
+
+reaction_patterns = [
+    path('', ReactionList.as_view(), name='reactions-home'),
+    path('add/', ReactionAdd.as_view(), name='reaction-add'),
+    path('<int:pk>/', ReactionDetail.as_view(), name='reaction-view'),
+    path('<int:pk>/edit/', ReactionEdit.as_view(), name='reaction-edit'),
+    path('<int:pk>/delete/', ReactionDelete.as_view(), name='reaction-delete'),
+]
+
 urlpatterns = [
     path('monsters/', include(monsters_patterns), {'base_breadcrumbs': monsters_breadcrumbs}),
     path('monster-properties/', include(specialprop_patterns), {'base_breadcrumbs': specialprop_breadcrumbs}),
     path('monster-actions/', include(action_patterns), {'base_breadcrumbs': action_breadcrumbs}),
+    path('monster-legendary-actions/', include(legaction_patterns), {'base_breadcrumbs': legaction_breadcrumbs}),
+    path('monster-reactions/', include(reaction_patterns), {'base_breadcrumbs': reaction_breadcrumbs}),
 ]
