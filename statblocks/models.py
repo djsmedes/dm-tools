@@ -156,6 +156,20 @@ class Action(BaseModel):
     hit_addl_type_damage_dice = models.IntegerField(choices=Die.MODEL_CHOICES, null=True, blank=True)
     hit_addl_damage_type = models.IntegerField(choices=DamageType.MODEL_CHOICES, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
+    specific_to_monster = models.ForeignKey(
+        'statblocks.Monster',
+        on_delete=models.CASCADE,
+        related_name='unique_actions',
+        null=True,
+        blank=True
+    )
+
+    @property
+    def monsters_with(self):
+        if self.specific_to_monster:
+            return self.specific_to_monster.name
+        else:
+            return str(len(self.monster_set.all()))
 
 
 class MonsterForm(ModelForm):
