@@ -232,11 +232,11 @@ class ActionForm(ModelForm):
 
 class LegendaryActionForm(ModelForm):
     class Meta:
-        model = Action
+        model = LegendaryAction
         fields = '__all__'
 
 
 class ReactionForm(ModelForm):
     class Meta:
-        model = Action
+        model = Reaction
         fields = '__all__'

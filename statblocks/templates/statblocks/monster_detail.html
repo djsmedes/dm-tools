@@ -2,7 +2,7 @@
 {% load base %}
 
 {% block content %}
-  <div class="container">
+  <div class="container mb-5">
     <div class="card" style="width: 40rem">
       {#  <img class="card-img-top" src="{{ monster.image?? }}">#}
       <div class="card-header bg-dark text-white">
@@ -131,7 +131,7 @@
         </p>
         <hr>
         {% for prop in monster.special_properties.all %}
-          {% include 'statblocks/specialproperty.html' with object=prop %}
+          {% include 'statblocks/statblockbit.html' with object=prop %}
         {% endfor %}
         <h3 class="mt-5 mb-0">
           Actions
@@ -140,38 +140,30 @@
         {% for action in monster.actions.all %}
           {% include 'statblocks/action.html' with object=action %}
         {% endfor %}
-        {# todo: remove the with, loop over monster's legendary actions, include a sub-template #}
-        {% with legendary_actions=1 %}
-          {% if legendary_actions %}
-            <h3 class="mt-5 mb-0">
-              Legendary Actions
-            </h3>
-            <hr class="mt-0">
-            <p>
-              The {{ monster.statblock_generic_name }} can take 3 legendary actions, choosing from the options below.
-              Only one legendary action option can be used at a time and only at the end of another
-              creature's turn. The {{ monster.statblock_generic_name }} regains spent legendary actions at the start of
-              its turn.
-            </p>
-
-            <p class="card-text mb-0">
-              <strong><em>Action name.</em></strong>
-              {% lorem %}
-            </p>
-          {% endif %}
-        {% endwith %}
-        {% with reactions=1 %}
-          {% if reactions %}
-            <h3 class="mt-5 mb-0">
-              Reactions
-            </h3>
-            <hr class="mt-0">
-            <p class="card-text">
-              <strong><em>Action name.</em></strong>
-              {% lorem %}
-            </p>
-          {% endif %}
-        {% endwith %}
+        {% if monster.legendary_actions.all %}
+          <h3 class="mt-5 mb-0">
+            Legendary Actions
+          </h3>
+          <hr class="mt-0">
+          <p>
+            The {{ monster.statblock_generic_name }} can take 3 legendary actions, choosing from the options below.
+            Only one legendary action option can be used at a time and only at the end of another
+            creature's turn. The {{ monster.statblock_generic_name }} regains spent legendary actions at the start of
+            its turn.
+          </p>
+          {% for legaction in monster.legendary_actions.all %}
+            {% include 'statblocks/statblockbit.html' with object=legaction %}
+          {% endfor %}
+        {% endif %}
+        {% if monster.reactions.all %}
+          <h3 class="mt-5 mb-0">
+            Reactions
+          </h3>
+          <hr class="mt-0">
+          {% for reaction in monster.reactions.all %}
+            {% include 'statblocks/statblockbit.html' with object=reaction %}
+          {% endfor %}
+        {% endif %}
       </div>
     </div>
   </div>
