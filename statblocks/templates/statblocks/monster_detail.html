@@ -137,10 +137,9 @@
           Actions
         </h3>
         <hr class="mt-0">
-        <p class="card-text">
-          <strong><em>Action name.</em></strong>
-          {% lorem %}
-        </p>
+        {% for action in object.actions.all %}
+          {% include 'statblocks/action.html' with object=action %}
+        {% endfor %}
         {# todo: remove the with, loop over object's legendary actions, include a sub-template #}
         {% with legendary_actions=1 %}
           {% if legendary_actions %}

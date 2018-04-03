@@ -129,6 +129,7 @@ class Action(BaseModel):
 
     attack_type = models.IntegerField(choices=ATTACK_TYPE_CHOICES, null=True, blank=True)
     attack_uses = models.CharField(max_length=3, choices=AbilityScore.MODEL_CHOICES, null=True, blank=True)
+    attack_tohit_bonus_override = models.IntegerField(null=True, blank=True)
     reach_range = models.IntegerField(choices=[(5*num, '{} ft.'.format(5*num)) for num in range(120)], null=True, blank=True)
     range_secondary = models.IntegerField(choices=[(5*num, '{} ft.'.format(5*num)) for num in range(120)], null=True, blank=True)
     num_targets = models.IntegerField(null=True, blank=True)

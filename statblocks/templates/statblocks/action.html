@@ -3,5 +3,8 @@
     <a class="text-dark" href="{{ object.get_absolute_url }}">
       {{ object.name }}.</a>
   </em></strong>
+  {% if object.attack_type %}
+    <em>{{ object.get_attack_type_display }}:</em>
+  {% endif %}
   <span style="white-space: pre-line;">{{ object.description }}</span>
 </p>

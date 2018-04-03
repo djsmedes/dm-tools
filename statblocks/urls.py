@@ -19,7 +19,7 @@ monsters_patterns = [
     path('<int:pk>/delete/', MonsterDelete.as_view(), name='monster-delete'),
 ]
 
-specialprop_breadcrumbs = breadcrumbs + [{'href': reverse_lazy('specialproperties-home'), 'text': 'Monster properties'}]
+specialprop_breadcrumbs = breadcrumbs + [{'href': reverse_lazy('specialproperties-home'), 'text': 'Monster Special Properties'}]
 
 specialprop_patterns = [
     path('', SpecialPropertyList.as_view(), name='specialproperties-home'),
@@ -29,7 +29,7 @@ specialprop_patterns = [
     path('<int:pk>/delete/', SpecialPropertyDelete.as_view(), name='specialproperty-delete'),
 ]
 
-action_breadcrumbs = breadcrumbs + [{'href': reverse_lazy('specialproperties-home'), 'text': 'Monster properties'}]
+action_breadcrumbs = breadcrumbs + [{'href': reverse_lazy('actions-home'), 'text': 'Monster Actions'}]
 
 action_patterns = [
     path('', ActionList.as_view(), name='actions-home'),
