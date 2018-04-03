@@ -86,7 +86,7 @@ class Monster(BaseModel):
     )
 
     special_properties = models.ManyToManyField('statblocks.SpecialProperty', blank=True)
-    # actions = models.ManyToManyField
+    actions = models.ManyToManyField('statblocks.Action', blank=True)
 
     @property
     def rand_hp(self):
