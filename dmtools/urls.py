@@ -49,4 +49,5 @@ urlpatterns = [
     path('plot/', include('plot.urls')),
     path('ajax/', include(ajax_patterns)),
     path('accounts/', include(accounts_patterns)),
+    path('searchableselect/', include('searchableselect.urls')),
 ]

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
     # other third party apps
     'widget_tweaks',
+    'searchableselect',
 
     # local apps
     'base.apps.BaseConfig',
