@@ -119,6 +119,13 @@ class SpecialProperty(BaseModel):
         blank=True
     )
 
+    @property
+    def monsters_with(self):
+        if self.specific_to_monster:
+            return self.specific_to_monster.name
+        else:
+            return str(len(self.monster_set.all()))
+
     class Meta:
         ordering = ['sort_priority']
 
