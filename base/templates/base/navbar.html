@@ -15,7 +15,15 @@
       <a class="nav-link" href="{% url 'npcs-home' %}">NPCs</a>
       {% if user.is_authenticated %}
         <a class="nav-link" href="{% url 'monsters-home' %}">Monsters</a>
-        <a class="nav-link" href="{% url 'specialproperties-home' %}">Monster Properties</a>
+        <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
+          Statblock Bits
+        </a>
+        <div class="dropdown-menu bg-dark">
+          <a class="dropdown-item text-muted" href="{% url 'specialproperties-home' %}">Special Properties</a>
+          <a class="dropdown-item text-muted" href="{% url 'actions-home' %}">Actions</a>
+        </div>
+      </div>
       {% endif %}
       <a class="nav-link" href="{% url 'populations-home' %}">Populations</a>
       <div class="nav-item dropdown">
