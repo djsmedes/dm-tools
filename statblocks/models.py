@@ -112,14 +112,33 @@ class Monster(BaseModel):
             return self.name.lower()
 
 
-class SpecialProperty(BaseModel):
+class StatblockBit(BaseModel):
 
-    sort_priority_help_text_string = "Properties without a sort priority will come before those that have one. Higher numbers will sort lower."
+    class Meta:
+        abstract = True
 
-    description = models.TextField()
-    sort_priority = models.IntegerField(help_text=sort_priority_help_text_string, default=0)
+    description = models.TextField(null=True, blank=True)
+    sort_priority = models.IntegerField(default=0)
+    specific_to_monster = None
+
     save_dc = models.IntegerField(null=True, blank=True)
     save_type = models.CharField(max_length=3, choices=AbilityScore.MODEL_CHOICES, null=True, blank=True)
+
+    @property
+    def monsters_with(self):
+        if self.specific_to_monster:
+            return self.specific_to_monster.name
+        elif hasattr(self, 'monster_set'):
+            return str(len(self.monster_set.all()))
+        else:
+            return '0'
+
+    def fields_non_conditional_in_ui(self):
+        return ['name', 'description', 'sort_priority', 'specific_to_monster']
+
+
+class SpecialProperty(StatblockBit):
+
     specific_to_monster = models.ForeignKey(
         'statblocks.Monster',
         on_delete=models.CASCADE,
@@ -128,18 +147,11 @@ class SpecialProperty(BaseModel):
         blank=True
     )
 
-    @property
-    def monsters_with(self):
-        if self.specific_to_monster:
-            return self.specific_to_monster.name
-        else:
-            return str(len(self.monster_set.all()))
-
     class Meta:
-        ordering = ['sort_priority']
+        ordering = ['-sort_priority']
 
 
-class Action(BaseModel):
+class Action(StatblockBit):
 
     MELEE_WEAPON_ATTACK = 1
     RANGED_WEAPON_ATTACK = 2
@@ -164,7 +176,6 @@ class Action(BaseModel):
     hit_addl_num_damage_dice = models.IntegerField(null=True, blank=True)
     hit_addl_type_damage_dice = models.IntegerField(choices=Die.MODEL_CHOICES, null=True, blank=True)
     hit_addl_damage_type = models.IntegerField(choices=DamageType.MODEL_CHOICES, null=True, blank=True)
-    description = models.TextField(null=True, blank=True)
     specific_to_monster = models.ForeignKey(
         'statblocks.Monster',
         on_delete=models.CASCADE,
@@ -173,12 +184,8 @@ class Action(BaseModel):
         blank=True
     )
 
-    @property
-    def monsters_with(self):
-        if self.specific_to_monster:
-            return self.specific_to_monster.name
-        else:
-            return str(len(self.monster_set.all()))
+    class Meta:
+        ordering = ['-sort_priority']
 
 
 class MonsterForm(ModelForm):
