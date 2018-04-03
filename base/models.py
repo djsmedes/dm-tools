@@ -19,17 +19,23 @@ class BaseModel(models.Model):
         abstract = True
         ordering = ['name']
 
-    def get_absolute_url(self):
-        return reverse('{}-view'.format(self._meta.verbose_name), kwargs={'pk': self.pk})
+    @classmethod
+    def url_prefix(cls):
+        return cls._meta.verbose_name.replace(' ', '')
 
-    def get_create_url(self):
-        return reverse('{}-add'.format(self._meta.verbose_name))
+    def get_absolute_url(self):
+        return reverse('{}-view'.format(self.url_prefix()), kwargs={'pk': self.pk})
+
+    @classmethod
+    def get_create_url(cls):
+        _str = reverse('{}-add'.format(cls.url_prefix()))
+        return _str
 
     def get_edit_url(self):
-        return reverse('{}-edit'.format(self._meta.verbose_name), kwargs={'pk': self.pk})
+        return reverse('{}-edit'.format(self.url_prefix()), kwargs={'pk': self.pk})
 
     def get_delete_url(self):
-        return reverse('{}-delete'.format(self._meta.verbose_name), kwargs={'pk': self.pk})
+        return reverse('{}-delete'.format(self.url_prefix()), kwargs={'pk': self.pk})
 
     @property
     def multiselect_field_names(self):

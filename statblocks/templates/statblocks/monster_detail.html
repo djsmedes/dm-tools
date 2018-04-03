@@ -130,11 +130,10 @@
           {{ object.challenge }}
         </p>
         <hr>
-        <p class="card-text">
-          <strong><em>Special Quality.</em></strong>
-          {% lorem %}
-        </p>
-        <h3 class="mt-2 mb-0">
+        {% for prop in object.special_properties.all %}
+          {% include 'statblocks/specialproperty.html' with object=prop %}
+        {% endfor %}
+        <h3 class="mt-5 mb-0">
           Actions
         </h3>
         <hr class="mt-0">
@@ -145,8 +144,20 @@
         {# todo: remove the with, loop over object's legendary actions, include a sub-template #}
         {% with legendary_actions=1 %}
           {% if legendary_actions %}
-            <h3 class="mt-2 mb-0">
+            <h3 class="mt-5 mb-0">
               Legendary Actions
+            </h3>
+            <hr class="mt-0">
+            <p class="card-text">
+              <strong><em>Action name.</em></strong>
+              {% lorem %}
+            </p>
+          {% endif %}
+        {% endwith %}
+        {% with reactions=1 %}
+          {% if reactions %}
+            <h3 class="mt-5 mb-0">
+              Reactions
             </h3>
             <hr class="mt-0">
             <p class="card-text">

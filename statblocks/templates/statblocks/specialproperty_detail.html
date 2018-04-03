@@ -1,0 +1,27 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+  <div class="container">
+    <div class="card" style="width: 40rem">
+      <div class="card-header bg-secondary text-white">
+        <div class="d-flex justify-content-between">
+          <h4>Property</h4>
+          <a class="btn btn-outline-light align-middle" href="{{ object.get_edit_url }}">
+            Edit
+          </a>
+        </div>
+      </div>
+      <div class="card-body">
+        {% include 'statblocks/specialproperty.html' %}
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item bg-secondary text-white">Monsters with this property</li>
+        {% for monster in object.monster_set.all %}
+          <a class="list-group-item list-group-item-action"
+             href="{{ monster.get_absolute_url }}">{{ monster.name }}
+          </a>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endblock %}

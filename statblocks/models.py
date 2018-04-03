@@ -105,7 +105,13 @@ class Monster(BaseModel):
 
 class SpecialProperty(BaseModel):
 
+    sort_priority_help_text_string = "Properties without a sort priority will come before those that have one. Higher numbers will sort lower."
+
     description = models.TextField()
+    sort_priority = models.IntegerField(help_text=sort_priority_help_text_string, default=0)
+
+    class Meta:
+        ordering = ['sort_priority']
 
 
 class Action(BaseModel):

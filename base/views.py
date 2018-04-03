@@ -51,7 +51,7 @@ class BaseCreateView(LoginRequiredMixin, BreadCrumbMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form_action'] = '{}-add'.format(self.model._meta.verbose_name)
+        context['form_action'] = '{}-add'.format(self.model.url_prefix())
         context['model'] = self.model
         return context
 
@@ -64,7 +64,7 @@ class BaseUpdateView(LoginRequiredMixin, BreadCrumbMixin, UpdateView):
             {
                 'text': self.object.name,
                 'href': reverse_lazy(
-                    '{}-view'.format(self.model._meta.verbose_name),
+                    '{}-view'.format(self.model.url_prefix()),
                     kwargs={'pk': self.object.pk}
                 ),
             },
@@ -73,7 +73,7 @@ class BaseUpdateView(LoginRequiredMixin, BreadCrumbMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form_action'] = '{}-edit'.format(self.model._meta.verbose_name)
+        context['form_action'] = '{}-edit'.format(self.model.url_prefix())
         return context
 
 
@@ -85,7 +85,7 @@ class BaseDeleteView(LoginRequiredMixin, BreadCrumbMixin, DeleteView):
             {
                 'text': self.object.name,
                 'href': reverse_lazy(
-                    '{}-view'.format(self.model._meta.verbose_name),
+                    '{}-view'.format(self.model.url_prefix()),
                     kwargs={'pk': self.object.pk})
             },
             {'text': 'Delete'}
