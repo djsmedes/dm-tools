@@ -2,7 +2,8 @@ from django.urls import path, include, reverse_lazy
 
 from .views import \
     MonsterList, MonsterAdd, MonsterDetail, MonsterEdit, MonsterDelete, \
-    SpecialPropertyList, SpecialPropertyAdd, SpecialPropertyDetail, SpecialPropertyEdit, SpecialPropertyDelete
+    SpecialPropertyList, SpecialPropertyAdd, SpecialPropertyDetail, SpecialPropertyEdit, SpecialPropertyDelete, \
+    ActionList, ActionAdd, ActionDetail, ActionEdit, ActionDelete
 
 from dmtools.urls import breadcrumbs as core_breadcrumbs
 
@@ -28,7 +29,18 @@ specialprop_patterns = [
     path('<int:pk>/delete/', SpecialPropertyDelete.as_view(), name='specialproperty-delete'),
 ]
 
+action_breadcrumbs = breadcrumbs + [{'href': reverse_lazy('specialproperties-home'), 'text': 'Monster properties'}]
+
+action_patterns = [
+    path('', ActionList.as_view(), name='actions-home'),
+    path('add/', ActionAdd.as_view(), name='action-add'),
+    path('<int:pk>/', ActionDetail.as_view(), name='action-view'),
+    path('<int:pk>/edit/', ActionEdit.as_view(), name='action-edit'),
+    path('<int:pk>/delete/', ActionDelete.as_view(), name='action-delete'),
+]
+
 urlpatterns = [
     path('monsters/', include(monsters_patterns), {'base_breadcrumbs': monsters_breadcrumbs}),
     path('monster-properties/', include(specialprop_patterns), {'base_breadcrumbs': specialprop_breadcrumbs}),
+    path('monster-actions/', include(action_patterns), {'base_breadcrumbs': action_breadcrumbs}),
 ]

@@ -46,6 +46,11 @@ class SpecialPropertyEdit(BaseUpdateView):
     form_class = SpecialPropertyForm
 
 
+class ActionEdit(BaseUpdateView):
+    model = Action
+    form_class = ActionForm
+
+
 class MonsterDelete(BaseDeleteView):
     model = Monster
     success_url = reverse_lazy('monsters-home')
@@ -56,6 +61,11 @@ class SpecialPropertyDelete(BaseDeleteView):
     success_url = reverse_lazy('specialproperties-home')
 
 
+class ActionDelete(BaseDeleteView):
+    model = Action
+    success_url = reverse_lazy('actions-home')
+
+
 class MonsterDetail(LoginRequiredMixin, BaseDetailView):
     model = Monster
     template_name = 'statblocks/monster_detail.html'
@@ -64,3 +74,8 @@ class MonsterDetail(LoginRequiredMixin, BaseDetailView):
 class SpecialPropertyDetail(LoginRequiredMixin, BaseDetailView):
     model = SpecialProperty
     template_name = 'statblocks/specialproperty_detail.html'
+
+
+class ActionDetail(LoginRequiredMixin, BaseDetailView):
+    model = Action
+    template_name = 'statblocks/action_detail.html'
