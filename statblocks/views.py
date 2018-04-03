@@ -61,6 +61,7 @@ class SpecialPropertyEdit(BaseUpdateView):
 class ActionEdit(BaseUpdateView):
     model = Action
     form_class = ActionForm
+    template_name = 'statblocks/action_form.html'
 
 
 class MonsterDelete(BaseDeleteView):

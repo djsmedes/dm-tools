@@ -3,6 +3,7 @@ from django.db import models
 from django.forms import ModelForm
 
 from multiselectfield import MultiSelectField
+from searchableselect.widgets import SearchableSelect
 
 from base.models import BaseModel
 from base.utils import Size, Alignment, Die, DamageType, Condition, Language, AbilityScore
@@ -10,6 +11,7 @@ from base.utils import Size, Alignment, Die, DamageType, Condition, Language, Ab
 
 class Monster(BaseModel):
 
+    generic_name = models.CharField(max_length=255, null=True, blank=True, help_text="If not specified, the name in lowercase will be used.")
     size = models.IntegerField(choices=Size.MODEL_CHOICES, null=True, blank=True)
     type = models.CharField(max_length=255, null=True, blank=True)
     alignment = models.IntegerField(choices=Alignment.MODEL_CHOICES, null=True, blank=True)
@@ -102,6 +104,13 @@ class Monster(BaseModel):
         hit_die_piece = self.num_hit_die * hit_die_avg // 1
         return max(int(con_mod_piece + hit_die_piece), 1)
 
+    @property
+    def statblock_generic_name(self):
+        if self.generic_name:
+            return self.generic_name
+        else:
+            return self.name.lower()
+
 
 class SpecialProperty(BaseModel):
 
@@ -176,6 +185,18 @@ class MonsterForm(ModelForm):
     class Meta:
         model = Monster
         fields = '__all__'
+        widgets = {
+            'special_properties': SearchableSelect(
+                model='statblocks.SpecialProperty',
+                search_field='name',
+                many=True
+            ),
+            'actions': SearchableSelect(
+                model='statblocks.Action',
+                search_field='name',
+                many=True
+            )
+        }
 
 
 class SpecialPropertyForm(ModelForm):

@@ -103,5 +103,5 @@ def replace_generic_monster(description: str, monster: Monster=None):
     if monster is None:
         replace_with = 'monster'
     else:
-        replace_with = monster.name.lower()
+        replace_with = monster.generic_name
     return description.replace(GENERIC_MONSTER_TAG, replace_with)
