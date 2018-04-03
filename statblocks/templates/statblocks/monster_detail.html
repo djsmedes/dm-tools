@@ -6,15 +6,15 @@
     <div class="card" style="width: 40rem">
       {#  <img class="card-img-top" src="{{ object.image?? }}">#}
       <div class="card-header bg-dark text-white">
-        <div class="form-row align-items-center">
-          <div class="col-10">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
             <h1 class="card-title">{{ object.name }}</h1>
             <h6 class="card-subtitle mb-1">
               {{ object.get_size_display|capfirst }} {{ object.type }}, {{ object.get_alignment_display }}
             </h6>
           </div>
-          <div class="col-2">
-            <a class="btn btn-lg btn-outline-light align-middle" href="{{ object.get_edit_url }}">
+          <div>
+            <a class="btn btn-lg btn-outline-light" href="{{ object.get_edit_url }}">
               Edit
             </a>
           </div>
