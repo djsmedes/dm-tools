@@ -109,6 +109,15 @@ class SpecialProperty(BaseModel):
 
     description = models.TextField()
     sort_priority = models.IntegerField(help_text=sort_priority_help_text_string, default=0)
+    save_dc = models.IntegerField(null=True, blank=True)
+    save_type = models.CharField(max_length=3, choices=AbilityScore.MODEL_CHOICES, null=True, blank=True)
+    specific_to_monster = models.ForeignKey(
+        'statblocks.Monster',
+        on_delete=models.CASCADE,
+        related_name='unique_properties',
+        null=True,
+        blank=True
+    )
 
     class Meta:
         ordering = ['sort_priority']
