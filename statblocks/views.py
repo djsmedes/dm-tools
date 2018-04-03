@@ -1,29 +1,21 @@
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .models import Monster, MonsterForm, SpecialProperty, SpecialPropertyForm
+from .models import Monster, MonsterForm, SpecialProperty, SpecialPropertyForm, Action, ActionForm
 
 from base.views import BaseListView, BaseCreateView, BaseUpdateView, BaseDeleteView, BaseDetailView
 
 
 class MonsterList(LoginRequiredMixin, BaseListView):
     model = Monster
-    table_headers = [
-        'Name',
-    ]
-    table_data_accessors = [
-        'name',
-    ]
 
 
 class SpecialPropertyList(LoginRequiredMixin, BaseListView):
     model = SpecialProperty
-    table_headers = [
-        'Name',
-    ]
-    table_data_accessors = [
-        'name'
-    ]
+
+
+class ActionList(LoginRequiredMixin, BaseListView):
+    model = Action
 
 
 class MonsterAdd(BaseCreateView):
@@ -35,6 +27,12 @@ class MonsterAdd(BaseCreateView):
 class SpecialPropertyAdd(BaseCreateView):
     model = SpecialProperty
     form_class = SpecialPropertyForm
+
+
+class ActionAdd(BaseCreateView):
+    model = Action
+    form_class = ActionForm
+    template_name = 'statblocks/action_form.html'
 
 
 class MonsterEdit(BaseUpdateView):

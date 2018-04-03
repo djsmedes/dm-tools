@@ -151,3 +151,9 @@ class SpecialPropertyForm(ModelForm):
     class Meta:
         model = SpecialProperty
         fields = '__all__'
+
+
+class ActionForm(ModelForm):
+    class Meta:
+        model = Action
+        fields = '__all__'

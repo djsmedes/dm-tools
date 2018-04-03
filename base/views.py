@@ -34,8 +34,12 @@ class BreadCrumbMixin(ContextMixin):
 
 class BaseListView(BreadCrumbMixin, ListView):
     template_name = 'base/_table.html'
-    table_headers = []
-    table_data_accessors = []
+    table_headers = [
+        'Name',
+    ]
+    table_data_accessors = [
+        'name'
+    ]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
