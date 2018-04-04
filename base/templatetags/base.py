@@ -1,4 +1,6 @@
 from django import template
+from statblocks.models import Action, Monster, StatblockBit, AbilityScore
+from base.utils import Die
 
 register = template.Library()
 
@@ -41,3 +43,92 @@ def val_in_iterable_in_dict_under_key(val, _dict, key):
 @register.filter
 def multiply(value, arg):
     return value * arg
+
+
+@register.simple_tag
+def get_attack_to_hit_for_monster(attack: Action, monster: Monster):
+
+    mod_to_get = '{}_mod'.format(attack.attack_uses)
+    if hasattr(monster, mod_to_get) and monster.proficiency is not None:
+        return monster.proficiency + int(getattr(monster, mod_to_get))
+    else:
+        return 0
+
+
+@register.filter
+def range_or_reach_text(attack: Action):
+    if not attack.attack_type:
+        return ''
+    if attack.attack_type in [Action.MELEE_WEAPON_ATTACK, Action.MELEE_SPELL_ATTACK]:
+        return 'reach {}'.format(attack.get_reach_range_display())
+    elif attack.range_secondary:  # ranged weapon attack or a ranged spell attack with a second range increment
+        return 'range {}/{} ft.'.format(attack.reach_range, attack.range_secondary)
+    else:  # ranged spell attack or a ranged weapon attack without a second range increment
+        return 'range {}'.format(attack.get_reach_range_display())
+
+
+@register.simple_tag
+def avg_with_die_in_parens(num_die, die_type, constant_to_add=None):
+    avg = Die.expected_value(num=num_die, size=die_type)
+    if constant_to_add is None or constant_to_add == 0:
+        return '{} ({}d{})'.format(avg, num_die, die_type)
+    elif constant_to_add > 0:
+        return '{} ({}d{} + {})'.format(
+            avg + constant_to_add,
+            num_die,
+            die_type,
+            constant_to_add
+        )
+    else:
+        return '{} ({}d{} - {})'.format(
+            avg + constant_to_add,
+            num_die,
+            die_type,
+            -1*constant_to_add
+        )
+
+
+@register.filter
+def get_mod(monster: Monster, mod):
+    mod_to_get = '{}_mod'.format(mod)
+    if hasattr(monster, mod_to_get):
+        return getattr(monster, mod_to_get)
+    else:
+        return -5
+
+
+@register.filter
+def replace_generic_monster(description: str, monster: Monster=None):
+    if description is None:
+        return ''
+    GENERIC_MONSTER_TAG = '$monster$'
+    if monster is None:
+        replace_with = 'monster'
+    else:
+        replace_with = monster.statblock_generic_name
+    return description.replace(GENERIC_MONSTER_TAG, replace_with)
+
+
+@register.filter
+def fill_generic_statblock_descr(statbit: StatblockBit, monster: Monster=None):
+    GENERIC_MONSTER_TAG = '$monster$'
+    GENERIC_DC_TAG = '$dc$'
+    GENERIC_SAVETYPE_TAG = '$savetype$'
+
+    if statbit.description is None:
+        return ''
+    else:
+        to_return = statbit.description
+        if monster is not None:
+            to_return = to_return.replace(
+                GENERIC_MONSTER_TAG, monster.statblock_generic_name
+            )
+        if statbit.save_dc is not None:
+            to_return = to_return.replace(
+                GENERIC_DC_TAG, str(statbit.save_dc)
+            )
+        if statbit.save_type is not None:
+            to_return = to_return.replace(
+                GENERIC_SAVETYPE_TAG, str(AbilityScore.get_full_name(statbit.save_type)).title()
+            )
+        return to_return

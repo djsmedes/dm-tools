@@ -74,6 +74,14 @@ class Die:
         (d100, 'd100'),
     ]
 
+    @staticmethod
+    def expected_value(num=1, size=None, as_str=None):
+        if as_str:
+            num, size = as_str.split('d')
+        if not num or not size:
+            return 0
+        return int((num * ((size + 1)/2.0)) // 1)
+
 
 class DamageType:
     BLUDGEONING, PIERCING, SLASHING, PHYSICAL = 1, 2, 3, 4
@@ -198,3 +206,27 @@ class Language:
             return cls.Script.name(cls._script_dict[language])
         except KeyError:
             return None
+
+
+class AbilityScore:
+    STR = 'str'
+    DEX = 'dex'
+    CON = 'con'
+    INT = 'int'
+    WIS = 'wis'
+    CHA = 'cha'
+    MODEL_CHOICES = [
+        (STR, 'strength'),
+        (DEX, 'dexterity'),
+        (CON, 'constitution'),
+        (INT, 'intelligence'),
+        (WIS, 'wisdom'),
+        (CHA, 'charisma')
+    ]
+
+    @classmethod
+    def get_full_name(cls, abscore_abbr):
+        for tup in cls.MODEL_CHOICES:
+            if tup[0] == abscore_abbr:
+                return tup[1]
+        return None

@@ -1,0 +1,39 @@
+{% load base %}
+{% load humanize %}
+
+<p class="card-text">
+  <strong><em>
+    <a class="text-dark" href="{{ object.get_absolute_url }}">
+      {{ object.title }}.</a>
+  </em></strong>
+  {% if object.attack_type %}
+    <em>{{ object.get_attack_type_display|title }}:</em>
+    {% if object.attack_tohit_bonus_override %}
+      +{{ object.attack_tohit_bonus_override }}
+    {% elif monster %}
+      +{% get_attack_to_hit_for_monster object monster %}
+    {% else %}
+      +?
+    {% endif %}
+    to hit,
+    {{ object|range_or_reach_text }},
+    {{ object.num_targets|apnumber }} target{{ object.num_targets|pluralize }}.
+    {% if monster %}
+      <em>Hit:</em>
+      {% avg_with_die_in_parens object.hit_num_damage_dice object.hit_type_damage_dice monster|get_mod:object.attack_uses %}
+    {% else %}
+      <em>Hit:</em> {% avg_with_die_in_parens object.hit_num_damage_dice object.hit_type_damage_dice %}
+    {% endif %}
+    {{ object.get_hit_damage_type_display }} damage{% if not object.hit_addl_num_damage_dice %}.
+    {% else %}
+      plus
+      {% avg_with_die_in_parens object.hit_addl_num_damage_dice object.hit_addl_type_damage_dice %}
+      {{ object.get_hit_addl_damage_type_display }} damage.
+    {% endif %}
+  {% endif %}
+  {% if monster %}
+    <span style="white-space: pre-line;">{{ object.description|replace_generic_monster:monster }}</span>
+  {% else %}
+    <span style="white-space: pre-line;">{{ object.description }}</span>
+  {% endif %}
+</p>

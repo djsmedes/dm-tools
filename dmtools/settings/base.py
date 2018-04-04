@@ -26,6 +26,12 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'not-secure-default')
 # Application definition
 
 INSTALLED_APPS = [
+    # apparently these have to come before django.contrib.admin
+    # django-autocomplete-light
+    # http://django-autocomplete-light.readthedocs.io/en/master/index.html
+    'dal',
+    'dal_select2',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -37,6 +43,8 @@ INSTALLED_APPS = [
     # http://whitenoise.evans.io/en/stable/django.html#using-whitenoise-in-development
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
+
 
     # other third party apps
     'widget_tweaks',

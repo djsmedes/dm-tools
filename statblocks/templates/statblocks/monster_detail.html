@@ -2,19 +2,19 @@
 {% load base %}
 
 {% block content %}
-  <div class="container">
+  <div class="container mb-5">
     <div class="card" style="width: 40rem">
-      {#  <img class="card-img-top" src="{{ object.image?? }}">#}
+      {#  <img class="card-img-top" src="{{ monster.image?? }}">#}
       <div class="card-header bg-dark text-white">
-        <div class="form-row align-items-center">
-          <div class="col-10">
-            <h1 class="card-title">{{ object.name }}</h1>
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h1 class="card-title">{{ monster.name }}</h1>
             <h6 class="card-subtitle mb-1">
-              {{ object.get_size_display|capfirst }} {{ object.type }}, {{ object.get_alignment_display }}
+              {{ monster.get_size_display|capfirst }} {{ monster.type }}, {{ monster.get_alignment_display }}
             </h6>
           </div>
-          <div class="col-2">
-            <a class="btn btn-lg btn-outline-light align-middle" href="{{ object.get_edit_url }}">
+          <div>
+            <a class="btn btn-lg btn-outline-light" href="{{ monster.get_edit_url }}">
               Edit
             </a>
           </div>
@@ -23,134 +23,147 @@
       <div class="card-body">
         <p class="card-text mb-0">
           <strong>Armor Class</strong>
-          {{ object.armor_class }}{% if object.armor_kind %} ({{ object.armor_kind }}){% endif %}
+          {{ monster.armor_class }}{% if monster.armor_kind %} ({{ monster.armor_kind }}){% endif %}
         </p>
         <p class="card-text mb-0">
           <strong>Hit Points</strong>
-          {% if object.hit_points %}
-            {{ object.hit_points }}
+          {% if monster.hit_points %}
+            {{ monster.hit_points }}
           {% else %}
-            {{ object.gen_hp }}
+            {{ monster.gen_hp }}
           {% endif %}
-          ({{ object.num_hit_die }}{{ object.get_hit_die_size_display }}
-          {% if object.con_mod > 0 %}
-            + {{ object.num_hit_die|multiply:object.con_mod }})
-          {% elif object.con_mod < 0 %}
-            - {{ object.num_hit_die|multiply:object.con_mod|multiply:-1 }})
+          ({{ monster.num_hit_die }}{{ monster.get_hit_die_size_display }}
+          {% if monster.con_mod > 0 %}
+            + {{ monster.num_hit_die|multiply:monster.con_mod }})
+          {% elif monster.con_mod < 0 %}
+            - {{ monster.num_hit_die|multiply:monster.con_mod|multiply:-1 }})
           {% endif %}
         </p>
         <p class="card-text mb-0">
           <strong>Speed</strong>
-          {{ object.speed }}
+          {{ monster.speed }}
         </p>
         <hr>
         <div class="row">
           <div class="col text-center">
             <strong>STR</strong>
             <br>
-            {{ object.str }} ({% if object.str_mod > -1 %}+{% endif %}{{ object.str_mod }})
+            {{ monster.str }} ({% if monster.str_mod > -1 %}+{% endif %}{{ monster.str_mod }})
           </div>
           <div class="col text-center">
             <strong>DEX</strong>
             <br>
-            {{ object.dex }} ({% if object.dex_mod > -1 %}+{% endif %}{{ object.dex_mod }})
+            {{ monster.dex }} ({% if monster.dex_mod > -1 %}+{% endif %}{{ monster.dex_mod }})
           </div>
           <div class="col text-center">
             <strong>CON</strong>
             <br>
-            {{ object.con }} ({% if object.con_mod > -1 %}+{% endif %}{{ object.con_mod }})
+            {{ monster.con }} ({% if monster.con_mod > -1 %}+{% endif %}{{ monster.con_mod }})
           </div>
           <div class="col text-center">
             <strong>INT</strong>
             <br>
-            {{ object.int }} ({% if object.int_mod > -1 %}+{% endif %}{{ object.int_mod }})
+            {{ monster.int }} ({% if monster.int_mod > -1 %}+{% endif %}{{ monster.int_mod }})
           </div>
           <div class="col text-center">
             <strong>WIS</strong>
             <br>
-            {{ object.wis }} ({% if object.wis_mod > -1 %}+{% endif %}{{ object.wis_mod }})
+            {{ monster.wis }} ({% if monster.wis_mod > -1 %}+{% endif %}{{ monster.wis_mod }})
           </div>
           <div class="col text-center">
             <strong>CHA</strong>
             <br>
-            {{ object.cha }} ({% if object.cha_mod > -1 %}+{% endif %}{{ object.cha_mod }})
+            {{ monster.cha }} ({% if monster.cha_mod > -1 %}+{% endif %}{{ monster.cha_mod }})
           </div>
         </div>
         <hr>
-        {% if object.saving_throws %}
+        {% if monster.saving_throws %}
           <p class="card-text mb-0 hanging-indent">
             <strong>Saving Throws</strong>
-            {{ object.saving_throws }}
+            {{ monster.saving_throws }}
           </p>
         {% endif %}
-        {% if object.skills %}
+        {% if monster.skills %}
           <p class="card-text mb-0 hanging-indent">
             <strong>Skills</strong>
-            {{ object.skills }}
+            {{ monster.skills }}
           </p>
         {% endif %}
-        {% if object.damage_vulnerabilities %}
+        {% if monster.damage_vulnerabilities %}
           <p class="card-text mb-0 hanging-indent">
             <strong>Damage Vulnerabilities</strong>
-            {{ object.get_damage_vulnerabilities_display }}
+            {{ monster.get_damage_vulnerabilities_display }}
           </p>
         {% endif %}
-        {% if object.damage_resistances %}
+        {% if monster.damage_resistances %}
           <p class="card-text mb-0 hanging-indent">
             <strong>Damage Resistances</strong>
-            {{ object.get_damage_resistances_display }}
+            {{ monster.get_damage_resistances_display }}
           </p>
         {% endif %}
-        {% if object.damage_immunities %}
+        {% if monster.damage_immunities %}
           <p class="card-text mb-0 hanging-indent">
             <strong>Damage Immunities</strong>
-            {{ object.get_damage_immunities_display }}
+            {{ monster.get_damage_immunities_display }}
           </p>
         {% endif %}
-        {% if object.condition_immunities %}
+        {% if monster.condition_immunities %}
           <p class="card-text mb-0 hanging-indent">
             <strong>Condition Immunities</strong>
-            {{ object.get_condition_immunities_display }}
+            {{ monster.get_condition_immunities_display }}
           </p>
         {% endif %}
         <p class="card-text mb-0 hanging-indent">
           <strong>Senses</strong>
-          {{ object.senses }}
+          {{ monster.senses }}
         </p>
         <p class="card-text mb-0 hanging-indent">
           <strong>Languages</strong>
-          {{ object.get_languages_display }}
+          {% if monster.languages %}
+            {{ monster.get_languages_display }}
+          {% else %}
+            &mdash;
+          {% endif %}
         </p>
         <p class="card-text mb-0 hanging-indent">
           <strong>Challenge</strong>
-          {{ object.challenge }}
+          {{ monster.challenge }}
         </p>
         <hr>
-        <p class="card-text">
-          <strong><em>Special Quality.</em></strong>
-          {% lorem %}
-        </p>
-        <h3 class="mt-2 mb-0">
+        {% for prop in monster.special_properties.all %}
+          {% include 'statblocks/statblockbit.html' with object=prop %}
+        {% endfor %}
+        <h3 class="mt-3 mb-0">
           Actions
         </h3>
         <hr class="mt-0">
-        <p class="card-text">
-          <strong><em>Action name.</em></strong>
-          {% lorem %}
-        </p>
-        {# todo: remove the with, loop over object's legendary actions, include a sub-template #}
-        {% with legendary_actions=1 %}
-          {% if legendary_actions %}
-            <h3 class="mt-2 mb-0">
-              Legendary Actions
-            </h3>
-            <hr class="mt-0">
-            <p class="card-text">
-              <strong><em>Action name.</em></strong>
-              {% lorem %}
-            </p>
-          {% endif %}
-        {% endwith %}
+        {% for action in monster.actions.all %}
+          {% include 'statblocks/action.html' with object=action %}
+        {% endfor %}
+        {% if monster.legendary_actions.all %}
+          <h3 class="mt-3 mb-0">
+            Legendary Actions
+          </h3>
+          <hr class="mt-0 mb-1">
+          <p>
+            The {{ monster.statblock_generic_name }} can take 3 legendary actions, choosing from the options below.
+            Only one legendary action option can be used at a time and only at the end of another
+            creature's turn. The {{ monster.statblock_generic_name }} regains spent legendary actions at the start of
+            its turn.
+          </p>
+          {% for legaction in monster.legendary_actions.all %}
+            {% include 'statblocks/legendaryaction.html' with object=legaction %}
+          {% endfor %}
+        {% endif %}
+        {% if monster.reactions.all %}
+          <h3 class="mt-3 mb-0">
+            Reactions
+          </h3>
+          <hr class="mt-0">
+          {% for reaction in monster.reactions.all %}
+            {% include 'statblocks/statblockbit.html' with object=reaction %}
+          {% endfor %}
+        {% endif %}
       </div>
     </div>
   </div>

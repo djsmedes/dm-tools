@@ -1,0 +1,81 @@
+{% extends 'base/base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+  {% if object %}
+    Edit {{ object.name }}
+  {% else %}
+    Add {{ model.meta.verbose_name }}
+  {% endif %}
+{% endblock %}
+
+{% block custom_styles %}
+  <style>
+    #is-attack:not(.active) ~ .attack-only {
+      display: none;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="container mb-5">
+    <form method="post" action="
+    {% if object.pk %}
+      {% url form_action pk=object.pk %}
+    {% else %}
+      {% url form_action %}
+    {% endif %}
+  ">
+      {% csrf_token %}
+
+      <div class="form-group">
+        {{ form.name.label_tag }}
+        {{ form.name|add_class:'form-control' }}
+      </div>
+      <div class="form-group">
+        {{ form.statblock_title.label_tag }}
+        {{ form.statblock_title|add_class:'form-control' }}
+      </div>
+      <div class="form-group">
+        {{ form.sort_priority.label_tag }}
+        {{ form.sort_priority|add_class:'form-control' }}
+      </div>
+      <button type="button"
+              id="is-attack"
+              class="btn btn-outline-dark btn-block mb-3{% if object.attack_type %} active{% endif %}"
+              data-toggle="button"
+              aria-pressed="{% if object.attack_type %}true{% else %}false{% endif %}">
+        Show attack-only fields
+      </button>
+      <div class="attack-only">
+        {% for field in form %}
+          {% if field.name not in object.fields_non_conditional_in_ui %}
+            <div class="form-group">
+              {{ field.label_tag }}
+              {{ field|add_class:'form-control' }}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <div class="form-group">
+        {{ form.description.label_tag }}
+        {{ form.description|add_class:'form-control' }}
+      </div>
+      <div class="form-group">
+        {{ form.save_dc.label_tag }}
+        {{ form.save_dc|add_class:'form-control' }}
+      </div>
+      <div class="form-group">
+        {{ form.save_type.label_tag }}
+        {{ form.save_type|add_class:'form-control' }}
+      </div>
+
+
+      {% if object %}
+        <a class="btn btn-secondary" href="{{ object.get_absolute_url }}">Cancel</a>
+        <a class="btn btn-outline-danger" href="{{ object.get_delete_url }}">Delete {{ object.name }}</a>
+      {% endif %}
+      <input type="submit" class="btn btn-primary" value="Save"/>
+    </form>
+  </div>
+{% endblock %}

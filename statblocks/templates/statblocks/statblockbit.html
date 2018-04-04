@@ -1,0 +1,13 @@
+{% load base %}
+
+<p class="card-text {% block extra_p_classes %}{% endblock %}">
+  <strong><em>
+    <a class="text-dark" href="{{ object.get_absolute_url }}">
+      {{ object.title }}.</a>
+  </em></strong>
+  {% if monster %}
+    <span style="white-space: pre-line;">{{ object|fill_generic_statblock_descr:monster }}</span>
+  {% else %}
+    <span style="white-space: pre-line;">{{ object.description }}</span>
+  {% endif %}
+</p>
