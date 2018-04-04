@@ -19,21 +19,31 @@
     {% endif %}
   ">
       {% csrf_token %}
-      {% for field in form %}
-        {% block single_field %}
-          {% if not field.name in object.login_protected_field_names and not field.name in model.login_protected_field_names %}
-            <div class="form-group">
-              {{ field.label_tag }}
-              {{ field|add_class:'form-control' }}
-            </div>
-          {% elif user.is_authenticated %}
-            <div class="form-group">
-              {{ field.label_tag }}
-              {{ field|add_class:'form-control' }}
-            </div>
-          {% endif %}
-        {% endblock %}
-      {% endfor %}
+      {% block all_fields %}
+        {% for field in form %}
+          {% block single_field %}
+            {% if not field.name in object.login_protected_field_names and not field.name in model.login_protected_field_names %}
+              <div class="form-group">
+                {{ field.label_tag }}
+                {% if forloop.first %}
+                  {{ field|add_class:'form-control'|attr:'autofocus' }}
+                {% else %}
+                  {{ field|add_class:'form-control' }}
+                {% endif %}
+              </div>
+            {% elif user.is_authenticated %}
+              <div class="form-group">
+                {{ field.label_tag }}
+                {% if forloop.first %}
+                  {{ field|add_class:'form-control'|attr:'autofocus' }}
+                {% else %}
+                  {{ field|add_class:'form-control' }}
+                {% endif %}
+              </div>
+            {% endif %}
+          {% endblock %}
+        {% endfor %}
+      {% endblock %}
       {% if object %}
         <a class="btn btn-secondary" href="{{ object.get_absolute_url }}">Cancel</a>
         <a class="btn btn-outline-danger" href="{{ object.get_delete_url }}">Delete {{ object.name }}</a>

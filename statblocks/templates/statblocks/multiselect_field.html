@@ -1,0 +1,21 @@
+{% load base %}
+
+{{ field.label_tag }}
+<div class="btn-group-toggle mb-3" id="{{ field.id_for_label }}" data-toggle="buttons">
+  {% for value, text in field.field.choices %}
+    {% val_in_iterable_in_dict_under_key value form.initial field.name as val_in_list %}
+    <label class="btn btn-outline-secondary mb-1{% if val_in_list %} active{% endif %}"
+           for="id_{{ field.name }}_{{ forloop.counter0 }}"
+    >
+      <input
+          class="form-check-input"
+          type="checkbox"
+          value="{{ value }}"
+          id="id_{{ field.name }}_{{ forloop.counter0 }}"
+          name="{{ field.name }}"
+          {% if val_in_list %}checked{% endif %}
+          autocomplete="off"
+      > {{ text }}
+    </label>
+  {% endfor %}
+</div>
