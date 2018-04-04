@@ -123,26 +123,8 @@ class StatblockBit(BaseModel):
     save_dc = models.IntegerField(null=True, blank=True)
     save_type = models.CharField(max_length=3, choices=AbilityScore.MODEL_CHOICES, null=True, blank=True)
 
-    @staticmethod
-    def _monster_set_related_name():
-        return '%(class)s'
-
-    @staticmethod
-    def _specific_to_monster_related_name():
-        return 'unique_%(class)s'
-
-    monster_set = models.ManyToManyField(
-        'statblocks.Monster',
-        blank=True,
-        related_name=_monster_set_related_name.__func__()
-    )
-    specific_to_monster = models.ForeignKey(
-        'statblocks.Monster',
-        on_delete=models.CASCADE,
-        related_name=_specific_to_monster_related_name.__func__(),
-        null=True,
-        blank=True
-    )
+    monster_set = None
+    specific_to_monster = None
 
     @property
     def monsters_with(self):
@@ -154,23 +136,43 @@ class StatblockBit(BaseModel):
             return '0'
 
     def fields_non_conditional_in_ui(self):
-        return ['name', 'description', 'sort_priority', 'specific_to_monster']
+        return ['name', 'description', 'sort_priority', 'monster_set', 'specific_to_monster']
 
 
 class SpecialProperty(StatblockBit):
-    @staticmethod
-    def _monster_set_related_name():
-        return 'special_properties'
 
-    @staticmethod
-    def _specific_to_monster_related_name():
-        return 'unique_properties'
+    monster_set = models.ManyToManyField(
+        'statblocks.Monster',
+        blank=True,
+        related_name='special_properties'
+    )
+    specific_to_monster = models.ForeignKey(
+        'statblocks.Monster',
+        on_delete=models.CASCADE,
+        related_name='unique_properties',
+        null=True,
+        blank=True
+    )
 
     class Meta:
         ordering = ['-sort_priority']
 
 
 class Action(StatblockBit):
+
+    monster_set = models.ManyToManyField(
+        'statblocks.Monster',
+        blank=True,
+        related_name='actions'
+    )
+    specific_to_monster = models.ForeignKey(
+        'statblocks.Monster',
+        on_delete=models.CASCADE,
+        related_name='unique_actions',
+        null=True,
+        blank=True
+    )
+
     MELEE_WEAPON_ATTACK = 1
     RANGED_WEAPON_ATTACK = 2
     MELEE_SPELL_ATTACK = 3
@@ -202,21 +204,36 @@ class Action(StatblockBit):
 
 
 class LegendaryAction(StatblockBit):
-    @staticmethod
-    def _monster_set_related_name():
-        return 'legendary_actions'
-
-    @staticmethod
-    def _specific_to_monster_related_name():
-        return 'unique_legendary_actions'
+    monster_set = models.ManyToManyField(
+        'statblocks.Monster',
+        blank=True,
+        related_name='legendary_actions'
+    )
+    specific_to_monster = models.ForeignKey(
+        'statblocks.Monster',
+        on_delete=models.CASCADE,
+        related_name='unique_legendary_actions',
+        null=True,
+        blank=True
+    )
 
     class Meta:
         ordering = ['-sort_priority']
 
 
 class Reaction(StatblockBit):
-    _monster_set_related_name = 'reactions'
-    _specific_to_monster_related_name = 'unique_reactions'
+    monster_set = models.ManyToManyField(
+        'statblocks.Monster',
+        blank=True,
+        related_name='reactions'
+    )
+    specific_to_monster = models.ForeignKey(
+        'statblocks.Monster',
+        on_delete=models.CASCADE,
+        related_name='unique_reactions',
+        null=True,
+        blank=True
+    )
 
     class Meta:
         ordering = ['-sort_priority']
