@@ -10,8 +10,8 @@ from base.utils import Size, Alignment, Die, DamageType, Condition, Language, Ab
 
 
 class Monster(BaseModel):
-
-    generic_name = models.CharField(max_length=255, null=True, blank=True, help_text="If not specified, the name in lowercase will be used.")
+    generic_name = models.CharField(max_length=255, null=True, blank=True,
+                                    help_text="If not specified, the name in lowercase will be used.")
     size = models.IntegerField(choices=Size.MODEL_CHOICES, null=True, blank=True)
     type = models.CharField(max_length=255, null=True, blank=True)
     alignment = models.IntegerField(choices=Alignment.MODEL_CHOICES, null=True, blank=True)
@@ -87,10 +87,10 @@ class Monster(BaseModel):
         null=True, blank=True
     )
 
-    special_properties = models.ManyToManyField('statblocks.SpecialProperty', blank=True)
-    actions = models.ManyToManyField('statblocks.Action', blank=True)
-    legendary_actions = models.ManyToManyField('statblocks.LegendaryAction', blank=True)
-    reactions = models.ManyToManyField('statblocks.Reaction', blank=True)
+    # special_properties = models.ManyToManyField('statblocks.SpecialProperty', blank=True)
+    # actions = models.ManyToManyField('statblocks.Action', blank=True)
+    # legendary_actions = models.ManyToManyField('statblocks.LegendaryAction', blank=True)
+    # reactions = models.ManyToManyField('statblocks.Reaction', blank=True)
 
     @property
     def rand_hp(self):
@@ -115,16 +115,34 @@ class Monster(BaseModel):
 
 
 class StatblockBit(BaseModel):
-
     class Meta:
         abstract = True
 
     description = models.TextField(null=True, blank=True)
     sort_priority = models.IntegerField(default=0)
-    specific_to_monster = None
-
     save_dc = models.IntegerField(null=True, blank=True)
     save_type = models.CharField(max_length=3, choices=AbilityScore.MODEL_CHOICES, null=True, blank=True)
+
+    @staticmethod
+    def _monster_set_related_name():
+        return '%(class)s'
+
+    @staticmethod
+    def _specific_to_monster_related_name():
+        return 'unique_%(class)s'
+
+    monster_set = models.ManyToManyField(
+        'statblocks.Monster',
+        blank=True,
+        related_name=_monster_set_related_name.__func__()
+    )
+    specific_to_monster = models.ForeignKey(
+        'statblocks.Monster',
+        on_delete=models.CASCADE,
+        related_name=_specific_to_monster_related_name.__func__(),
+        null=True,
+        blank=True
+    )
 
     @property
     def monsters_with(self):
@@ -140,21 +158,19 @@ class StatblockBit(BaseModel):
 
 
 class SpecialProperty(StatblockBit):
+    @staticmethod
+    def _monster_set_related_name():
+        return 'special_properties'
 
-    specific_to_monster = models.ForeignKey(
-        'statblocks.Monster',
-        on_delete=models.CASCADE,
-        related_name='unique_properties',
-        null=True,
-        blank=True
-    )
+    @staticmethod
+    def _specific_to_monster_related_name():
+        return 'unique_properties'
 
     class Meta:
         ordering = ['-sort_priority']
 
 
 class Action(StatblockBit):
-
     MELEE_WEAPON_ATTACK = 1
     RANGED_WEAPON_ATTACK = 2
     MELEE_SPELL_ATTACK = 3
@@ -169,8 +185,10 @@ class Action(StatblockBit):
     attack_type = models.IntegerField(choices=ATTACK_TYPE_CHOICES, null=True, blank=True)
     attack_uses = models.CharField(max_length=3, choices=AbilityScore.MODEL_CHOICES, null=True, blank=True)
     attack_tohit_bonus_override = models.IntegerField(null=True, blank=True)
-    reach_range = models.IntegerField(choices=[(5*num, '{} ft.'.format(5*num)) for num in range(120)], null=True, blank=True)
-    range_secondary = models.IntegerField(choices=[(5*num, '{} ft.'.format(5*num)) for num in range(120)], null=True, blank=True)
+    reach_range = models.IntegerField(choices=[(5 * num, '{} ft.'.format(5 * num)) for num in range(120)], null=True,
+                                      blank=True)
+    range_secondary = models.IntegerField(choices=[(5 * num, '{} ft.'.format(5 * num)) for num in range(120)],
+                                          null=True, blank=True)
     num_targets = models.IntegerField(null=True, blank=True)
     hit_num_damage_dice = models.IntegerField(null=True, blank=True)
     hit_type_damage_dice = models.IntegerField(choices=Die.MODEL_CHOICES, null=True, blank=True)
@@ -178,24 +196,28 @@ class Action(StatblockBit):
     hit_addl_num_damage_dice = models.IntegerField(null=True, blank=True)
     hit_addl_type_damage_dice = models.IntegerField(choices=Die.MODEL_CHOICES, null=True, blank=True)
     hit_addl_damage_type = models.IntegerField(choices=DamageType.MODEL_CHOICES, null=True, blank=True)
-    specific_to_monster = models.ForeignKey(
-        'statblocks.Monster',
-        on_delete=models.CASCADE,
-        related_name='unique_actions',
-        null=True,
-        blank=True
-    )
 
     class Meta:
         ordering = ['-sort_priority']
 
 
 class LegendaryAction(StatblockBit):
+    @staticmethod
+    def _monster_set_related_name():
+        return 'legendary_actions'
+
+    @staticmethod
+    def _specific_to_monster_related_name():
+        return 'unique_legendary_actions'
+
     class Meta:
         ordering = ['-sort_priority']
 
 
 class Reaction(StatblockBit):
+    _monster_set_related_name = 'reactions'
+    _specific_to_monster_related_name = 'unique_reactions'
+
     class Meta:
         ordering = ['-sort_priority']
 
@@ -204,39 +226,71 @@ class MonsterForm(ModelForm):
     class Meta:
         model = Monster
         fields = '__all__'
-        widgets = {
-            'special_properties': SearchableSelect(
-                model='statblocks.SpecialProperty',
-                search_field='name',
-                many=True
-            ),
-            'actions': SearchableSelect(
-                model='statblocks.Action',
-                search_field='name',
-                many=True
-            )
-        }
 
 
 class SpecialPropertyForm(ModelForm):
     class Meta:
         model = SpecialProperty
         fields = '__all__'
+        widgets = {
+            'monster_set': SearchableSelect(
+                model='statblocks.Monster',
+                search_field='name',
+                many=True
+            ),
+            'specific_to_monster': SearchableSelect(
+                model='statblocks.Monster',
+                search_field='name'
+            )
+        }
 
 
 class ActionForm(ModelForm):
     class Meta:
         model = Action
         fields = '__all__'
+        widgets = {
+            'monster_set': SearchableSelect(
+                model='statblocks.Monster',
+                search_field='name',
+                many=True
+            ),
+            'specific_to_monster': SearchableSelect(
+                model='statblocks.Monster',
+                search_field='name'
+            )
+        }
 
 
 class LegendaryActionForm(ModelForm):
     class Meta:
         model = LegendaryAction
         fields = '__all__'
+        widgets = {
+            'monster_set': SearchableSelect(
+                model='statblocks.Monster',
+                search_field='name',
+                many=True
+            ),
+            'specific_to_monster': SearchableSelect(
+                model='statblocks.Monster',
+                search_field='name'
+            )
+        }
 
 
 class ReactionForm(ModelForm):
     class Meta:
         model = Reaction
         fields = '__all__'
+        widgets = {
+            'monster_set': SearchableSelect(
+                model='statblocks.Monster',
+                search_field='name',
+                many=True
+            ),
+            'specific_to_monster': SearchableSelect(
+                model='statblocks.Monster',
+                search_field='name'
+            )
+        }
