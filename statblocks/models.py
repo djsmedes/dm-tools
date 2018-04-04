@@ -138,12 +138,6 @@ class StatblockBit(BaseModel):
         else:
             return '0'
 
-    def fields_non_conditional_in_ui(self):
-        return [
-            'name', 'statblock_title', 'description', 'sort_priority',
-            'monster_set', 'specific_to_monster', 'save_dc', 'save_type'
-        ]
-
 
 class SpecialProperty(StatblockBit):
     class Meta:
@@ -164,19 +158,19 @@ class Action(StatblockBit):
     ]
 
     attack_type = models.IntegerField(choices=ATTACK_TYPE_CHOICES, null=True, blank=True)
-    attack_uses = models.CharField(max_length=3, choices=AbilityScore.MODEL_CHOICES, null=True, blank=True)
-    attack_tohit_bonus_override = models.IntegerField(null=True, blank=True)
+    attack_uses = models.CharField(max_length=3, choices=AbilityScore.MODEL_CHOICES, null=True, blank=True, verbose_name='ability score used')
+    attack_tohit_bonus_override = models.IntegerField(null=True, blank=True, verbose_name='to-hit bonus')
     reach_range = models.IntegerField(choices=[(5 * num, '{} ft.'.format(5 * num)) for num in range(120)], null=True,
-                                      blank=True)
+                                      blank=True, verbose_name='reach or first range increment')
     range_secondary = models.IntegerField(choices=[(5 * num, '{} ft.'.format(5 * num)) for num in range(120)],
-                                          null=True, blank=True)
-    num_targets = models.IntegerField(null=True, blank=True)
-    hit_num_damage_dice = models.IntegerField(null=True, blank=True)
-    hit_type_damage_dice = models.IntegerField(choices=Die.MODEL_CHOICES, null=True, blank=True)
-    hit_damage_type = models.IntegerField(choices=DamageType.MODEL_CHOICES, null=True, blank=True)
-    hit_addl_num_damage_dice = models.IntegerField(null=True, blank=True)
-    hit_addl_type_damage_dice = models.IntegerField(choices=Die.MODEL_CHOICES, null=True, blank=True)
-    hit_addl_damage_type = models.IntegerField(choices=DamageType.MODEL_CHOICES, null=True, blank=True)
+                                          null=True, blank=True, verbose_name='second range increment')
+    num_targets = models.IntegerField(null=True, blank=True, verbose_name='number of targets')
+    hit_num_damage_dice = models.IntegerField(null=True, blank=True, verbose_name='number of damage dice')
+    hit_type_damage_dice = models.IntegerField(choices=Die.MODEL_CHOICES, null=True, blank=True, verbose_name='damage die')
+    hit_damage_type = models.IntegerField(choices=DamageType.MODEL_CHOICES, null=True, blank=True, verbose_name='damage type')
+    hit_addl_num_damage_dice = models.IntegerField(null=True, blank=True, verbose_name='number of damage dice (secondary)')
+    hit_addl_type_damage_dice = models.IntegerField(choices=Die.MODEL_CHOICES, null=True, blank=True, verbose_name='damage die (secondary)')
+    hit_addl_damage_type = models.IntegerField(choices=DamageType.MODEL_CHOICES, null=True, blank=True, verbose_name='damage type (secondary)')
 
     class Meta:
         ordering = ['-sort_priority']

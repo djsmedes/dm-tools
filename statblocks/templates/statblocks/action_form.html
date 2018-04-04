@@ -28,18 +28,17 @@
   ">
       {% csrf_token %}
 
-      <div class="form-group">
-        {{ form.name.label_tag }}
-        {{ form.name|add_class:'form-control'|attr:'autofocus' }}
+      <div class="form-row">
+        <div class="form-group col-sm">
+          {{ form.name.label_tag }}
+          {{ form.name|add_class:'form-control'|attr:'autofocus' }}
+        </div>
+        <div class="form-group col-sm">
+          {{ form.statblock_title.label_tag }}
+          {{ form.statblock_title|add_class:'form-control' }}
+        </div>
       </div>
-      <div class="form-group">
-        {{ form.statblock_title.label_tag }}
-        {{ form.statblock_title|add_class:'form-control' }}
-      </div>
-      <div class="form-group">
-        {{ form.sort_priority.label_tag }}
-        {{ form.sort_priority|add_class:'form-control' }}
-      </div>
+
       <button type="button"
               id="is-attack"
               class="btn btn-outline-dark btn-block mb-3{% if object.attack_type %} active{% endif %}"
@@ -48,28 +47,82 @@
         Show attack-only fields
       </button>
       <div class="attack-only">
-        {% for field in form %}
-          {% if field.name not in object.fields_non_conditional_in_ui %}
-            <div class="form-group">
-              {{ field.label_tag }}
-              {{ field|add_class:'form-control' }}
-            </div>
-          {% endif %}
-        {% endfor %}
+        <div class="form-row">
+          <div class="form-group col-sm">
+            {{ form.attack_type.label_tag }}
+            {{ form.attack_type|add_class:'form-control' }}
+          </div>
+          <div class="form-group col-sm">
+            {{ form.attack_uses.label_tag }}
+            {{ form.attack_uses|add_class:'form-control' }}
+          </div>
+          <div class="form-group col-sm">
+            {{ form.attack_tohit_bonus_override.label_tag }}
+            {{ form.attack_tohit_bonus_override|add_class:'form-control' }}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-sm">
+            {{ form.reach_range.label_tag }}
+            {{ form.reach_range|add_class:'form-control' }}
+          </div>
+          <div class="form-group col-sm">
+            {{ form.range_secondary.label_tag }}
+            {{ form.range_secondary|add_class:'form-control' }}
+          </div>
+          <div class="form-group col-sm">
+            {{ form.num_targets.label_tag }}
+            {{ form.num_targets|add_class:'form-control' }}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-sm">
+            {{ form.hit_num_damage_dice.label_tag }}
+            {{ form.hit_num_damage_dice|add_class:'form-control' }}
+          </div>
+          <div class="form-group col-sm">
+            {{ form.hit_type_damage_dice.label_tag }}
+            {{ form.hit_type_damage_dice|add_class:'form-control' }}
+          </div>
+          <div class="form-group col-sm">
+            {{ form.hit_damage_type.label_tag }}
+            {{ form.hit_damage_type|add_class:'form-control' }}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-sm">
+            {{ form.hit_addl_num_damage_dice.label_tag }}
+            {{ form.hit_addl_num_damage_dice|add_class:'form-control' }}
+          </div>
+          <div class="form-group col-sm">
+            {{ form.hit_addl_type_damage_dice.label_tag }}
+            {{ form.hit_addl_type_damage_dice|add_class:'form-control' }}
+          </div>
+          <div class="form-group col-sm">
+            {{ form.hit_addl_damage_type.label_tag }}
+            {{ form.hit_addl_damage_type|add_class:'form-control' }}
+          </div>
+        </div>
       </div>
       <div class="form-group">
         {{ form.description.label_tag }}
         {{ form.description|add_class:'form-control' }}
       </div>
-      <div class="form-group">
-        {{ form.save_dc.label_tag }}
-        {{ form.save_dc|add_class:'form-control' }}
-      </div>
-      <div class="form-group">
-        {{ form.save_type.label_tag }}
-        {{ form.save_type|add_class:'form-control' }}
-      </div>
 
+      <div class="form-row">
+        <div class="form-group col-sm">
+          {{ form.sort_priority.label_tag }}
+          {{ form.sort_priority|add_class:'form-control' }}
+        </div>
+        <div class="form-group col-sm">
+          {{ form.save_dc.label_tag }}
+          {{ form.save_dc|add_class:'form-control' }}
+        </div>
+        <div class="form-group col-sm">
+          {{ form.save_type.label_tag }}
+          {{ form.save_type|add_class:'form-control' }}
+        </div>
+      </div>
 
       {% if object %}
         <a class="btn btn-secondary" href="{{ object.get_absolute_url }}">Cancel</a>
