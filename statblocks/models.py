@@ -3,7 +3,6 @@ from django.db import models
 from django.forms import ModelForm
 
 from multiselectfield import MultiSelectField
-from searchableselect.widgets import SearchableSelect
 
 from base.models import BaseModel
 from base.utils import Size, Alignment, Die, DamageType, Condition, Language, AbilityScore
@@ -249,65 +248,21 @@ class SpecialPropertyForm(ModelForm):
     class Meta:
         model = SpecialProperty
         fields = '__all__'
-        widgets = {
-            'monster_set': SearchableSelect(
-                model='statblocks.Monster',
-                search_field='name',
-                many=True
-            ),
-            'specific_to_monster': SearchableSelect(
-                model='statblocks.Monster',
-                search_field='name'
-            )
-        }
 
 
 class ActionForm(ModelForm):
     class Meta:
         model = Action
         fields = '__all__'
-        widgets = {
-            'monster_set': SearchableSelect(
-                model='statblocks.Monster',
-                search_field='name',
-                many=True
-            ),
-            'specific_to_monster': SearchableSelect(
-                model='statblocks.Monster',
-                search_field='name'
-            )
-        }
 
 
 class LegendaryActionForm(ModelForm):
     class Meta:
         model = LegendaryAction
         fields = '__all__'
-        widgets = {
-            'monster_set': SearchableSelect(
-                model='statblocks.Monster',
-                search_field='name',
-                many=True
-            ),
-            'specific_to_monster': SearchableSelect(
-                model='statblocks.Monster',
-                search_field='name'
-            )
-        }
 
 
 class ReactionForm(ModelForm):
     class Meta:
         model = Reaction
         fields = '__all__'
-        widgets = {
-            'monster_set': SearchableSelect(
-                model='statblocks.Monster',
-                search_field='name',
-                many=True
-            ),
-            'specific_to_monster': SearchableSelect(
-                model='statblocks.Monster',
-                search_field='name'
-            )
-        }
