@@ -13,12 +13,13 @@ python_version = '3.6'
 [packages]
 
 dj-database-url = "==0.4.1"
-Django = "==2.0"
+django = "==2.0"
 gunicorn = "==19.6.0"
 whitenoise = "==3.2"
 "psycopg2-binary" = "*"
 django-widget-tweaks = "*"
 django-multiselectfield = "*"
+django-autocomplete-light = "*"
 
 
 [dev-packages]
