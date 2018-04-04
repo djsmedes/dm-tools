@@ -1,32 +1,165 @@
 {% extends 'base/_form.html' %}
 {% load base %}
+{% load widget_tweaks %}
 
-{% block single_field %}
+{% block derpsingle_field %}
   {% if field.name in object.multiselect_field_names or field.name in model.multiselect_field_names %}
-    {{ field.label_tag }}
-    <div class="card" id="{{ field.id_for_label }}">
-      <div class="card-body">
-        {% for value, text in field.field.choices %}
-          <div class="form-check">
-            <input
-                class="form-check-input"
-                type="checkbox"
-                value="{{ value }}"
-                id="id_{{ field.name }}_{{ forloop.counter0 }}"
-                name="{{ field.name }}"
-                {% val_in_iterable_in_dict_under_key value form.initial field.name as val_in_list %}
-                {% if val_in_list %}checked="checked"{% endif %}
-            >
-            <label class="form-check-label" for="id_{{ field.name }}_{{ forloop.counter0 }}">
-              {{ text }}
-            </label>
-          </div>
-        {% endfor %}
-      </div>
-    </div>
+    {% include 'statblocks/multiselect_field.html' %}
   {% else %}
     {{ block.super }}
   {% endif %}
+{% endblock %}
+
+{% block all_fields %}
+  <div class="form-row">
+    <div class="form-group col-sm-4">
+      {{ form.name.label_tag }}
+      {{ form.name|add_class:'form-control'|attr:'autofocus' }}
+    </div>
+    <div class="form-group col-sm-4">
+      {{ form.generic_name.label_tag }}
+      {{ form.generic_name|add_class:'form-control' }}
+    </div>
+    <div class="form-group col-sm-4">
+      {{ form.proficiency.label_tag }}
+      {{ form.proficiency|add_class:'form-control' }}
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-sm-4">
+      {{ form.size.label_tag }}
+      {{ form.size|add_class:'form-control' }}
+    </div>
+    <div class="form-group col-sm-4">
+      {{ form.type.label_tag }}
+      {{ form.type|add_class:'form-control' }}
+    </div>
+    <div class="form-group col-sm-4">
+      {{ form.alignment.label_tag }}
+      {{ form.alignment|add_class:'form-control' }}
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-sm-4">
+      {{ form.armor_class.label_tag }}
+      {{ form.armor_class|add_class:'form-control' }}
+    </div>
+    <div class="form-group col-sm-4">
+      {{ form.armor_kind.label_tag }}
+      {{ form.armor_kind|add_class:'form-control' }}
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-sm-4">
+      {{ form.hit_points.label_tag }}
+      {{ form.hit_points|add_class:'form-control' }}
+    </div>
+    <div class="form-group col-sm-4">
+      {{ form.num_hit_die.label_tag }}
+      {{ form.num_hit_die|add_class:'form-control' }}
+    </div>
+    <div class="form-group col-sm-4">
+      {{ form.hit_die_size.label_tag }}
+      {{ form.hit_die_size|add_class:'form-control' }}
+    </div>
+  </div>
+
+  <div class="form-group">
+    {{ form.speed.label_tag }}
+    {{ form.speed|add_class:'form-control' }}
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-4 col-sm-2">
+      {{ form.str.label_tag }}
+      {{ form.str|add_class:'form-control' }}
+    </div>
+    <div class="form-group col-4 col-sm-2">
+      {{ form.dex.label_tag }}
+      {{ form.dex|add_class:'form-control' }}
+    </div>
+    <div class="form-group col-4 col-sm-2">
+      {{ form.con.label_tag }}
+      {{ form.con|add_class:'form-control' }}
+    </div>
+    <div class="form-group col-4 col-sm-2">
+      {{ form.int.label_tag }}
+      {{ form.int|add_class:'form-control' }}
+    </div>
+    <div class="form-group col-4 col-sm-2">
+      {{ form.wis.label_tag }}
+      {{ form.wis|add_class:'form-control' }}
+    </div>
+    <div class="form-group col-4 col-sm-2">
+      {{ form.cha.label_tag }}
+      {{ form.cha|add_class:'form-control' }}
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-lg-6">
+      {{ form.saving_throws.label_tag }}
+      {{ form.saving_throws|add_class:'form-control' }}
+    </div>
+    <div class="form-group col-lg-6">
+      {{ form.skills.label_tag }}
+      {{ form.skills|add_class:'form-control' }}
+    </div>
+  </div>
+
+  <div class="form-group">
+    {% include 'statblocks/multiselect_field.html' with field=form.damage_vulnerabilities %}
+  </div>
+
+  <div class="form-group">
+    {% include 'statblocks/multiselect_field.html' with field=form.damage_resistances %}
+  </div>
+
+  <div class="form-group">
+    {% include 'statblocks/multiselect_field.html' with field=form.damage_immunities %}
+  </div>
+
+  <div class="form-group">
+    {% include 'statblocks/multiselect_field.html' with field=form.condition_immunities %}
+  </div>
+
+  <div class="form-group">
+    {{ form.senses.label_tag }}
+    {{ form.senses|add_class:'form-control' }}
+  </div>
+
+  <div class="form-group">
+    {% include 'statblocks/multiselect_field.html' with field=form.languages %}
+  </div>
+
+  <div class="form-group">
+    {{ form.challenge.label_tag }}
+    {{ form.challenge|add_class:'form-control' }}
+  </div>
+
+  <div class="form-group">
+    {{ form.special_properties.label_tag }}
+    {{ form.special_properties|add_class:'form-control' }}
+  </div>
+
+  <div class="form-group">
+    {{ form.actions.label_tag }}
+    {{ form.actions|add_class:'form-control' }}
+  </div>
+
+  <div class="form-group">
+    {{ form.legendary_actions.label_tag }}
+    {{ form.legendary_actions|add_class:'form-control' }}
+  </div>
+
+  <div class="form-group">
+    {{ form.reactions.label_tag }}
+    {{ form.reactions|add_class:'form-control' }}
+  </div>
+
 {% endblock %}
 
 {% block custom_scripts %}
