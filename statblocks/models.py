@@ -1,4 +1,5 @@
 from random import randint
+from dal import autocomplete
 from django.db import models
 from django.forms import ModelForm
 
@@ -86,10 +87,10 @@ class Monster(BaseModel):
         null=True, blank=True
     )
 
-    # special_properties = models.ManyToManyField('statblocks.SpecialProperty', blank=True)
-    # actions = models.ManyToManyField('statblocks.Action', blank=True)
-    # legendary_actions = models.ManyToManyField('statblocks.LegendaryAction', blank=True)
-    # reactions = models.ManyToManyField('statblocks.Reaction', blank=True)
+    special_properties = models.ManyToManyField('statblocks.SpecialProperty', blank=True)
+    actions = models.ManyToManyField('statblocks.Action', blank=True)
+    legendary_actions = models.ManyToManyField('statblocks.LegendaryAction', blank=True)
+    reactions = models.ManyToManyField('statblocks.Reaction', blank=True)
 
     @property
     def rand_hp(self):
@@ -117,60 +118,39 @@ class StatblockBit(BaseModel):
     class Meta:
         abstract = True
 
+    statblock_title = models.CharField(max_length=255, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     sort_priority = models.IntegerField(default=0)
     save_dc = models.IntegerField(null=True, blank=True)
     save_type = models.CharField(max_length=3, choices=AbilityScore.MODEL_CHOICES, null=True, blank=True)
 
-    monster_set = None
-    specific_to_monster = None
+    @property
+    def title(self):
+        if self.statblock_title:
+            return self.statblock_title
+        else:
+            return self.name
 
     @property
     def monsters_with(self):
-        if self.specific_to_monster:
-            return self.specific_to_monster.name
-        elif hasattr(self, 'monster_set'):
+        if hasattr(self, 'monster_set'):
             return str(len(self.monster_set.all()))
         else:
             return '0'
 
     def fields_non_conditional_in_ui(self):
-        return ['name', 'description', 'sort_priority', 'monster_set', 'specific_to_monster']
+        return [
+            'name', 'statblock_title', 'description', 'sort_priority',
+            'monster_set', 'specific_to_monster', 'save_dc', 'save_type'
+        ]
 
 
 class SpecialProperty(StatblockBit):
-
-    monster_set = models.ManyToManyField(
-        'statblocks.Monster',
-        blank=True,
-        related_name='special_properties'
-    )
-    specific_to_monster = models.ForeignKey(
-        'statblocks.Monster',
-        on_delete=models.CASCADE,
-        related_name='unique_properties',
-        null=True,
-        blank=True
-    )
-
     class Meta:
         ordering = ['-sort_priority']
 
 
 class Action(StatblockBit):
-
-    monster_set = models.ManyToManyField(
-        'statblocks.Monster',
-        blank=True,
-        related_name='actions'
-    )
-    specific_to_monster = models.ForeignKey(
-        'statblocks.Monster',
-        on_delete=models.CASCADE,
-        related_name='unique_actions',
-        null=True,
-        blank=True
-    )
 
     MELEE_WEAPON_ATTACK = 1
     RANGED_WEAPON_ATTACK = 2
@@ -203,37 +183,11 @@ class Action(StatblockBit):
 
 
 class LegendaryAction(StatblockBit):
-    monster_set = models.ManyToManyField(
-        'statblocks.Monster',
-        blank=True,
-        related_name='legendary_actions'
-    )
-    specific_to_monster = models.ForeignKey(
-        'statblocks.Monster',
-        on_delete=models.CASCADE,
-        related_name='unique_legendary_actions',
-        null=True,
-        blank=True
-    )
-
     class Meta:
         ordering = ['-sort_priority']
 
 
 class Reaction(StatblockBit):
-    monster_set = models.ManyToManyField(
-        'statblocks.Monster',
-        blank=True,
-        related_name='reactions'
-    )
-    specific_to_monster = models.ForeignKey(
-        'statblocks.Monster',
-        on_delete=models.CASCADE,
-        related_name='unique_reactions',
-        null=True,
-        blank=True
-    )
-
     class Meta:
         ordering = ['-sort_priority']
 
@@ -242,6 +196,15 @@ class MonsterForm(ModelForm):
     class Meta:
         model = Monster
         fields = '__all__'
+        widgets = {
+            'special_properties': autocomplete.ModelSelect2Multiple(
+                url='specialproperty-autocomplete',
+                attrs={}
+            ),
+            'actions': autocomplete.ModelSelect2Multiple(url='action-autocomplete'),
+            'legendary_actions': autocomplete.ModelSelect2Multiple(url='legendaryaction-autocomplete'),
+            'reactions': autocomplete.ModelSelect2Multiple(url='reaction-autocomplete'),
+        }
 
 
 class SpecialPropertyForm(ModelForm):

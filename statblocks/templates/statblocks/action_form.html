@@ -33,6 +33,10 @@
         {{ form.name|add_class:'form-control' }}
       </div>
       <div class="form-group">
+        {{ form.statblock_title.label_tag }}
+        {{ form.statblock_title|add_class:'form-control' }}
+      </div>
+      <div class="form-group">
         {{ form.sort_priority.label_tag }}
         {{ form.sort_priority|add_class:'form-control' }}
       </div>
@@ -58,12 +62,12 @@
         {{ form.description|add_class:'form-control' }}
       </div>
       <div class="form-group">
-        {{ form.specific_to_monster.label_tag }}
-        {{ form.specific_to_monster|add_class:'form-control' }}
+        {{ form.save_dc.label_tag }}
+        {{ form.save_dc|add_class:'form-control' }}
       </div>
       <div class="form-group">
-        {{ form.monster_set.label_tag }}
-        {{ form.monster_set|add_class:'form-control' }}
+        {{ form.save_type.label_tag }}
+        {{ form.save_type|add_class:'form-control' }}
       </div>
 
 

@@ -223,3 +223,10 @@ class AbilityScore:
         (WIS, 'wisdom'),
         (CHA, 'charisma')
     ]
+
+    @classmethod
+    def get_full_name(cls, abscore_abbr):
+        for tup in cls.MODEL_CHOICES:
+            if tup[0] == abscore_abbr:
+                return tup[1]
+        return None

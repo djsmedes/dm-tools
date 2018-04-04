@@ -2,10 +2,10 @@ from django.urls import path, include, reverse_lazy
 
 from .views import \
     MonsterList, MonsterAdd, MonsterDetail, MonsterEdit, MonsterDelete, \
-    SpecialPropertyList, SpecialPropertyAdd, SpecialPropertyDetail, SpecialPropertyEdit, SpecialPropertyDelete, \
-    ActionList, ActionAdd, ActionDetail, ActionEdit, ActionDelete, \
-    LegendaryActionList, LegendaryActionAdd, LegendaryActionDetail, LegendaryActionEdit, LegendaryActionDelete, \
-    ReactionList, ReactionAdd, ReactionDetail, ReactionEdit, ReactionDelete
+    SpecialPropertyList, SpecialPropertyAdd, SpecialPropertyDetail, SpecialPropertyEdit, SpecialPropertyDelete, SpecialPropertyAutocomplete, \
+    ActionList, ActionAdd, ActionDetail, ActionEdit, ActionDelete, ActionAutocomplete, \
+    LegendaryActionList, LegendaryActionAdd, LegendaryActionDetail, LegendaryActionEdit, LegendaryActionDelete, LegendaryActionAutocomplete, \
+    ReactionList, ReactionAdd, ReactionDetail, ReactionEdit, ReactionDelete, ReactionAutocomplete
 
 from dmtools.urls import breadcrumbs as core_breadcrumbs
 
@@ -61,10 +61,18 @@ reaction_patterns = [
     path('<int:pk>/delete/', ReactionDelete.as_view(), name='reaction-delete'),
 ]
 
+autocomplete_patterns = [
+    path('special-property/', SpecialPropertyAutocomplete.as_view(create_field='name'), name='specialproperty-autocomplete'),
+    path('action/', ActionAutocomplete.as_view(create_field='name'), name='action-autocomplete'),
+    path('legendary-action/', LegendaryActionAutocomplete.as_view(create_field='name'), name='legendaryaction-autocomplete'),
+    path('reaction/', ReactionAutocomplete.as_view(create_field='name'), name='reaction-autocomplete'),
+]
+
 urlpatterns = [
     path('monsters/', include(monsters_patterns), {'base_breadcrumbs': monsters_breadcrumbs}),
     path('monster-properties/', include(specialprop_patterns), {'base_breadcrumbs': specialprop_breadcrumbs}),
     path('monster-actions/', include(action_patterns), {'base_breadcrumbs': action_breadcrumbs}),
     path('monster-legendary-actions/', include(legaction_patterns), {'base_breadcrumbs': legaction_breadcrumbs}),
     path('monster-reactions/', include(reaction_patterns), {'base_breadcrumbs': reaction_breadcrumbs}),
+    path('autocomplete/', include(autocomplete_patterns)),
 ]

@@ -65,7 +65,20 @@ class SpecialPropertyDelete(BaseDeleteView):
 
 class SpecialPropertyDetail(LoginRequiredMixin, BaseDetailView):
     model = SpecialProperty
-    template_name = 'statblocks/specialproperty_detail.html'
+    template_name = 'statblocks/statblockbit_detail.html'
+
+
+class SpecialPropertyAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return SpecialProperty.objects.none()
+
+        qs = SpecialProperty.objects.all()
+
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+
+        return qs
 
 
 # Actions
@@ -101,6 +114,19 @@ class ActionDetail(LoginRequiredMixin, BaseDetailView):
     template_name = 'statblocks/action_detail.html'
 
 
+class ActionAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Action.objects.none()
+
+        qs = Action.objects.all()
+
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+
+        return qs
+
+
 # Legendary Actions
 class LegendaryActionList(LoginRequiredMixin, BaseListView):
     model = LegendaryAction
@@ -129,7 +155,20 @@ class LegendaryActionDelete(BaseDeleteView):
 
 class LegendaryActionDetail(LoginRequiredMixin, BaseDetailView):
     model = LegendaryAction
-    # template_name = 'statblocks/legendaryaction_detail.html'
+    template_name = 'statblocks/statblockbit_detail.html'
+
+
+class LegendaryActionAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return LegendaryAction.objects.none()
+
+        qs = LegendaryAction.objects.all()
+
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+
+        return qs
 
 
 # Reactions
@@ -160,4 +199,17 @@ class ReactionDelete(BaseDeleteView):
 
 class ReactionDetail(LoginRequiredMixin, BaseDetailView):
     model = Reaction
-    # template_name = 'statblocks/reaction_detail.html'
+    template_name = 'statblocks/statblockbit_detail.html'
+
+
+class ReactionAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Reaction.objects.none()
+
+        qs = Reaction.objects.all()
+
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+
+        return qs
