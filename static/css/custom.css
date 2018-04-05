@@ -41,6 +41,8 @@ body:not(.context-remove) .not-remove-context-hide {
 
 body.context-display-only .badge {
     font-size: 1.5em;
+    display: inline-block;
+    margin-bottom: 0.25rem;
 }
 
 body.context-display-only .combatant-card-container {
