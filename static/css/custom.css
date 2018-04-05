@@ -74,3 +74,32 @@ body:not(.context-display-only) .combatant-card-body {
         max-width: 400px;
     }
 }
+
+@media (min-width: 992px) {
+    .dm-screen-tab {
+        column-count: 2;
+    }
+}
+@media (min-width: 1200px) {
+    .dm-screen-tab {
+        column-count: 3;
+    }
+}
+@media (min-width: 1500px) {
+    .dm-screen-tab {
+        column-count: 4;
+    }
+}
+@media (min-width: 1800px) {
+    .dm-screen-tab {
+        column-count: 5;
+    }
+}
+.dm-screen-tab p {
+    white-space: pre-line;
+    -webkit-column-break-inside:avoid;
+    -moz-column-break-inside:avoid;
+    -o-column-break-inside:avoid;
+    -ms-column-break-inside:avoid;
+    column-break-inside:avoid;
+}

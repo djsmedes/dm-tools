@@ -152,4 +152,8 @@
       {% endfor %}
     </div>
   </div>
+
+  {% if user.is_authenticated %}
+    {% include 'base/dm_screen/dm_screen.html' %}
+  {% endif %}
 {% endblock %}
