@@ -97,9 +97,9 @@ body:not(.context-display-only) .combatant-card-body {
 }
 .dm-screen-tab p {
     white-space: pre-line;
-    -webkit-column-break-inside:avoid;
-    -moz-column-break-inside:avoid;
-    -o-column-break-inside:avoid;
-    -ms-column-break-inside:avoid;
+    /*-webkit-column-break-inside:avoid;*/
+    /*-moz-column-break-inside:avoid;*/
+    /*-o-column-break-inside:avoid;*/
+    /*-ms-column-break-inside:avoid;*/
     column-break-inside:avoid;
 }

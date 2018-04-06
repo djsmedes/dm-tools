@@ -1,18 +1,19 @@
 // See http://brunch.io for documentation.
 exports.paths = {
-    public: 'static/'
+    public: '../dist/',
+    watched: ['js', 'css']
 };
 
 exports.files = {
     javascripts: {
         joinTo: {
-            'js/app.js': /^app/,
-            'js/vendor.js': /^(?!app)/
+            'js/app.js': /^js/,
+            'js/vendor.js': /^node_modules/
         }
     },
     stylesheets: {
         joinTo: {
-            'css/app.css': /^app/
+            'css/app.css': /^css\//
         }
     }
 };
