@@ -1,11 +1,14 @@
+from dal import autocomplete
 from django.urls import reverse_lazy
+from django.views.generic import UpdateView
 
 from base.views import BaseListView, BaseCreateView, BaseUpdateView, BaseDeleteView, \
-    BaseDetailView
+    BaseDetailView, BreadCrumbMixin
 from .models import God, GodForm, \
     Person, PersonForm, \
     Population, PopulationForm, \
     Combatant, CombatantForm
+from statblocks.models import Monster
 
 
 class GodList(BaseListView):
@@ -78,12 +81,18 @@ class PopulationEdit(BaseUpdateView):
     form_class = PopulationForm
 
 
-class CombatantEdit(BaseUpdateView):
+class CombatantEdit(BreadCrumbMixin, UpdateView):
     model = Combatant
     form_class = CombatantForm
+    # template_name = 'people/combatant_form.html'
 
     def get_extra_breadcrumbs(self):
         return [{'text': 'Edit {}'.format(self.object.name)}]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form_action'] = '{}-edit'.format(self.model.url_prefix())
+        return context
 
 
 class GodDelete(BaseDeleteView):

@@ -80,7 +80,7 @@ class Die:
             num, size = as_str.split('d')
         if not num or not size:
             return 0
-        return int((num * ((size + 1)/2.0)) // 1)
+        return int((num * ((size + 1) / 2.0)) // 1)
 
 
 class DamageType:
@@ -230,3 +230,32 @@ class AbilityScore:
             if tup[0] == abscore_abbr:
                 return tup[1]
         return None
+
+
+class BootstrapColor:
+    # built-in
+    ENEMY = 'dark'
+    BLUE = 'primary'
+    LIGHT_BLUE = 'info'
+    YELLOW = 'warning'
+    RED = 'danger'
+    GREEN = 'success'
+
+    # must modify bootstrap sass to add
+    PURPLE = 'purple'
+    BROWN = 'brown'
+    ORANGE = 'orange'
+    PINK = 'pink'
+
+    MODEL_CHOICES = [
+        (BLUE, 'blue'),
+        (LIGHT_BLUE, 'light blue'),
+        (YELLOW, 'yellow'),
+        (RED, 'red'),
+        (GREEN, 'green'),
+        (ENEMY, 'enemy'),
+        (PURPLE, 'purple'),
+        (BROWN, 'brown'),
+        (ORANGE, 'orange'),
+        (PINK, 'pink'),
+    ]

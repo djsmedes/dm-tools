@@ -2,14 +2,6 @@
 {% load base %}
 {% load widget_tweaks %}
 
-{% block derpsingle_field %}
-  {% if field.name in object.multiselect_field_names or field.name in model.multiselect_field_names %}
-    {% include 'statblocks/multiselect_field.html' %}
-  {% else %}
-    {{ block.super }}
-  {% endif %}
-{% endblock %}
-
 {% block all_fields %}
   <div class="form-row">
     <div class="form-group col-sm-4">

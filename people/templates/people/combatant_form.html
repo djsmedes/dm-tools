@@ -1,0 +1,52 @@
+{% extends 'base/_form.html' %}
+{% load widget_tweaks %}
+{% load base %}
+
+{% block all_fields %}
+  <div class="form-row">
+    <div class="form-group col-sm-6">
+      {{ form.name.label_tag }}
+      {{ form.name|add_class:'form-control'|attr:'autofocus' }}
+    </div>
+    <div class="form-group col-sm-6">
+      {{ form.initiative.label_tag }}
+      {{ form.initiative|add_class:'form-control' }}
+    </div>
+  </div>
+
+  <div class="form-group">
+    {{ form.color.label_tag }}
+    <div class="btn-group-toggle mb-3" id="{{ form.color.id_for_label }}" data-toggle="buttons">
+      {% for value, text in form.color.field.choices %}
+        {% if user.is_authenticated or text != 'enemy' %}
+          <label class="btn mb-1 btn-outline-{{ value }}
+          {% if value == form.initial.color %} active{% endif %}"
+                 for="id_{{ form.color.name }}_{{ forloop.counter0 }}">
+            <input
+                class="form-check-input"
+                type="radio"
+                value="{{ value }}"
+                id="id_{{ form.color.name }}_{{ forloop.counter0 }}"
+                name="{{ form.color.name }}"
+                {% if value == form.initial.color %}checked{% endif %}
+                autocomplete="off"
+            > {{ text }}
+          </label>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if user.is_authenticated %}
+    <div class="form-group">
+      {{ form.statblock.label_tag }}
+      {{ form.statblock|add_class:'form-control' }}
+    </div>
+  {% endif %}
+
+{% endblock %}
+
+{% block custom_scripts %}
+  {{ block.super }}
+  {{ form.media }}
+{% endblock %}
