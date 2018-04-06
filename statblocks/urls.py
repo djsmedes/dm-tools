@@ -1,7 +1,7 @@
 from django.urls import path, include, reverse_lazy
 
 from .views import \
-    MonsterList, MonsterAdd, MonsterDetail, MonsterEdit, MonsterDelete, \
+    MonsterList, MonsterAdd, MonsterDetail, MonsterEdit, MonsterDelete, MonsterAutocomplete, \
     SpecialPropertyList, SpecialPropertyAdd, SpecialPropertyDetail, SpecialPropertyEdit, SpecialPropertyDelete, SpecialPropertyAutocomplete, \
     ActionList, ActionAdd, ActionDetail, ActionEdit, ActionDelete, ActionAutocomplete, \
     LegendaryActionList, LegendaryActionAdd, LegendaryActionDetail, LegendaryActionEdit, LegendaryActionDelete, LegendaryActionAutocomplete, \
@@ -66,6 +66,7 @@ autocomplete_patterns = [
     path('action/', ActionAutocomplete.as_view(create_field='name'), name='action-autocomplete'),
     path('legendary-action/', LegendaryActionAutocomplete.as_view(create_field='name'), name='legendaryaction-autocomplete'),
     path('reaction/', ReactionAutocomplete.as_view(create_field='name'), name='reaction-autocomplete'),
+    path('monster/', MonsterAutocomplete.as_view(), name='monster-autocomplete'),
 ]
 
 urlpatterns = [

@@ -1,10 +1,11 @@
+from dal import autocomplete
 from django.db import models
 from django.forms import ModelForm, ModelMultipleChoiceField
 
 from multiselectfield import MultiSelectField
 
 from base.models import BaseModel
-from base.utils import update_last_updated
+from base.utils import update_last_updated, BootstrapColor
 from statblocks.models import Monster
 
 
@@ -120,22 +121,7 @@ class Combatant(BaseModel):
     class Meta:
         ordering = ['-initiative']
 
-    BLUE = 'primary'
-    TEAL = 'info'
-    YELLOW = 'warning'
-    RED = 'danger'
-    GREEN = 'success'
-    ENEMY = 'dark'
-    COLOR_CHOICES = [
-        (BLUE, 'blue'),
-        (TEAL, 'teal'),
-        (YELLOW, 'yellow'),
-        (RED, 'red'),
-        (GREEN, 'green'),
-        (ENEMY, 'enemy'),
-    ]
-
-    color = models.CharField(max_length=7, choices=COLOR_CHOICES, null=True, blank=True)
+    color = models.CharField(max_length=7, choices=BootstrapColor.MODEL_CHOICES, null=True, blank=True)
     initiative = models.IntegerField(null=True, blank=True)
     buffs = MultiSelectField(null=True, blank=True)
     debuffs = MultiSelectField(null=True, blank=True)
@@ -215,6 +201,15 @@ class GodForm(ModelForm):
 
 
 class CombatantForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        color_field = self.fields.get('color')
+        if color_field:
+            color_field.choices = color_field.choices[1:]
+
     class Meta:
         model = Combatant
         fields = ['name', 'color', 'initiative', 'statblock']
+        widgets = {
+            'statblock': autocomplete.ModelSelect2(url='monster-autocomplete'),
+        }

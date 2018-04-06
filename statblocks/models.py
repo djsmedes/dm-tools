@@ -191,10 +191,7 @@ class MonsterForm(ModelForm):
         model = Monster
         fields = '__all__'
         widgets = {
-            'special_properties': autocomplete.ModelSelect2Multiple(
-                url='specialproperty-autocomplete',
-                attrs={}
-            ),
+            'special_properties': autocomplete.ModelSelect2Multiple(url='specialproperty-autocomplete'),
             'actions': autocomplete.ModelSelect2Multiple(url='action-autocomplete'),
             'legendary_actions': autocomplete.ModelSelect2Multiple(url='legendaryaction-autocomplete'),
             'reactions': autocomplete.ModelSelect2Multiple(url='reaction-autocomplete'),

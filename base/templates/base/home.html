@@ -4,7 +4,9 @@
 {% block title %}DMTOOLS{% endblock %}
 
 {% block custom_scripts %}
-  <script src="{% static 'js/homepagescripts.js' %}"></script>
+  <script>
+    require('js/homepagescripts').initialize()
+  </script>
 {% endblock %}
 
 {% block content %}

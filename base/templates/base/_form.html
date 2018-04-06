@@ -46,7 +46,9 @@
       {% endblock %}
       {% if object %}
         <a class="btn btn-secondary" href="{{ object.get_absolute_url }}">Cancel</a>
-        <a class="btn btn-outline-danger" href="{{ object.get_delete_url }}">Delete {{ object.name }}</a>
+        {% if user.is_authenticated %} {# todo: replace with proper permissions #}
+          <a class="btn btn-outline-danger" href="{{ object.get_delete_url }}">Delete {{ object.name }}</a>
+        {% endif %}
       {% endif %}
       <input type="submit" class="btn btn-primary" value="Save"/>
     </form>

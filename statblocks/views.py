@@ -37,6 +37,19 @@ class MonsterDetail(LoginRequiredMixin, BaseDetailView):
     template_name = 'statblocks/monster_detail.html'
 
 
+class MonsterAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Monster.objects.none()
+
+        qs = Monster.objects.all()
+
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+
+        return qs
+
+
 # Special Properties
 class SpecialPropertyList(LoginRequiredMixin, BaseListView):
     model = SpecialProperty
