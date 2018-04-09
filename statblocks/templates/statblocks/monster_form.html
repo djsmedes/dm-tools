@@ -156,5 +156,5 @@
 
 {% block custom_scripts %}
   {{ block.super }}
-  {{ form.media }}
+  {% include 'base/django_autocomplete_light_hack.html' %}
 {% endblock %}
