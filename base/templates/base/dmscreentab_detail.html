@@ -1,0 +1,8 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+  <div class="container">
+    <a class="btn btn-secondary" href="{{ object.get_edit_url }}">Edit</a>
+  </div>
+  {% include 'base/dm_screen/dm_screen.html' with dmscreentabs=object_list %}
+{% endblock %}

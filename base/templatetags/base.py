@@ -137,4 +137,8 @@ def fill_generic_statblock_descr(statbit: StatblockBit, monster: Monster=None):
 
 @register.filter
 def markdownify(text):
-    return markdown.markdown(text, safe_mode='escape')
+    return markdown.markdown(text, safe_mode='escape', extensions=[
+        'markdown.extensions.nl2br',
+        'markdown.extensions.tables',
+        'markdown.extensions.sane_lists',
+    ])
