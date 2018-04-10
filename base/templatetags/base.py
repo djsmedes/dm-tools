@@ -1,6 +1,7 @@
 from django import template
 from statblocks.models import Action, Monster, StatblockBit, AbilityScore
 from base.utils import Die
+import markdown
 
 register = template.Library()
 
@@ -132,3 +133,8 @@ def fill_generic_statblock_descr(statbit: StatblockBit, monster: Monster=None):
                 GENERIC_SAVETYPE_TAG, str(AbilityScore.get_full_name(statbit.save_type)).title()
             )
         return to_return
+
+
+@register.filter
+def markdownify(text):
+    return markdown.markdown(text, safe_mode='escape')

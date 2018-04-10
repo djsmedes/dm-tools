@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "df5a1fc75850f564134ee2a787efd0935ad3ac30f072148231843f2f079e0dec"
+            "sha256": "3248e4129f164f1248b93882e95179a18922240a3da48972bbdd1e0fd6fa071b"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -9,9 +9,9 @@
             "os_name": "posix",
             "platform_machine": "x86_64",
             "platform_python_implementation": "CPython",
-            "platform_release": "4.13.0-37-generic",
+            "platform_release": "4.13.0-38-generic",
             "platform_system": "Linux",
-            "platform_version": "#42~16.04.1-Ubuntu SMP Wed Mar 7 16:03:28 UTC 2018",
+            "platform_version": "#43~16.04.1-Ubuntu SMP Wed Mar 14 17:48:43 UTC 2018",
             "python_full_version": "3.6.4",
             "python_version": "3.6",
             "sys_platform": "linux"
@@ -67,6 +67,13 @@
                 "sha256:813f6916d18a4c8e90efde72f419308b357692f81333cb1125f80013d22fb618"
             ],
             "version": "==19.6.0"
+        },
+        "markdown": {
+            "hashes": [
+                "sha256:9ba587db9daee7ec761cfc656272be6aabe2ed300fece21208e4aab2e457bc8f",
+                "sha256:a856869c7ff079ad84a3e19cd87a64998350c2b94e9e08e44270faef33400f81"
+            ],
+            "version": "==2.6.11"
         },
         "psycopg2-binary": {
             "hashes": [

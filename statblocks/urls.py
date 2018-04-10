@@ -7,9 +7,7 @@ from .views import \
     LegendaryActionList, LegendaryActionAdd, LegendaryActionDetail, LegendaryActionEdit, LegendaryActionDelete, LegendaryActionAutocomplete, \
     ReactionList, ReactionAdd, ReactionDetail, ReactionEdit, ReactionDelete, ReactionAutocomplete
 
-from dmtools.urls import breadcrumbs as core_breadcrumbs
-
-breadcrumbs = core_breadcrumbs
+from dmtools.urls import breadcrumbs
 
 monsters_breadcrumbs = breadcrumbs + [{'href': reverse_lazy('monsters-home'), 'text': 'Monsters'}]
 

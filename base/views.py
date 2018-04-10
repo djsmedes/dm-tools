@@ -14,6 +14,7 @@ from pytz import utc
 from people.models import Combatant
 from .forms import EffectForm
 from .utils import get_last_updated
+from .models import DmScreenTab, DmScreenTabForm
 
 
 class BreadCrumbMixin(ContextMixin):
@@ -124,6 +125,7 @@ class HomepageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         kwargs['combatant_list'] = Combatant.objects.all()
+        kwargs['dmscreentabs'] = DmScreenTab.objects.all()
         return super().get_context_data(**kwargs)
 
 
@@ -254,3 +256,27 @@ def poll_for_combatant_updates(request):
         resp['needs_update'] = True
 
     return JsonResponse(resp)
+
+
+class DmScreenTabList(LoginRequiredMixin, BaseListView):
+    model = DmScreenTab
+
+
+class DmScreenTabAdd(BaseCreateView):
+    model = DmScreenTab
+    form_class = DmScreenTabForm
+
+
+class DmScreenTabEdit(BaseUpdateView):
+    model = DmScreenTab
+    form_class = DmScreenTabForm
+
+
+class DmScreenTabDelete(BaseDeleteView):
+    model = DmScreenTab
+    success_url = reverse_lazy('dmscreentabs-home')
+
+
+class DmScreenTabDetail(LoginRequiredMixin, BaseDetailView):
+    model = DmScreenTab
+    form_class = DmScreenTabForm

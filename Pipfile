@@ -20,6 +20,7 @@ whitenoise = "==3.2"
 django-widget-tweaks = "*"
 django-multiselectfield = "*"
 django-autocomplete-light = "==3.3.0rc6"
+markdown = "*"
 
 
 [dev-packages]
