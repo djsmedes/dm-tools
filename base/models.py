@@ -55,7 +55,11 @@ class TableMetaData(models.Model):
 class DmScreenTab(BaseModel):
 
     name = models.CharField(max_length=50, verbose_name='tab title')
+    sort_order = models.IntegerField(default=0)
     tab_contents = models.TextField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['sort_order']
 
 
 class DmScreenTabForm(ModelForm):

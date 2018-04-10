@@ -99,3 +99,6 @@ body:not(.context-display-only) .combatant-card-body {
     page-break-inside: avoid;
     break-inside: avoid;
 }
+.dm-screen-tab tr:nth-child(even) {
+    background-color: #bbbbbb;
+}

@@ -125,7 +125,7 @@ class HomepageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         kwargs['combatant_list'] = Combatant.objects.all()
-        kwargs['dmscreentabs'] = DmScreenTab.objects.all()
+        kwargs['dmscreentabs'] = DmScreenTab.objects.filter(sort_order__gte=0)
         return super().get_context_data(**kwargs)
 
 
