@@ -1,4 +1,4 @@
-<nav aria-label="breadcrumb">
+<nav aria-label="breadcrumb" class="display-only-context-hide">
   <ol class="breadcrumb">
     {% for crumb in breadcrumbs %}
       <li class="breadcrumb-item {% if forloop.last %}active{% endif %}">
@@ -13,3 +13,4 @@
     {% endfor %}
   </ol>
 </nav>
+<div class="not-display-only-context-hide m-3"></div>
