@@ -41,7 +41,7 @@ class RaceList(BaseListView):
     ]
     table_data_accessors = [
         'name',
-        'subrace_of',
+        'parent_race',
     ]
 
 

@@ -89,6 +89,10 @@ class Race(BaseModel):
         blank=True,
     )
 
+    @property
+    def parent_race(self):
+        return self.subrace_of if self.subrace_of else ''
+
 
 class God(BaseModel):
 
@@ -146,6 +150,11 @@ class PersonForm(ModelForm):
 
 
 class RaceForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['subrace_of'].queryset = Race.objects.filter(subrace_of__isnull=True)
+
     class Meta:
         model = Race
         fields = '__all__'
