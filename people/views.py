@@ -6,7 +6,7 @@ from base.views import BaseListView, BaseCreateView, BaseUpdateView, BaseDeleteV
     BaseDetailView, BreadCrumbMixin
 from .models import God, GodForm, \
     Person, PersonForm, \
-    Population, PopulationForm, \
+    Race, RaceForm, \
     Combatant, CombatantForm
 from statblocks.models import Monster
 
@@ -33,15 +33,15 @@ class PersonList(BaseListView):
     ]
 
 
-class PopulationList(BaseListView):
-    model = Population
+class RaceList(BaseListView):
+    model = Race
     table_headers = [
         'Name',
-        'Subpopulation of',
+        'Subrace of',
     ]
     table_data_accessors = [
         'name',
-        'sub_population_of',
+        'subrace_of',
     ]
 
 
@@ -55,9 +55,9 @@ class PersonAdd(BaseCreateView):
     form_class = PersonForm
 
 
-class PopulationAdd(BaseCreateView):
-    model = Population
-    form_class = PopulationForm
+class RaceAdd(BaseCreateView):
+    model = Race
+    form_class = RaceForm
 
 
 class CombatantAdd(BaseCreateView):
@@ -76,9 +76,9 @@ class PersonEdit(BaseUpdateView):
     form_class = PersonForm
 
 
-class PopulationEdit(BaseUpdateView):
-    model = Population
-    form_class = PopulationForm
+class RaceEdit(BaseUpdateView):
+    model = Race
+    form_class = RaceForm
 
 
 class CombatantEdit(BreadCrumbMixin, UpdateView):
@@ -105,9 +105,9 @@ class PersonDelete(BaseDeleteView):
     success_url = reverse_lazy('npcs-home')
 
 
-class PopulationDelete(BaseDeleteView):
-    model = Population
-    success_url = reverse_lazy('populations-home')
+class RaceDelete(BaseDeleteView):
+    model = Race
+    success_url = reverse_lazy('races-home')
 
 
 class CombatantDelete(BaseDeleteView):
@@ -128,6 +128,6 @@ class PersonDetail(BaseDetailView):
     form_class = PersonForm
 
 
-class PopulationDetail(BaseDetailView):
-    model = Population
-    form_class = PopulationForm
+class RaceDetail(BaseDetailView):
+    model = Race
+    form_class = RaceForm

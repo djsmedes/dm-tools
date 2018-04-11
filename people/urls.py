@@ -4,7 +4,7 @@ from django.views.generic import RedirectView
 from .views import \
     GodList, GodAdd, GodDetail, GodEdit, GodDelete,\
     PersonList, PersonAdd, PersonDetail, PersonEdit, PersonDelete,\
-    PopulationList, PopulationAdd, PopulationDetail, PopulationEdit, PopulationDelete, \
+    RaceList, RaceAdd, RaceDetail, RaceEdit, RaceDelete, \
     CombatantAdd, CombatantEdit, CombatantDelete
 from dmtools.urls import breadcrumbs as core_breadcrumbs
 
@@ -30,14 +30,14 @@ npcs_patterns = [
     path('<int:pk>/delete/', PersonDelete.as_view(), name='npc-delete'),
 ]
 
-populations_breadcrumbs = breadcrumbs + [{'href': reverse_lazy('populations-home'), 'text': 'Populations'}]
+races_breadcrumbs = breadcrumbs + [{'href': reverse_lazy('races-home'), 'text': 'Races'}]
 
-populations_patterns = [
-    path('', PopulationList.as_view(), name='populations-home'),
-    path('add/', PopulationAdd.as_view(), name='population-add'),
-    path('<int:pk>/', PopulationDetail.as_view(), name='population-view'),
-    path('<int:pk>/edit/', PopulationEdit.as_view(), name='population-edit'),
-    path('<int:pk>/delete/', PopulationDelete.as_view(), name='population-delete'),
+races_patterns = [
+    path('', RaceList.as_view(), name='races-home'),
+    path('add/', RaceAdd.as_view(), name='race-add'),
+    path('<int:pk>/', RaceDetail.as_view(), name='race-view'),
+    path('<int:pk>/edit/', RaceEdit.as_view(), name='race-edit'),
+    path('<int:pk>/delete/', RaceDelete.as_view(), name='race-delete'),
 ]
 
 combatants_patterns = [
@@ -51,6 +51,6 @@ combatants_patterns = [
 urlpatterns = [
     path('gods/', include(gods_patterns), {'base_breadcrumbs': gods_breadcrumbs}),
     path('npcs/', include(npcs_patterns), {'base_breadcrumbs': npcs_breadcrumbs}),
-    path('populations/', include(populations_patterns), {'base_breadcrumbs': populations_breadcrumbs}),
+    path('races/', include(races_patterns), {'base_breadcrumbs': races_breadcrumbs}),
     path('combatants/', include(combatants_patterns), {'base_breadcrumbs': breadcrumbs}),
 ]

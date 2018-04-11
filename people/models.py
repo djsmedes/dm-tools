@@ -13,7 +13,7 @@ class Person(BaseModel):
 
     description = models.TextField(null=True, blank=True)
     race = models.ForeignKey(
-        'people.Population',
+        'people.Race',
         on_delete=models.SET_NULL,
         related_name='members_of_race',
         null=True,
@@ -21,11 +21,6 @@ class Person(BaseModel):
     )
     organizations_in = models.ManyToManyField(
         'people.Organization',
-        related_name='members',
-        blank=True,
-    )
-    populations_in = models.ManyToManyField(
-        'people.Population',
         related_name='members',
         blank=True,
     )
@@ -83,18 +78,13 @@ class Organization(BaseModel):
     )
 
 
-class Population(BaseModel):
+class Race(BaseModel):
 
     description = models.TextField(null=True, blank=True)
-    member_count = models.IntegerField(
-        help_text='Including unnamed members not in the database.',
-        null=True,
-        blank=True,
-    )
-    sub_population_of = models.ForeignKey(
+    subrace_of = models.ForeignKey(
         'self',
         on_delete=models.SET_NULL,
-        related_name='sub_populations',
+        related_name='subraces',
         null=True,
         blank=True,
     )
@@ -109,8 +99,8 @@ class God(BaseModel):
     # todo: install django-multiselectfield and switch cleric domains to this
     cleric_domains = models.CharField(max_length=255, null=True, blank=True)
 
-    follower_populations = models.ManyToManyField(
-        'people.Population',
+    follower_races = models.ManyToManyField(
+        'people.Race',
         related_name='gods_followed',
         blank=True
     )
@@ -155,9 +145,9 @@ class PersonForm(ModelForm):
         fields = '__all__'
 
 
-class PopulationForm(ModelForm):
+class RaceForm(ModelForm):
     class Meta:
-        model = Population
+        model = Race
         fields = '__all__'
 
 
