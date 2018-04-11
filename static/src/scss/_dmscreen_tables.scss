@@ -1,0 +1,13 @@
+.dm-screen-tab {
+  p {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  tr:nth-child(even) {
+    background-color: #bbbbbb;
+  }
+  table {
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+}
