@@ -19,7 +19,7 @@
     "autoprefixer": "^8.2.0",
     "brunch": "^2",
     "csswring": "^6.0.3",
-    "postcss-brunch": "^2.1.0",
+    "postcss-brunch": "~0.5.0",
     "sass-brunch": "^2.10.4",
     "uglify-js-brunch": "^2"
   }
