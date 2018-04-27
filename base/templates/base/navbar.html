@@ -13,6 +13,7 @@
     <div class="navbar-nav mr-auto">
       <a class="nav-link" href="{% url 'gods-home' %}">Gods</a>
       <a class="nav-link" href="{% url 'npcs-home' %}">NPCs</a>
+      <a class="nav-link" href="{% url 'places-home' %}">Places</a>
       {% if user.is_authenticated %}
         <a class="nav-link" href="{% url 'monsters-home' %}">Monsters</a>
         <div class="nav-item dropdown">
@@ -34,7 +35,7 @@
         <div class="dropdown-menu bg-dark">
           <a class="dropdown-item text-muted" href="{% url 'races-home' %}">Races</a>
           <a class="dropdown-item text-muted" href="{% url 'dmscreentabs-home' %}">DM Screen Tabs</a>
-          <a class="dropdown-item text-muted" href="#">Places</a>
+
           <a class="dropdown-item text-muted" href="#">Plot</a>
         </div>
       </div>
