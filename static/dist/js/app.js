@@ -449,17 +449,34 @@ exports.default = {
     },
 
     methods: {
-        loadShapes: function loadShapes() {}
+        load_shapes: function load_shapes() {
+            var _this = this;
+
+            _axios2.default.get('/places/api/get-place-data/').then(function (r) {
+                _this.shapes = r.data.shape_set;
+            }).catch(function (e) {
+                console.log(e);
+            });
+        },
+        test_method: function test_method(event) {
+            var bound = document.getElementById('place-canvas').getBoundingClientRect();
+            var html = document.documentElement;
+            var left = bound.left + window.pageXOffset - html.clientLeft;
+            var top = bound.top + window.pageYOffset - html.clientTop;
+            var x = event.pageX - left;
+            var y = event.pageY - top;
+            console.log(x, y);
+        }
     },
     created: function created() {
-        this.loadShapes();
+        this.load_shapes();
     }
 };
 })()
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"ml-5 p-0",staticStyle:{"width":"1200px","height":"900px"}},[_c('svg',{attrs:{"id":"place-canvas","width":"1200","height":"900"}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"10","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_c('polygon',{attrs:{"points":"200,50 300,50 250,190 160,210","filter":"url(#innershadow)","fill":"green","stroke":"green","stroke-width":"2"}}),_vm._v(" "),_c('polygon',{attrs:{"points":"200,50 300,50 250,190 160,210","fill":"transparent","stroke":"green","stroke-width":"2"}}),_vm._v(" "),_c('rect',{attrs:{"width":"1200","height":"900","fill":"transparent","stroke":"black","stroke-width":"2","onclick":"draw_clicked_point(evt)"}})])])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"ml-5 p-0",staticStyle:{"width":"1200px","height":"900px"}},[_c('svg',{attrs:{"id":"place-canvas","width":"1200","height":"900"}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"10","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_vm._l((_vm.shapes),function(shape){return _c('g',[_c('polygon',{attrs:{"points":shape.points,"stroke":"green","fill":"green","stroke-width":"2","filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{attrs:{"points":shape.points,"fill":"transparent","stroke":"green","stroke-width":"2"}})])}),_vm._v(" "),_c('rect',{attrs:{"width":"1200","height":"900","fill":"transparent","stroke":"black","stroke-width":"2"},on:{"click":function($event){_vm.test_method($event)}}})],2)])}
 __vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)

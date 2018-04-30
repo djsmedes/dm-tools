@@ -3,36 +3,6 @@
   <div class="ml-5 p-0" style="width: 1200px; height: 900px">
 
     <svg id="place-canvas" width="1200" height="900">
-
-      <!--<script>-->
-          <!--function mouse_coords(event) {-->
-              <!--let bound = document.getElementById('place-canvas').getBoundingClientRect();-->
-              <!--var html = document.documentElement;-->
-              <!--var left = bound.left + window.pageXOffset - html.clientLeft;-->
-              <!--var top = bound.top + window.pageYOffset - html.clientTop;-->
-              <!--var x = event.pageX - left;-->
-              <!--var y = event.pageY - top;-->
-              <!--console.log(x, y);-->
-              <!--return {x: x, y: y};-->
-          <!--}-->
-
-          <!--function getNode(n, v) {-->
-              <!--n = document.createElementNS("http://www.w3.org/2000/svg", n);-->
-              <!--for (var p in v)-->
-                  <!--n.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {-->
-                      <!--return "-" + m.toLowerCase();-->
-                  <!--}), v[p]);-->
-              <!--return n-->
-          <!--}-->
-
-          <!--function draw_clicked_point(event) {-->
-              <!--var coords = mouse_coords(event);-->
-              <!--var svg = document.getElementById('place-canvas');-->
-              <!--svg.appendChild(getNode('circle', {cx: coords.x, cy: coords.y, r: '5', fill: 'red'}));-->
-          <!--}-->
-
-      <!--</script>-->
-
       <defs>
         <filter id="innershadow">
           <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"></feGaussianBlur>
@@ -41,14 +11,19 @@
 
       </defs>
 
-      <polygon points="200,50 300,50 250,190 160,210" filter="url(#innershadow)" fill="green" stroke="green"
-               stroke-width="2"></polygon>
+      <g v-for="shape in shapes">
+        <polygon :points="shape.points" stroke="green" fill="green" stroke-width="2" filter="url(#innershadow)"></polygon>
+        <polygon :points="shape.points" fill="transparent" stroke="green" stroke-width="2"></polygon>
+      </g>
 
-      <polygon points="200,50 300,50 250,190 160,210" fill="transparent" stroke="green" stroke-width="2"></polygon>
+      <!--<polygon points="200,50 300,50 250,190 160,210" filter="url(#innershadow)" fill="green" stroke="green"-->
+               <!--stroke-width="2"></polygon>-->
+
+      <!--<polygon points="200,50 300,50 250,190 160,210" fill="transparent" stroke="green" stroke-width="2"></polygon>-->
 
       <rect width="1200" height="900" fill="transparent" stroke="black" stroke-width="2"
-            onclick="draw_clicked_point(evt)"
-      ></rect>
+            v-on:click="test_method($event)">
+      </rect>
     </svg>
 
   </div>
@@ -68,13 +43,22 @@
           }
       },
       methods: {
-          loadShapes: function() {
-              // axios
-              //     .get('/get/endpoint')
-              //     .then(r => { this.shapes = r.data.shape_set })
-              //     .catch(e => { console.log(e) })
+          load_shapes: function() {
+              axios
+                  .get('/places/api/get-place-data/')
+                  .then(r => { this.shapes = r.data.shape_set })
+                  .catch(e => { console.log(e) })
+          },
+          test_method: function(event) {
+              let bound = document.getElementById('place-canvas').getBoundingClientRect();
+              let html = document.documentElement;
+              let left = bound.left + window.pageXOffset - html.clientLeft;
+              let top = bound.top + window.pageYOffset - html.clientTop;
+              let x = event.pageX - left;
+              let y = event.pageY - top;
+              console.log(x, y);
           }
       },
-      created() { this.loadShapes() }
+      created() { this.load_shapes() }
   }
 </script>

@@ -1,6 +1,4 @@
-# importing this to be used in an exec in a lambda expression
-# noinspection PyUnresolvedReferences
-from django.http import Http404, JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render_to_response, render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
