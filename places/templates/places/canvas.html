@@ -1,6 +1,14 @@
 {% extends 'base/base.html' %}
 
 {% block content %}
+  <div id="canvas"></div>
+{% endblock %}
+
+{% block custom_scripts %}
+  <script>
+    require('js/places-vue/main.js')
+  </script>
+{% endblock %}
 
   <div class="ml-5 p-0" style="width: 1200px; height: 900px">
 
@@ -55,4 +63,3 @@
 
   </div>
 
-{% endblock %}

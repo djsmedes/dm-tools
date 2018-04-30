@@ -149,33 +149,37 @@ var __makeRelativeRequire = function(require, mappings, pref) {
   }
 };
 require.register("js/clickable_row.js", function(exports, require, module) {
+"use strict";
+
 module.exports = {
 
-    initialize: function() {
+    initialize: function initialize() {
         $('.clickable-row').click(function () {
             window.location = $(this).data("href");
         });
     }
 
 };
-
 });
 
 require.register("js/homepagescripts.js", function(exports, require, module) {
+"use strict";
+
 module.exports = {
 
-    initialize: function () {
+    initialize: function initialize() {
         var body = $('body');
 
         function csrfSafeMethod(method) {
             // these HTTP methods do not require CSRF protection
-            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method)
+            );
         }
 
         var csrftoken = $("[name=csrfmiddlewaretoken]").val();
 
         $.ajaxSetup({
-            beforeSend: function (xhr, settings) {
+            beforeSend: function beforeSend(xhr, settings) {
                 if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
                     xhr.setRequestHeader("X-CSRFToken", csrftoken);
                 }
@@ -184,13 +188,13 @@ module.exports = {
 
         $('#display-only-toggle-button').click(function () {
             body.toggleClass('context-display-only');
-            $(this).toggleClass('text-muted')
+            $(this).toggleClass('text-muted');
         });
 
         body.on('click', '.combatant-context-enter', function () {
             var combatant = $(this).data('combatant');
             body.addClass('context-combatant').data('combatant', combatant);
-            label_matched_combatants()
+            label_matched_combatants();
         });
         body.on('click', '.combatant-context-leave', function () {
             body.removeClass('context-combatant').data('combatant', '');
@@ -216,8 +220,8 @@ module.exports = {
             }
             active_combatant_buttons.each(function () {
                 var combatant = $(this).data('combatant');
-                $('#' + combatant + '-' + body.data('apply-effect-type')).val(myval)
-            })
+                $('#' + combatant + '-' + body.data('apply-effect-type')).val(myval);
+            });
         });
 
         var effect_add_form = $('#effect-add-form');
@@ -226,13 +230,12 @@ module.exports = {
                 type: effect_add_form.attr('method'),
                 url: effect_add_form.attr('action'),
                 data: effect_add_form.serialize(),
-                success: function (data) {
+                success: function success(data) {
                     $(".combatant-card-body").each(function () {
                         // todo change combatant card body data-id to data-combatant
                         var id = $(this).data('id');
                         $(this).html(data[id]);
                     });
-
                 }
             });
             exit_apply_context();
@@ -253,9 +256,9 @@ module.exports = {
                     'effect_type': effect_type,
                     'combatant': combatant_id
                 },
-                success: function (return_html) {
+                success: function success(return_html) {
                     if (return_html === '') {
-                        return
+                        return;
                     }
                     $(".combatant-card-body").each(function () {
                         if ($(this).data('id') === combatant_id) {
@@ -263,7 +266,7 @@ module.exports = {
                         }
                     });
                 }
-            })
+            });
         });
 
         body.on('click', '#enter-remove-context', function () {
@@ -276,9 +279,9 @@ module.exports = {
                 type: remove_combatants_form.attr('method'),
                 url: remove_combatants_form.attr('action'),
                 data: remove_combatants_form.serialize(),
-                success: function (return_html) {
+                success: function success(return_html) {
                     if (return_html === '') {
-                        return
+                        return;
                     }
                     $('#combatant-card-deck').html(return_html);
                     label_matched_combatants();
@@ -288,16 +291,15 @@ module.exports = {
             return false;
         });
 
-
         body.on('click', '.context-activatable', function () {
             $(this).toggleClass('active');
             var combatant = $(this).data('combatant');
             if (body.hasClass('context-remove')) {
                 var combatant_to_remove_selector = $("#combatant-to-remove-" + combatant);
                 if ($(this).hasClass('active')) {
-                    combatant_to_remove_selector.val('True')
+                    combatant_to_remove_selector.val('True');
                 } else {
-                    combatant_to_remove_selector.val('')
+                    combatant_to_remove_selector.val('');
                 }
                 if ($('.context-activatable.active').length) {
                     $('#confirm-remove-combatants-button').prop('disabled', false);
@@ -310,7 +312,7 @@ module.exports = {
                 var effect_to_apply = $('#effect-to-apply').val();
                 var apply_effect_type = body.data('apply-effect-type');
                 if ($(this).hasClass('active')) {
-                    effect = effect_to_apply
+                    effect = effect_to_apply;
                 }
                 $('#' + combatant + '-' + apply_effect_type).val(effect);
                 if (effect_to_apply !== '') {
@@ -330,9 +332,9 @@ module.exports = {
                 type: $(this).attr('method'),
                 url: $(this).attr('action'),
                 data: $(this).serialize(),
-                success: function (return_html) {
+                success: function success(return_html) {
                     if (return_html === '') {
-                        return
+                        return;
                     }
                     $("#combatant-card-deck").html(return_html);
                     label_matched_combatants();
@@ -342,7 +344,7 @@ module.exports = {
         });
         var last_updated = new Date().getTime();
         setTimeout(function () {
-            poll_server(last_updated)
+            poll_server(last_updated);
         }, 2500);
     }
 };
@@ -351,14 +353,14 @@ function exit_apply_context() {
     $('body').removeClass('context-apply');
     $('.effect-input').val('');
     $('.context-activatable').removeClass('active');
-    $('#apply-button').prop('disabled', true)
+    $('#apply-button').prop('disabled', true);
 }
 
 function exit_remove_context() {
     $('body').removeClass('context-remove');
     $('.combatant-to-remove').val('');
     $('.context-activatable').removeClass('active');
-    $('#confirm-remove-combatants-button').prop('disabled', true)
+    $('#confirm-remove-combatants-button').prop('disabled', true);
 }
 
 function poll_server(last_updated) {
@@ -368,18 +370,18 @@ function poll_server(last_updated) {
         data: {
             last_updated: last_updated
         },
-        success: function (return_data) {
+        success: function success(return_data) {
             if (return_data.needs_update) {
                 update_all_combatants();
                 last_updated = new Date().getTime();
             }
         },
-        complete: function (data) {
+        complete: function complete(data) {
             setTimeout(function () {
-                poll_server(last_updated)
+                poll_server(last_updated);
             }, 2500);
         }
-    })
+    });
 }
 
 function update_all_combatants() {
@@ -388,9 +390,9 @@ function update_all_combatants() {
         type: 'post',
         url: url,
         data: {},
-        success: function (return_html) {
+        success: function success(return_html) {
             if (return_html === '') {
-                return
+                return;
             }
             $("#combatant-card-deck").html(return_html);
             label_matched_combatants();
@@ -405,7 +407,7 @@ function label_matched_combatants() {
         if (combatant) {
             $('.combatant-context-match-hide, .combatant-context-unmatch-hide').each(function () {
                 if ($(this).data('combatant') === combatant) {
-                    $(this).addClass('context-combatant-match')
+                    $(this).addClass('context-combatant-match');
                 }
             });
         }
@@ -414,11 +416,86 @@ function label_matched_combatants() {
 });
 
 ;require.register("js/initialize.js", function(exports, require, module) {
+'use strict';
+
 document.addEventListener('DOMContentLoaded', function () {
     // setup?
     console.log('Initialized app');
 });
+});
 
+require.register("js/places-vue/components/Canvas.vue", function(exports, require, module) {
+;(function(){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _axios = require('axios');
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_axios2.default.defaults.xsrfCookieName = 'csrftoken';
+_axios2.default.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+exports.default = {
+    data: function data() {
+        return {
+            shapes: []
+        };
+    },
+
+    methods: {
+        loadShapes: function loadShapes() {}
+    },
+    created: function created() {
+        this.loadShapes();
+    }
+};
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"ml-5 p-0",staticStyle:{"width":"1200px","height":"900px"}},[_c('svg',{attrs:{"id":"place-canvas","width":"1200","height":"900"}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"10","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_c('polygon',{attrs:{"points":"200,50 300,50 250,190 160,210","filter":"url(#innershadow)","fill":"green","stroke":"green","stroke-width":"2"}}),_vm._v(" "),_c('polygon',{attrs:{"points":"200,50 300,50 250,190 160,210","fill":"transparent","stroke":"green","stroke-width":"2"}}),_vm._v(" "),_c('rect',{attrs:{"width":"1200","height":"900","fill":"transparent","stroke":"black","stroke-width":"2","onclick":"draw_clicked_point(evt)"}})])])}
+__vue__options__.staticRenderFns = []
+if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-43273a22", __vue__options__)
+  } else {
+    hotAPI.reload("data-v-43273a22", __vue__options__)
+  }
+})()}
+});
+
+;require.register("js/places-vue/main.js", function(exports, require, module) {
+'use strict';
+
+var _axios = require('axios');
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _vue = require('vue');
+
+var _vue2 = _interopRequireDefault(_vue);
+
+var _Canvas = require('./components/Canvas.vue');
+
+var _Canvas2 = _interopRequireDefault(_Canvas);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+new _vue2.default({
+    el: '#canvas',
+    render: function render(h) {
+        return h(_Canvas2.default);
+    }
+});
 });
 
 require.alias("process/browser.js", "process");process = require('process');require.register("___globals___", function(exports, require, module) {
