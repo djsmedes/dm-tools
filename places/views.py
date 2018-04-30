@@ -15,5 +15,5 @@ class CanvasView(BreadCrumbMixin, TemplateView):
 def get_place_data(request):
     ret_dict = []
     for place in Place.objects.all():
-        ret_dict.append({'points': place.points})
+        ret_dict.append({'points': place.pointstring})
     return JsonResponse({'shape_set': ret_dict}, safe=False)

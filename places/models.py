@@ -20,19 +20,31 @@ class Place(BaseModel):
         self._shape = shape.wkb
 
     @property
-    def shape_type(self):
+    def dimensions(self):
         if isinstance(self.shape, Point):
-            return 'point'
+            return 0
         elif isinstance(self.shape, Polygon):
-            return 'polygon'
+            return 2
         else:
-            return 'line'
+            return 1
 
     @property
     def points(self):
+        dim = self.dimensions
+        if dim == 0:
+            # do something appropriate for a point
+            pass
+        elif dim == 1:
+            # do something appropriate for a line
+            pass
+        else:
+            # it's a polygon
+            pts = list(self.shape.exterior.coords)[:-1]
+            return [{'x': pt[0], 'y': pt[1]} for pt in pts]
+
+    @property
+    def pointstring(self):
         pointstring = ''
-        if isinstance(self.shape, Polygon):
-            points = list(self.shape.exterior.coords)[:-1]
-            for x, y in points:
-                pointstring += '{},{} '.format(int(x), int(y))
+        for pt in self.points:
+            pointstring += '{},{} '.format(int(pt['x']), int(pt['y']))
         return pointstring

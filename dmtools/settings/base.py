@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 
     # other third party apps
     'widget_tweaks',
+    'rest_framework',
 
     # local apps
     'base.apps.BaseConfig',
@@ -158,3 +159,9 @@ FIXTURE_DIRS = [
 ]
 
 LOGIN_REDIRECT_URL = '/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadyOnly'
+    ]
+}
