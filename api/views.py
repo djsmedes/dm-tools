@@ -1,17 +1,17 @@
-from collections import deque
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_201_CREATED
 from shapely.geometry import Point, LineString, Polygon
 
 from places.models import Place
+from places.utils import topological_sort_shapes
 from .serializers import PlaceSerializer
 
 
 class PlaceList(APIView):
 
     def get(self, request, format=None):
-        polygons = topo_sort_shapes(Place.objects.filter(_dimensions=2))
+        polygons = topological_sort_shapes(Place.objects.filter(_dimensions=2))
         other_shapes = list(Place.objects.filter(_dimensions__lt=2))
         places = polygons + other_shapes
         serializer = PlaceSerializer(places, many=True)
@@ -48,34 +48,3 @@ class PlaceList(APIView):
         place.shape = shape
         place.save()
         return Response({}, HTTP_201_CREATED)
-
-
-def topo_sort_shapes(places) -> list:
-    # construct dependency graph
-    graph = {place.id: [] for place in places}
-    index = {place.id: place for place in places}
-    for place in places:
-        for other_place in places:
-            if place is not other_place and place.shape.within(other_place.shape):
-                graph[other_place.id].append(place.id)
-
-    # topological sort
-    order, enter, state = deque(), set(graph), {}
-
-    def dfs(node):
-        state[node] = 0
-        for k in graph.get(node, ()):
-            sk = state.get(k, None)
-            if sk == 0:
-                raise ValueError("cycle")
-            if sk == 1:
-                continue
-            enter.discard(k)
-            dfs(k)
-        order.appendleft(node)
-        state[node] = 1
-
-    while enter:
-        dfs(enter.pop())
-
-    return [index[pk] for pk in order]
