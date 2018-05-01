@@ -24,3 +24,56 @@ p.hanging-indent {
     stroke-width: 4;
   }
 }
+
+.place-type-point {
+  stroke-width: 2;
+  fill: transparent;
+}
+
+$place-color-map: (
+        0: map_get($theme-colors, 'dark'),
+        1: map_get($theme-colors, 'danger'),
+        2: map_get($theme-colors, 'brown'),
+        3: map_get($theme-colors, 'warning'),
+        100: map_get($theme-colors, 'dark'),
+        101: map_get($theme-colors, 'danger'),
+        102: map_get($theme-colors, 'primary'),
+        200: map_get($theme-colors, 'dark'),
+        201: map_get($theme-colors, 'brown'),
+        202: map_get($theme-colors, 'success'),
+        203: map_get($theme-colors, 'primary'),
+        204: map_get($theme-colors, 'danger'),
+);
+
+.place-temp-point {
+  stroke-width: 2;
+  fill: transparent;
+  stroke: map_get($theme-colors, 'secondary');
+}
+
+@for $i from 0 through 3 {
+  .place-type-#{$i} {
+    @extend .place-temp-point;
+    stroke: map_get($place-color-map, $i);
+  }
+}
+
+@for $i from 100 through 102 {
+  .place-type-#{$i} {
+    stroke-width: 2;
+    fill: none;
+    stroke: map_get($place-color-map, $i);
+  }
+}
+
+@for $i from 200 through 204 {
+  .place-type-#{$i} {
+    fill: map_get($place-color-map, $i);
+
+    &.place-poly-outline {
+      stroke-width: 2;
+      fill: transparent;
+      stroke: map_get($place-color-map, $i);
+    }
+  }
+}
