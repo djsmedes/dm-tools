@@ -162,6 +162,6 @@ LOGIN_REDIRECT_URL = '/'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadyOnly'
+        'rest_framework.permissions.AllowAny'
     ]
 }

@@ -10,14 +10,23 @@ from base.models import BaseModel
 class Place(BaseModel):
 
     _shape = models.BinaryField(db_column='shape', null=True, blank=True)
+    _shapely_object = None
 
     @property
     def shape(self):
-        return wkb_loads(bytes(self._shape))
+        if self._shape is None:
+            return None
+        if self._shapely_object is None:
+            self._shapely_object = wkb_loads(bytes(self._shape))
+        return self._shapely_object
 
     @shape.setter
     def shape(self, shape: Type[BaseGeometry]):
-        self._shape = shape.wkb
+        self._shapely_object = shape
+        if shape is None:
+            self._shape = None
+        else:
+            self._shape = shape.wkb
 
     @property
     def dimensions(self):
@@ -31,20 +40,18 @@ class Place(BaseModel):
     @property
     def points(self):
         dim = self.dimensions
-        if dim == 0:
-            # do something appropriate for a point
-            pass
-        elif dim == 1:
-            # do something appropriate for a line
-            pass
+        if dim < 2:
+            # points or lines use attr .coords directly
+            pts = list(self.shape.coords)
         else:
-            # it's a polygon
-            pts = list(self.shape.exterior.coords)[:-1]
-            return [{'x': pt[0], 'y': pt[1]} for pt in pts]
+            # it's a polygon, which you have to get the exterior attr of first
+            # and also it lists start and end point as the same point, so slice that sucker off
+            pts = self.shape.exterior.coords[:-1]
+        return [{'x': int(pt[0]), 'y': int(pt[1])} for pt in pts]
 
     @property
     def pointstring(self):
         pointstring = ''
         for pt in self.points:
-            pointstring += '{},{} '.format(int(pt['x']), int(pt['y']))
+            pointstring += '{x},{y} '.format(x=pt['x'], y=pt['y'])
         return pointstring

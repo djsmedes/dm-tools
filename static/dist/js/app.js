@@ -444,7 +444,9 @@ _axios2.default.defaults.xsrfHeaderName = 'X-CSRFToken';
 exports.default = {
     data: function data() {
         return {
-            shapes: []
+            shapes: [],
+            temp_points: [],
+            temp_dimensions: null
         };
     },
 
@@ -452,20 +454,49 @@ exports.default = {
         load_shapes: function load_shapes() {
             var _this = this;
 
-            _axios2.default.get('/places/api/get-place-data/').then(function (r) {
-                _this.shapes = r.data.shape_set;
+            _axios2.default.get('/api/places/').then(function (r) {
+                _this.shapes = r.data;
             }).catch(function (e) {
                 console.log(e);
             });
         },
-        test_method: function test_method(event) {
+        get_click_coords: function get_click_coords(event) {
             var bound = document.getElementById('place-canvas').getBoundingClientRect();
             var html = document.documentElement;
             var left = bound.left + window.pageXOffset - html.clientLeft;
             var top = bound.top + window.pageYOffset - html.clientTop;
             var x = event.pageX - left;
             var y = event.pageY - top;
-            console.log(x, y);
+            return { x: x, y: y };
+        },
+        enter_create_context: function enter_create_context(context) {
+            this.temp_dimensions = context;
+        },
+        exit_and_save: function exit_and_save() {
+            var _this2 = this;
+
+            _axios2.default.post('/api/places/', {
+                points: this.temp_points,
+                dimensions: this.temp_dimensions
+            }).then(function (_) {
+                _this2.load_shapes();
+            }).catch(function (e) {
+                console.log(e);
+            });
+            this.exit_create_context();
+        },
+        exit_create_context: function exit_create_context() {
+            this.temp_points = [];
+            this.temp_dimensions = null;
+        },
+        generate_temp_point: function generate_temp_point(event) {
+            if (this.temp_dimensions != null) {
+                var coords = this.get_click_coords(event);
+                if (this.temp_dimensions === 0) {
+                    this.temp_points.pop();
+                }
+                this.temp_points.push(coords);
+            }
         }
     },
     created: function created() {
@@ -476,7 +507,7 @@ exports.default = {
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"ml-5 p-0",staticStyle:{"width":"1200px","height":"900px"}},[_c('svg',{attrs:{"id":"place-canvas","width":"1200","height":"900"}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"10","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_vm._l((_vm.shapes),function(shape){return _c('g',[_c('polygon',{attrs:{"points":shape.points,"stroke":"green","fill":"green","stroke-width":"2","filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{attrs:{"points":shape.points,"fill":"transparent","stroke":"green","stroke-width":"2"}})])}),_vm._v(" "),_c('rect',{attrs:{"width":"1200","height":"900","fill":"transparent","stroke":"black","stroke-width":"2"},on:{"click":function($event){_vm.test_method($event)}}})],2)])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"row"},[_c('div',{staticClass:"ml-5 p-0 col",staticStyle:{"width":"1200px","height":"900px"}},[_c('svg',{attrs:{"id":"place-canvas","width":"1200","height":"900"},on:{"click":function($event){_vm.generate_temp_point($event)}}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"10","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_c('rect',{attrs:{"width":"1200","height":"900","fill":"transparent","stroke":"black","stroke-width":"2"}}),_vm._v(" "),_vm._l((_vm.shapes),function(shape){return _c('g',[(shape.dimensions === '2')?_c('g',[_c('polygon',{attrs:{"points":shape.pointstring,"stroke":"green","fill":"green","stroke-width":"2","filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{attrs:{"points":shape.pointstring,"fill":"transparent","stroke":"green","stroke-width":"2"}})]):_vm._e()])}),_vm._v(" "),_vm._l((_vm.temp_points),function(pt){return _c('circle',{attrs:{"cx":pt.x,"cy":pt.y,"r":"5","stroke":"black","stroke-width":"2","fill":"transparent"}})})],2)]),_vm._v(" "),_c('div',{staticClass:"col"},[(_vm.temp_dimensions == null)?_c('button',{staticClass:"btn btn-outline-dark",on:{"click":function($event){_vm.enter_create_context(0)}}},[_vm._v("\n      Create new Point\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions === 0)?_c('button',{staticClass:"btn btn-dark",on:{"click":_vm.exit_and_save}},[_vm._v("\n      Save this Point\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions == null)?_c('button',{staticClass:"btn btn-outline-dark",on:{"click":function($event){_vm.enter_create_context(1)}}},[_vm._v("\n      Create new Line\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions === 1)?_c('button',{staticClass:"btn btn-dark",on:{"click":_vm.exit_and_save}},[_vm._v("\n      Save this Line\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions == null)?_c('button',{staticClass:"btn btn-outline-dark",on:{"click":function($event){_vm.enter_create_context(2)}}},[_vm._v("\n      Create new Polygon\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions === 2)?_c('button',{staticClass:"btn btn-dark",on:{"click":_vm.exit_and_save}},[_vm._v("\n      Save this Polygon\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions != null)?_c('button',{staticClass:"btn btn-outline-danger",on:{"click":_vm.exit_create_context}},[_vm._v("\n      Cancel\n    ")]):_vm._e()])])}
 __vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
