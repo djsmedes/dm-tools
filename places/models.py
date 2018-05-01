@@ -65,15 +65,5 @@ class Place(BaseModel):
             pts = self.shape.exterior.coords[:-1]
         return [{'x': int(pt[0]), 'y': int(pt[1])} for pt in pts]
 
-    @property
-    def pointstring(self):
-        pointstring = ''
-        for pt in self.points:
-            pointstring += '{x},{y} '.format(x=pt['x'], y=pt['y'])
-        return pointstring
-
-    def __lt__(self, other):
-        return self.shape.within(other.shape)
-
     def __str__(self):
         return str(self.id)
