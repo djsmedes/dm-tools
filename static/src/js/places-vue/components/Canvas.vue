@@ -13,14 +13,30 @@
 
         <rect width="1200" height="900" fill="transparent" stroke="black" stroke-width="2"></rect>
 
-        <g v-for="shape in shapes">
+        <template v-for="shape in shapes">
           <g v-if="shape.dimensions === '2'">
-            <polygon :points="shape.pointstring" stroke="green" fill="green" stroke-width="2"
+            <polygon :points="points_to_pointstring(shape.points)" stroke="green" fill="green" stroke-width="2"
                      filter="url(#innershadow)"></polygon>
-            <polygon :points="shape.pointstring" fill="transparent" stroke="green" stroke-width="2"></polygon>
+            <polygon :points="points_to_pointstring(shape.points)" fill="transparent" stroke="green"
+                     stroke-width="2"></polygon>
           </g>
-        </g>
+          <polyline v-else-if="shape.dimensions === '1'" :points="points_to_pointstring(shape.points)" stroke="blue"
+                    stroke-width="2"
+                    fill="none"></polyline>
+          <circle v-else-if="shape.dimensions === '0'"
+                  v-for="pt in shape.points"
+                  :cx="pt.x" :cy="pt.y" r="5"
+                  stroke="black" stroke-width="2" fill="transparent"></circle>
+        </template>
 
+        <polyline v-if="temp_dimensions === 1" :points="points_to_pointstring(temp_points)" stroke="blue"
+                  stroke-width="2" fill="none"></polyline>
+        <g v-if="temp_dimensions === 2">
+          <polygon :points="points_to_pointstring(temp_points)" stroke="green" fill="green" stroke-width="2"
+                   filter="url(#innershadow)"></polygon>
+          <polygon :points="points_to_pointstring(temp_points)" fill="transparent" stroke="green"
+                   stroke-width="2"></polygon>
+        </g>
         <circle v-for="pt in temp_points"
                 :cx="pt.x" :cy="pt.y" r="5"
                 stroke="black" stroke-width="2" fill="transparent"></circle>
@@ -106,7 +122,7 @@
                 let y = event.pageY - top;
                 return {x: x, y: y};
             },
-            enter_create_context: function(context) {
+            enter_create_context: function (context) {
                 this.temp_dimensions = context;
             },
             exit_and_save: function () {
@@ -115,7 +131,9 @@
                         points: this.temp_points,
                         dimensions: this.temp_dimensions
                     })
-                    .then(_ => { this.load_shapes() })
+                    .then(_ => {
+                        this.load_shapes()
+                    })
                     .catch(e => {
                         console.log(e)
                     });
@@ -125,14 +143,21 @@
                 this.temp_points = [];
                 this.temp_dimensions = null;
             },
-            generate_temp_point: function(event) {
-                if ( this.temp_dimensions != null ) {
+            generate_temp_point: function (event) {
+                if (this.temp_dimensions != null) {
                     let coords = this.get_click_coords(event);
-                    if ( this.temp_dimensions === 0) {
+                    if (this.temp_dimensions === 0) {
                         this.temp_points.pop();
                     }
                     this.temp_points.push(coords);
                 }
+            },
+            points_to_pointstring: function (points_obj) {
+                let pointstring = '';
+                points_obj.forEach(function (point) {
+                    pointstring += point.x + ',' + point.y + ' ';
+                });
+                return pointstring
             }
         },
         created() {

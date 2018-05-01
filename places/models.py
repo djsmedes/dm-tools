@@ -9,8 +9,21 @@ from base.models import BaseModel
 
 class Place(BaseModel):
 
+    POINT = 0
+    LINE = 1
+    POLYGON = 2
+    DIMENSIONS_CHOICES = [
+        (POINT, 'point'),
+        (LINE, 'line'),
+        (POLYGON, 'polygon')
+    ]
+
     _shape = models.BinaryField(db_column='shape', null=True, blank=True)
+    _dimensions = models.IntegerField(db_column='dimensions', choices=DIMENSIONS_CHOICES, null=True, blank=True)
     _shapely_object = None
+
+    class Meta:
+        ordering = ['-_dimensions']
 
     @property
     def shape(self):
@@ -27,15 +40,18 @@ class Place(BaseModel):
             self._shape = None
         else:
             self._shape = shape.wkb
+        self._dimensions = self.dimensions
 
     @property
     def dimensions(self):
         if isinstance(self.shape, Point):
-            return 0
+            return self.POINT  # 0
+        elif isinstance(self.shape, LineString):
+            return self.LINE  # 1
         elif isinstance(self.shape, Polygon):
-            return 2
+            return self.POLYGON  # 2
         else:
-            return 1
+            return None
 
     @property
     def points(self):
