@@ -71,3 +71,9 @@ class Place(BaseModel):
         for pt in self.points:
             pointstring += '{x},{y} '.format(x=pt['x'], y=pt['y'])
         return pointstring
+
+    def __lt__(self, other):
+        return self.shape.within(other.shape)
+
+    def __repr__(self):
+        return str(self.id)

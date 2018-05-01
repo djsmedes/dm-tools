@@ -517,6 +517,7 @@ exports.default = {
             }
 
             var pk = event.target.id.split('-')[1];
+            console.log(pk);
         }
     },
     created: function created() {
