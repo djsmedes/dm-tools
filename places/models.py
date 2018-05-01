@@ -8,6 +8,45 @@ from base.models import BaseModel
 
 
 class Place(BaseModel):
+    # actual Place details
+
+    description = models.TextField(null=True, blank=True)
+
+    MISC_REGION = 200
+    GEOLOGICAL = 201
+    VEGETATION = 202
+    WATER = 203
+    POLITICAL = 204
+
+    MISC_LINE = 100
+    ROAD = 101
+    RIVER = 102
+
+    MISC_POINT = 0
+    SETTLEMENT = 1
+    NATURAL = 2
+    DUNGEON = 3
+
+    TYPE_CHOICES = [
+        (MISC_REGION, 'misc region'),
+        (GEOLOGICAL, 'geological'),
+        (VEGETATION, 'vegetation'),
+        (WATER, 'water'),
+        (POLITICAL, 'political'),
+
+        (MISC_LINE, 'misc line'),
+        (ROAD, 'road'),
+        (RIVER, 'river'),
+
+        (MISC_POINT, 'misc point'),
+        (SETTLEMENT, 'settlement'),
+        (NATURAL, 'natural'),
+        (DUNGEON, 'dungeon'),
+    ]
+
+    type = models.IntegerField(choices=TYPE_CHOICES, null=True, blank=True)
+
+    # Shapely stuff
 
     POINT = 0
     LINE = 1
