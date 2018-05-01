@@ -447,7 +447,28 @@ exports.default = {
             shapes: [],
             temp_points: [],
             temp_dimensions: null,
-            hoverable_place_class: 'hoverable-place'
+            temp_type: null,
+            hoverable_place_class: 'hoverable-place',
+            shape_types: {
+                d2: {
+                    200: { name: 'misc region', bscolor: 'dark', rgbcolor: 'rgb(52, 58, 64)' },
+                    201: { name: 'geological', bscolor: 'brown', rgbcolor: 'rgb(87, 53, 17)' },
+                    202: { name: 'vegetation', bscolor: 'success', rgbcolor: 'rgb(40, 167, 69)' },
+                    203: { name: 'water', bscolor: 'primary', rgbcolor: 'rgb(0, 123, 255)' },
+                    204: { name: 'political', bscolor: 'danger', rgbcolor: 'rgb(220, 53, 69)' }
+                },
+                d1: {
+                    100: { name: 'misc line', bscolor: 'dark', rgbcolor: 'rgb(52, 58, 64)' },
+                    101: { name: 'road', bscolor: 'danger', rgbcolor: 'rgb(220, 53, 69)' },
+                    102: { name: 'river', bscolor: 'primary', rgbcolor: 'rgb(0, 123, 255)' }
+                },
+                d0: {
+                    0: { name: 'misc point', bscolor: 'dark', rgbcolor: 'rgb(52, 58, 64)' },
+                    1: { name: 'settlement', bscolor: 'danger', rgbcolor: 'rgb(220, 53, 69)' },
+                    2: { name: 'natural', bscolor: 'brown', rgbcolor: 'rgb(87, 53, 17)' },
+                    3: { name: 'dungeon', bscolor: 'warning', rgbcolor: 'rgb(255, 193, 7)' }
+                }
+            }
         };
     },
 
@@ -471,7 +492,8 @@ exports.default = {
             return { x: x, y: y };
         },
         enter_create_context: function enter_create_context(context) {
-            this.temp_dimensions = context;
+            this.temp_dimensions = ~~(context / 100);
+            this.temp_type = context % 100;
             this.hoverable_place_class = '';
         },
         exit_and_save: function exit_and_save() {
@@ -479,7 +501,8 @@ exports.default = {
 
             _axios2.default.post('/api/places/', {
                 points: this.temp_points,
-                dimensions: this.temp_dimensions
+                dimensions: this.temp_dimensions,
+                type: this.temp_type + this.temp_dimensions * 100
             }).then(function (_) {
                 _this2.load_shapes();
             }).catch(function (e) {
@@ -490,6 +513,7 @@ exports.default = {
         exit_create_context: function exit_create_context() {
             this.temp_points = [];
             this.temp_dimensions = null;
+            this.temp_type = null;
             this.hoverable_place_class = 'hoverable-place';
         },
         generate_temp_point: function generate_temp_point(event) {
@@ -518,6 +542,22 @@ exports.default = {
 
             var pk = event.target.id.split('-')[1];
             console.log(pk);
+        },
+        get_circle_color: function get_circle_color() {
+            if (this.temp_dimensions === 0) {
+                return this.shape_types.d0[this.temp_type].rgbcolor;
+            } else {
+                return 'rgb(108, 117, 125)';
+            }
+        },
+        get_shape_color: function get_shape_color(shape) {
+            if (shape.type > 199) {
+                return this.shape_types.d2[shape.type].rgbcolor;
+            } else if (shape.type > 99) {
+                return this.shape_types.d1[shape.type].rgbcolor;
+            } else {
+                return this.shape_types.d0[shape.type].rgbcolor;
+            }
         }
     },
     created: function created() {
@@ -528,7 +568,7 @@ exports.default = {
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"row"},[_c('div',{staticClass:"ml-5 p-0 col",staticStyle:{"width":"1200px","height":"900px"}},[_c('svg',{attrs:{"id":"place-canvas","width":"1200","height":"900"},on:{"click":function($event){_vm.generate_temp_point($event)}}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"10","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_c('rect',{attrs:{"width":"1200","height":"900","fill":"transparent","stroke":"black","stroke-width":"2"}}),_vm._v(" "),_vm._l((_vm.shapes),function(shape){return [(shape.dimensions === '2')?_c('g',[_c('polygon',{attrs:{"points":_vm.points_to_pointstring(shape.points),"stroke":"green","fill":"green","stroke-width":"2","filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:_vm.hoverable_place_class,attrs:{"points":_vm.points_to_pointstring(shape.points),"fill":"transparent","stroke":"green","id":'place-' + shape.id,"stroke-width":"2"},on:{"click":function($event){_vm.place_clicked($event)}}})]):(shape.dimensions === '1')?_c('polyline',{class:_vm.hoverable_place_class,attrs:{"points":_vm.points_to_pointstring(shape.points),"stroke":"blue","stroke-width":"2","id":'place-' + shape.id,"fill":"none"},on:{"click":function($event){_vm.place_clicked($event)}}}):(shape.dimensions === '0')?_vm._l((shape.points),function(pt){return _c('circle',{class:_vm.hoverable_place_class,attrs:{"cx":pt.x,"cy":pt.y,"r":"5","id":'place-' + shape.id,"stroke":"black","stroke-width":"2","fill":"transparent"},on:{"click":function($event){_vm.place_clicked($event)}}})}):_vm._e()]}),_vm._v(" "),(_vm.temp_dimensions === 1)?_c('polyline',{attrs:{"points":_vm.points_to_pointstring(_vm.temp_points),"stroke":"blue","stroke-width":"2","fill":"none"}}):_vm._e(),_vm._v(" "),(_vm.temp_dimensions === 2)?_c('g',[_c('polygon',{attrs:{"points":_vm.points_to_pointstring(_vm.temp_points),"stroke":"green","fill":"green","stroke-width":"2","filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{attrs:{"points":_vm.points_to_pointstring(_vm.temp_points),"fill":"transparent","stroke":"green","stroke-width":"2"}})]):_vm._e(),_vm._v(" "),_vm._l((_vm.temp_points),function(pt){return _c('circle',{attrs:{"cx":pt.x,"cy":pt.y,"r":"5","stroke":"black","stroke-width":"2","fill":"transparent"}})})],2)]),_vm._v(" "),_c('div',{staticClass:"col"},[(_vm.temp_dimensions == null)?_c('button',{staticClass:"btn btn-outline-dark",on:{"click":function($event){_vm.enter_create_context(0)}}},[_vm._v("\n      Create new Point\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions === 0)?_c('button',{staticClass:"btn btn-dark",on:{"click":_vm.exit_and_save}},[_vm._v("\n      Save this Point\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions == null)?_c('button',{staticClass:"btn btn-outline-dark",on:{"click":function($event){_vm.enter_create_context(1)}}},[_vm._v("\n      Create new Line\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions === 1)?_c('button',{staticClass:"btn btn-dark",on:{"click":_vm.exit_and_save}},[_vm._v("\n      Save this Line\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions == null)?_c('button',{staticClass:"btn btn-outline-dark",on:{"click":function($event){_vm.enter_create_context(2)}}},[_vm._v("\n      Create new Polygon\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions === 2)?_c('button',{staticClass:"btn btn-dark",on:{"click":_vm.exit_and_save}},[_vm._v("\n      Save this Polygon\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions != null)?_c('button',{staticClass:"btn btn-outline-danger",on:{"click":_vm.exit_create_context}},[_vm._v("\n      Cancel\n    ")]):_vm._e()])])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"row"},[_c('div',{staticClass:"ml-5 p-0 col",staticStyle:{"width":"1200px","height":"900px"}},[_c('svg',{attrs:{"id":"place-canvas","width":"1200","height":"900"},on:{"click":function($event){_vm.generate_temp_point($event)}}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"10","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_c('rect',{attrs:{"width":"1200","height":"900","fill":"transparent","stroke":"black","stroke-width":"2"}}),_vm._v(" "),_vm._l((_vm.shapes),function(shape){return [(shape.dimensions === 2)?_c('g',[_c('polygon',{attrs:{"points":_vm.points_to_pointstring(shape.points),"fill":_vm.get_shape_color(shape),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:_vm.hoverable_place_class,attrs:{"points":_vm.points_to_pointstring(shape.points),"fill":"transparent","stroke":_vm.get_shape_color(shape),"id":'place-' + shape.id,"stroke-width":"2"},on:{"click":function($event){_vm.place_clicked($event)}}})]):(shape.dimensions === 1)?_c('polyline',{class:_vm.hoverable_place_class,attrs:{"points":_vm.points_to_pointstring(shape.points),"stroke":_vm.get_shape_color(shape),"stroke-width":"2","id":'place-' + shape.id,"fill":"none"},on:{"click":function($event){_vm.place_clicked($event)}}}):(shape.dimensions === 0)?_vm._l((shape.points),function(pt){return _c('circle',{class:_vm.hoverable_place_class,attrs:{"cx":pt.x,"cy":pt.y,"r":"5","id":'place-' + shape.id,"stroke":_vm.get_shape_color(shape),"stroke-width":"2","fill":"transparent"},on:{"click":function($event){_vm.place_clicked($event)}}})}):_vm._e()]}),_vm._v(" "),(_vm.temp_dimensions === 1)?_c('polyline',{attrs:{"points":_vm.points_to_pointstring(_vm.temp_points),"stroke":_vm.shape_types.d1[100+_vm.temp_type].rgbcolor,"stroke-width":"2","fill":"none"}}):_vm._e(),_vm._v(" "),(_vm.temp_dimensions === 2)?_c('g',[_c('polygon',{attrs:{"points":_vm.points_to_pointstring(_vm.temp_points),"fill":_vm.shape_types.d2[200+_vm.temp_type].rgbcolor,"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{attrs:{"points":_vm.points_to_pointstring(_vm.temp_points),"fill":"transparent","stroke":_vm.shape_types.d2[200+_vm.temp_type].rgbcolor,"stroke-width":"2"}})]):_vm._e(),_vm._v(" "),_vm._l((_vm.temp_points),function(pt){return _c('circle',{attrs:{"cx":pt.x,"cy":pt.y,"r":"5","stroke":_vm.get_circle_color(),"stroke-width":"2","fill":"transparent"}})})],2)]),_vm._v(" "),_c('div',{staticClass:"col"},[(_vm.temp_dimensions == null)?_c('div',{staticClass:"btn-group",attrs:{"role":"group","aria-label":"Point creation buttons"}},_vm._l((_vm.shape_types.d0),function(type,key){return _c('button',{class:'btn btn-outline-' + type.bscolor,attrs:{"type":"button"},on:{"click":function($event){_vm.enter_create_context(key)}}},[_vm._v("\n        New "+_vm._s(type.name)+"\n      ")])})):_vm._e(),_vm._v(" "),_c('br'),_vm._v(" "),(_vm.temp_dimensions == null)?_c('div',{staticClass:"btn-group",attrs:{"role":"group","aria-label":"Line creation buttons"}},_vm._l((_vm.shape_types.d1),function(type,key){return _c('button',{class:'btn btn-outline-' + type.bscolor,attrs:{"type":"button"},on:{"click":function($event){_vm.enter_create_context(key)}}},[_vm._v("\n        New "+_vm._s(type.name)+"\n      ")])})):_vm._e(),_vm._v(" "),_c('br'),_vm._v(" "),(_vm.temp_dimensions == null)?_c('div',{staticClass:"btn-group",attrs:{"role":"group","aria-label":"Shape creation buttons"}},_vm._l((_vm.shape_types.d2),function(type,key){return _c('button',{class:'btn btn-outline-' + type.bscolor,attrs:{"type":"button"},on:{"click":function($event){_vm.enter_create_context(key)}}},[_vm._v("\n        New "+_vm._s(type.name)+"\n      ")])})):_vm._e(),_vm._v(" "),(_vm.temp_dimensions != null)?_c('button',{staticClass:"btn btn-outline-success",on:{"click":_vm.exit_and_save}},[_vm._v("\n      Save\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions != null)?_c('button',{staticClass:"btn btn-outline-danger",on:{"click":_vm.exit_create_context}},[_vm._v("\n      Cancel\n    ")]):_vm._e()])])}
 __vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)

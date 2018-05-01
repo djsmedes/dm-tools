@@ -10,6 +10,6 @@ class PointSerializer(serializers.Serializer):
 
 class PlaceSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
-    dimensions = serializers.CharField()
+    dimensions = serializers.IntegerField()
     points = PointSerializer(many=True)
-    pointstring = serializers.CharField()
+    type = serializers.IntegerField()

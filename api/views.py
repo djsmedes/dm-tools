@@ -20,6 +20,7 @@ class PlaceList(APIView):
     def post(self, request, format=None):
         coords = [(datum['x'], datum['y']) for datum in request.data['points']]
         dimensions = request.data['dimensions']
+        type = request.data['type']
         place = Place()
         if dimensions == 0:
             try:
@@ -46,5 +47,6 @@ class PlaceList(APIView):
                         'errors': 'Polygons must have at least three coordinate pairs.'
                     }}, HTTP_400_BAD_REQUEST)
         place.shape = shape
+        place.type = type
         place.save()
         return Response({}, HTTP_201_CREATED)
