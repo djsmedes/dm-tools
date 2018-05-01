@@ -446,7 +446,8 @@ exports.default = {
         return {
             shapes: [],
             temp_points: [],
-            temp_dimensions: null
+            temp_dimensions: null,
+            hoverable_place_class: 'hoverable-place'
         };
     },
 
@@ -471,6 +472,7 @@ exports.default = {
         },
         enter_create_context: function enter_create_context(context) {
             this.temp_dimensions = context;
+            this.hoverable_place_class = '';
         },
         exit_and_save: function exit_and_save() {
             var _this2 = this;
@@ -488,6 +490,7 @@ exports.default = {
         exit_create_context: function exit_create_context() {
             this.temp_points = [];
             this.temp_dimensions = null;
+            this.hoverable_place_class = 'hoverable-place';
         },
         generate_temp_point: function generate_temp_point(event) {
             if (this.temp_dimensions != null) {
@@ -504,6 +507,16 @@ exports.default = {
                 pointstring += point.x + ',' + point.y + ' ';
             });
             return pointstring;
+        },
+        place_clicked: function place_clicked(event) {
+            var $clicked = $(event.target);
+            var was_active = $clicked.hasClass('active');
+            $('.active').removeClass('active');
+            if (!was_active) {
+                $clicked.addClass('active');
+            }
+
+            var pk = event.target.id.split('-')[1];
         }
     },
     created: function created() {
@@ -514,7 +527,7 @@ exports.default = {
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"row"},[_c('div',{staticClass:"ml-5 p-0 col",staticStyle:{"width":"1200px","height":"900px"}},[_c('svg',{attrs:{"id":"place-canvas","width":"1200","height":"900"},on:{"click":function($event){_vm.generate_temp_point($event)}}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"10","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_c('rect',{attrs:{"width":"1200","height":"900","fill":"transparent","stroke":"black","stroke-width":"2"}}),_vm._v(" "),_vm._l((_vm.shapes),function(shape){return [(shape.dimensions === '2')?_c('g',[_c('polygon',{attrs:{"points":_vm.points_to_pointstring(shape.points),"stroke":"green","fill":"green","stroke-width":"2","filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{attrs:{"points":_vm.points_to_pointstring(shape.points),"fill":"transparent","stroke":"green","stroke-width":"2"}})]):(shape.dimensions === '1')?_c('polyline',{attrs:{"points":_vm.points_to_pointstring(shape.points),"stroke":"blue","stroke-width":"2","fill":"none"}}):(shape.dimensions === '0')?_vm._l((shape.points),function(pt){return _c('circle',{attrs:{"cx":pt.x,"cy":pt.y,"r":"5","stroke":"black","stroke-width":"2","fill":"transparent"}})}):_vm._e()]}),_vm._v(" "),(_vm.temp_dimensions === 1)?_c('polyline',{attrs:{"points":_vm.points_to_pointstring(_vm.temp_points),"stroke":"blue","stroke-width":"2","fill":"none"}}):_vm._e(),_vm._v(" "),(_vm.temp_dimensions === 2)?_c('g',[_c('polygon',{attrs:{"points":_vm.points_to_pointstring(_vm.temp_points),"stroke":"green","fill":"green","stroke-width":"2","filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{attrs:{"points":_vm.points_to_pointstring(_vm.temp_points),"fill":"transparent","stroke":"green","stroke-width":"2"}})]):_vm._e(),_vm._v(" "),_vm._l((_vm.temp_points),function(pt){return _c('circle',{attrs:{"cx":pt.x,"cy":pt.y,"r":"5","stroke":"black","stroke-width":"2","fill":"transparent"}})})],2)]),_vm._v(" "),_c('div',{staticClass:"col"},[(_vm.temp_dimensions == null)?_c('button',{staticClass:"btn btn-outline-dark",on:{"click":function($event){_vm.enter_create_context(0)}}},[_vm._v("\n      Create new Point\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions === 0)?_c('button',{staticClass:"btn btn-dark",on:{"click":_vm.exit_and_save}},[_vm._v("\n      Save this Point\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions == null)?_c('button',{staticClass:"btn btn-outline-dark",on:{"click":function($event){_vm.enter_create_context(1)}}},[_vm._v("\n      Create new Line\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions === 1)?_c('button',{staticClass:"btn btn-dark",on:{"click":_vm.exit_and_save}},[_vm._v("\n      Save this Line\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions == null)?_c('button',{staticClass:"btn btn-outline-dark",on:{"click":function($event){_vm.enter_create_context(2)}}},[_vm._v("\n      Create new Polygon\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions === 2)?_c('button',{staticClass:"btn btn-dark",on:{"click":_vm.exit_and_save}},[_vm._v("\n      Save this Polygon\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions != null)?_c('button',{staticClass:"btn btn-outline-danger",on:{"click":_vm.exit_create_context}},[_vm._v("\n      Cancel\n    ")]):_vm._e()])])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"row"},[_c('div',{staticClass:"ml-5 p-0 col",staticStyle:{"width":"1200px","height":"900px"}},[_c('svg',{attrs:{"id":"place-canvas","width":"1200","height":"900"},on:{"click":function($event){_vm.generate_temp_point($event)}}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"10","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_c('rect',{attrs:{"width":"1200","height":"900","fill":"transparent","stroke":"black","stroke-width":"2"}}),_vm._v(" "),_vm._l((_vm.shapes),function(shape){return [(shape.dimensions === '2')?_c('g',[_c('polygon',{attrs:{"points":_vm.points_to_pointstring(shape.points),"stroke":"green","fill":"green","stroke-width":"2","filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:_vm.hoverable_place_class,attrs:{"points":_vm.points_to_pointstring(shape.points),"fill":"transparent","stroke":"green","id":'place-' + shape.id,"stroke-width":"2"},on:{"click":function($event){_vm.place_clicked($event)}}})]):(shape.dimensions === '1')?_c('polyline',{class:_vm.hoverable_place_class,attrs:{"points":_vm.points_to_pointstring(shape.points),"stroke":"blue","stroke-width":"2","id":'place-' + shape.id,"fill":"none"},on:{"click":function($event){_vm.place_clicked($event)}}}):(shape.dimensions === '0')?_vm._l((shape.points),function(pt){return _c('circle',{class:_vm.hoverable_place_class,attrs:{"cx":pt.x,"cy":pt.y,"r":"5","id":'place-' + shape.id,"stroke":"black","stroke-width":"2","fill":"transparent"},on:{"click":function($event){_vm.place_clicked($event)}}})}):_vm._e()]}),_vm._v(" "),(_vm.temp_dimensions === 1)?_c('polyline',{attrs:{"points":_vm.points_to_pointstring(_vm.temp_points),"stroke":"blue","stroke-width":"2","fill":"none"}}):_vm._e(),_vm._v(" "),(_vm.temp_dimensions === 2)?_c('g',[_c('polygon',{attrs:{"points":_vm.points_to_pointstring(_vm.temp_points),"stroke":"green","fill":"green","stroke-width":"2","filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{attrs:{"points":_vm.points_to_pointstring(_vm.temp_points),"fill":"transparent","stroke":"green","stroke-width":"2"}})]):_vm._e(),_vm._v(" "),_vm._l((_vm.temp_points),function(pt){return _c('circle',{attrs:{"cx":pt.x,"cy":pt.y,"r":"5","stroke":"black","stroke-width":"2","fill":"transparent"}})})],2)]),_vm._v(" "),_c('div',{staticClass:"col"},[(_vm.temp_dimensions == null)?_c('button',{staticClass:"btn btn-outline-dark",on:{"click":function($event){_vm.enter_create_context(0)}}},[_vm._v("\n      Create new Point\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions === 0)?_c('button',{staticClass:"btn btn-dark",on:{"click":_vm.exit_and_save}},[_vm._v("\n      Save this Point\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions == null)?_c('button',{staticClass:"btn btn-outline-dark",on:{"click":function($event){_vm.enter_create_context(1)}}},[_vm._v("\n      Create new Line\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions === 1)?_c('button',{staticClass:"btn btn-dark",on:{"click":_vm.exit_and_save}},[_vm._v("\n      Save this Line\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions == null)?_c('button',{staticClass:"btn btn-outline-dark",on:{"click":function($event){_vm.enter_create_context(2)}}},[_vm._v("\n      Create new Polygon\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions === 2)?_c('button',{staticClass:"btn btn-dark",on:{"click":_vm.exit_and_save}},[_vm._v("\n      Save this Polygon\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_dimensions != null)?_c('button',{staticClass:"btn btn-outline-danger",on:{"click":_vm.exit_create_context}},[_vm._v("\n      Cancel\n    ")]):_vm._e()])])}
 __vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -523,7 +536,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-43273a22", __vue__options__)
   } else {
-    hotAPI.rerender("data-v-43273a22", __vue__options__)
+    hotAPI.reload("data-v-43273a22", __vue__options__)
   }
 })()}
 });

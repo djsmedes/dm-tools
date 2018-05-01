@@ -11,6 +11,16 @@ $theme-colors: (
 @import "homepage";
 
 p.hanging-indent {
-    text-indent: -2em;
-    padding-left: 2em;
+  text-indent: -2em;
+  padding-left: 2em;
+}
+
+#place-canvas .hoverable-place {
+  &.active {
+    stroke-width: 4;
+  }
+
+  @include hover-focus() {
+    stroke-width: 4;
+  }
 }

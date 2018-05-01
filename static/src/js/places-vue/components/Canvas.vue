@@ -15,17 +15,29 @@
 
         <template v-for="shape in shapes">
           <g v-if="shape.dimensions === '2'">
-            <polygon :points="points_to_pointstring(shape.points)" stroke="green" fill="green" stroke-width="2"
+            <polygon :points="points_to_pointstring(shape.points)"
+                     stroke="green" fill="green" stroke-width="2"
                      filter="url(#innershadow)"></polygon>
-            <polygon :points="points_to_pointstring(shape.points)" fill="transparent" stroke="green"
+            <polygon :points="points_to_pointstring(shape.points)"
+                     fill="transparent" stroke="green"
+                     :id="'place-' + shape.id"
+                     :class="hoverable_place_class"
+                     @click="place_clicked($event)"
                      stroke-width="2"></polygon>
           </g>
-          <polyline v-else-if="shape.dimensions === '1'" :points="points_to_pointstring(shape.points)" stroke="blue"
-                    stroke-width="2"
+          <polyline v-else-if="shape.dimensions === '1'"
+                    :points="points_to_pointstring(shape.points)"
+                    stroke="blue" stroke-width="2"
+                    :class="hoverable_place_class"
+                    :id="'place-' + shape.id"
+                    @click="place_clicked($event)"
                     fill="none"></polyline>
           <circle v-else-if="shape.dimensions === '0'"
                   v-for="pt in shape.points"
                   :cx="pt.x" :cy="pt.y" r="5"
+                  :id="'place-' + shape.id"
+                  :class="hoverable_place_class"
+                  @click="place_clicked($event)"
                   stroke="black" stroke-width="2" fill="transparent"></circle>
         </template>
 
@@ -99,7 +111,8 @@
             return {
                 shapes: [],
                 temp_points: [],
-                temp_dimensions: null
+                temp_dimensions: null,
+                hoverable_place_class: 'hoverable-place'
             }
         },
         methods: {
@@ -124,6 +137,7 @@
             },
             enter_create_context: function (context) {
                 this.temp_dimensions = context;
+                this.hoverable_place_class = '';
             },
             exit_and_save: function () {
                 axios
@@ -142,6 +156,7 @@
             exit_create_context: function () {
                 this.temp_points = [];
                 this.temp_dimensions = null;
+                this.hoverable_place_class = 'hoverable-place';
             },
             generate_temp_point: function (event) {
                 if (this.temp_dimensions != null) {
@@ -158,6 +173,18 @@
                     pointstring += point.x + ',' + point.y + ' ';
                 });
                 return pointstring
+            },
+            place_clicked: function (event) {
+                // toggle display active state
+                let $clicked = $(event.target);
+                let was_active = $clicked.hasClass('active');
+                $('.active').removeClass('active');
+                if (!was_active) {
+                    $clicked.addClass('active');
+                }
+
+                // load details about place
+                let pk = event.target.id.split('-')[1];
             }
         },
         created() {
