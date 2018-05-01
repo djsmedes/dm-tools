@@ -75,5 +75,5 @@ class Place(BaseModel):
     def __lt__(self, other):
         return self.shape.within(other.shape)
 
-    def __repr__(self):
+    def __str__(self):
         return str(self.id)
