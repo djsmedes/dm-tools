@@ -1,11 +1,26 @@
 <template>
-  <div class="row">
-    <div class="ml-5 p-0 col" style="width: 1200px; height: 900px">
+  <div class="row container-fluid px-5">
+
+    <div class="col">
+      <div class="card">
+        <div class="card-header bg-dark text-white">
+          Place name
+        </div>
+        <div class="card-body">
+          Lorem ipsum
+        </div>
+        <div class="card-footer">
+          footer stuff
+        </div>
+      </div>
+    </div>
+
+    <div class="col-auto ml-auto p-0" style="width: 1200px; height: 900px">
 
       <svg id="place-canvas" width="1200" height="900" @click="generate_temp_point($event)">
         <defs>
           <filter id="innershadow">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"></feGaussianBlur>
+            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"></feGaussianBlur>
             <feComposite in2="SourceGraphic" operator="arithmetic" k2="-1" k3="1" result="shadowDiff"></feComposite>
           </filter>
 
@@ -48,40 +63,30 @@
         <circle v-for="pt in temp_points"
                 :cx="pt.x" :cy="pt.y" r="5"
                 :class="get_temp_circle_class()"></circle>
-
-
       </svg>
 
     </div>
 
-    <div class="col">
-      <div v-if="temp_type == null"
-              class="btn-group" role="group" aria-label="Point creation buttons">
-        <button v-for="(type, key) in shape_types.d0" type="button"
-                :class="'btn btn-outline-' + type.bscolor"
-                @click="enter_create_context(key)" >
-          New {{ type.name }}
-        </button>
+    <div class="col-auto ml-2">
+      <div class="card">
+        <div class="card-header bg-dark text-white">
+          Key
+        </div>
+        <ul class="list-group list-group-flush">
+          <li v-for="(name, type) in place_types" class="list-group-item">
+            <svg width="16" height="16">
+              <circle v-if="type < 100" cx="8" cy="8" r="5" :class="'place-type-' + type"></circle>
+              <polyline v-else-if="type < 200" points="2,2 4,12 14,14" :class="'place-type-' + type"></polyline>
+              <g v-else>
+                <polygon points="2,2 50,0 0,50" :class="'place-type-' + type" filter="url(#innershadow)"></polygon>
+                <polygon points="2,2 50,0 0,50" :class="'place-poly-outline place-type-' + type"></polygon>
+              </g>
+            </svg>
+            {{ name }}
+            <button class="btn btn-sm btn-light rounded-circle" @click="enter_create_context(type)">+</button>
+          </li>
+        </ul>
       </div>
-      <br>
-      <div v-if="temp_type == null"
-              class="btn-group" role="group" aria-label="Line creation buttons">
-        <button v-for="(type, key) in shape_types.d1" type="button"
-                :class="'btn btn-outline-' + type.bscolor"
-                @click="enter_create_context(key)" >
-          New {{ type.name }}
-        </button>
-      </div>
-      <br>
-      <div v-if="temp_type == null"
-              class="btn-group" role="group" aria-label="Shape creation buttons">
-        <button v-for="(type, key) in shape_types.d2" type="button"
-                :class="'btn btn-outline-' + type.bscolor"
-                @click="enter_create_context(key)" >
-          New {{ type.name }}
-        </button>
-      </div>
-
       <button v-if="temp_type != null"
               class="btn btn-outline-success"
               @click="exit_and_save">
@@ -95,7 +100,6 @@
     </div>
 
   </div>
-
 </template>
 
 <script>
@@ -111,25 +115,19 @@
                 temp_points: [],
                 temp_type: null,
                 hoverable_place_class: 'hoverable-place',
-                shape_types: {
-                    d2: {
-                        200: {name: 'misc region', bscolor: 'dark'},
-                        201: {name: 'geological', bscolor: 'brown'},
-                        202: {name: 'vegetation', bscolor: 'success'},
-                        203: {name: 'water', bscolor: 'primary'},
-                        204: {name: 'political', bscolor: 'danger'}
-                    },
-                    d1: {
-                        100: {name: 'misc line', bscolor: 'dark'},
-                        101: {name: 'road', bscolor: 'danger'},
-                        102: {name: 'river', bscolor: 'primary'}
-                    },
-                    d0: {
-                        0: {name: 'misc point', bscolor: 'dark'},
-                        1: {name: 'settlement', bscolor: 'danger'},
-                        2: {name: 'natural', bscolor: 'brown'},
-                        3: {name: 'dungeon', bscolor: 'warning'}
-                    }
+                place_types: {
+                    200: 'misc region',
+                    201: 'geological',
+                    202: 'vegetation',
+                    203: 'water',
+                    204: 'political',
+                    100: 'misc line',
+                    101: 'road',
+                    102: 'river',
+                    0: 'misc point',
+                    1: 'settlement',
+                    2: 'natural',
+                    3: 'dungeon'
                 }
             }
         },
@@ -206,8 +204,8 @@
                 let pk = event.target.id.split('-')[1];
                 console.log(pk);
             },
-            get_temp_circle_class: function() {
-                if ( this.temp_type < 100) {
+            get_temp_circle_class: function () {
+                if (this.temp_type < 100) {
                     return 'place-type-' + this.temp_type
                 } else {
                     return 'place-temp-point'

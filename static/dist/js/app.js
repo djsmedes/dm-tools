@@ -448,25 +448,19 @@ exports.default = {
             temp_points: [],
             temp_type: null,
             hoverable_place_class: 'hoverable-place',
-            shape_types: {
-                d2: {
-                    200: { name: 'misc region', bscolor: 'dark' },
-                    201: { name: 'geological', bscolor: 'brown' },
-                    202: { name: 'vegetation', bscolor: 'success' },
-                    203: { name: 'water', bscolor: 'primary' },
-                    204: { name: 'political', bscolor: 'danger' }
-                },
-                d1: {
-                    100: { name: 'misc line', bscolor: 'dark' },
-                    101: { name: 'road', bscolor: 'danger' },
-                    102: { name: 'river', bscolor: 'primary' }
-                },
-                d0: {
-                    0: { name: 'misc point', bscolor: 'dark' },
-                    1: { name: 'settlement', bscolor: 'danger' },
-                    2: { name: 'natural', bscolor: 'brown' },
-                    3: { name: 'dungeon', bscolor: 'warning' }
-                }
+            place_types: {
+                200: 'misc region',
+                201: 'geological',
+                202: 'vegetation',
+                203: 'water',
+                204: 'political',
+                100: 'misc line',
+                101: 'road',
+                102: 'river',
+                0: 'misc point',
+                1: 'settlement',
+                2: 'natural',
+                3: 'dungeon'
             }
         };
     },
@@ -556,8 +550,8 @@ exports.default = {
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"row"},[_c('div',{staticClass:"ml-5 p-0 col",staticStyle:{"width":"1200px","height":"900px"}},[_c('svg',{attrs:{"id":"place-canvas","width":"1200","height":"900"},on:{"click":function($event){_vm.generate_temp_point($event)}}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"10","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_c('rect',{attrs:{"width":"1200","height":"900","fill":"transparent","stroke":"black","stroke-width":"2"}}),_vm._v(" "),_vm._l((_vm.shapes),function(shape){return [(shape.dimensions === 2)?_c('g',[_c('polygon',{class:'place-type-' + shape.type,attrs:{"points":_vm.points_to_pointstring(shape.points),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:_vm.hoverable_place_class + ' place-poly-outline place-type-' + shape.type,attrs:{"points":_vm.points_to_pointstring(shape.points),"id":'place-' + shape.id},on:{"click":function($event){_vm.place_clicked($event)}}})]):(shape.dimensions === 1)?_c('polyline',{class:_vm.hoverable_place_class + ' place-type-' + shape.type,attrs:{"points":_vm.points_to_pointstring(shape.points),"id":'place-' + shape.id},on:{"click":function($event){_vm.place_clicked($event)}}}):(shape.dimensions === 0)?_vm._l((shape.points),function(pt){return _c('circle',{class:_vm.hoverable_place_class + ' place-type-' + shape.type,attrs:{"cx":pt.x,"cy":pt.y,"r":"5","id":'place-' + shape.id},on:{"click":function($event){_vm.place_clicked($event)}}})}):_vm._e()]}),_vm._v(" "),(200 <= _vm.temp_type)?_c('g',[_c('polygon',{class:'place-type-' + _vm.temp_type,attrs:{"points":_vm.points_to_pointstring(_vm.temp_points),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:'place-poly-outline place-type-' + _vm.temp_type,attrs:{"points":_vm.points_to_pointstring(_vm.temp_points)}})]):(100 <= _vm.temp_type)?_c('polyline',{class:'place-type-' + _vm.temp_type,attrs:{"points":_vm.points_to_pointstring(_vm.temp_points)}}):_vm._e(),_vm._v(" "),_vm._l((_vm.temp_points),function(pt){return _c('circle',{class:_vm.get_temp_circle_class(),attrs:{"cx":pt.x,"cy":pt.y,"r":"5"}})})],2)]),_vm._v(" "),_c('div',{staticClass:"col"},[(_vm.temp_type == null)?_c('div',{staticClass:"btn-group",attrs:{"role":"group","aria-label":"Point creation buttons"}},_vm._l((_vm.shape_types.d0),function(type,key){return _c('button',{class:'btn btn-outline-' + type.bscolor,attrs:{"type":"button"},on:{"click":function($event){_vm.enter_create_context(key)}}},[_vm._v("\n        New "+_vm._s(type.name)+"\n      ")])})):_vm._e(),_vm._v(" "),_c('br'),_vm._v(" "),(_vm.temp_type == null)?_c('div',{staticClass:"btn-group",attrs:{"role":"group","aria-label":"Line creation buttons"}},_vm._l((_vm.shape_types.d1),function(type,key){return _c('button',{class:'btn btn-outline-' + type.bscolor,attrs:{"type":"button"},on:{"click":function($event){_vm.enter_create_context(key)}}},[_vm._v("\n        New "+_vm._s(type.name)+"\n      ")])})):_vm._e(),_vm._v(" "),_c('br'),_vm._v(" "),(_vm.temp_type == null)?_c('div',{staticClass:"btn-group",attrs:{"role":"group","aria-label":"Shape creation buttons"}},_vm._l((_vm.shape_types.d2),function(type,key){return _c('button',{class:'btn btn-outline-' + type.bscolor,attrs:{"type":"button"},on:{"click":function($event){_vm.enter_create_context(key)}}},[_vm._v("\n        New "+_vm._s(type.name)+"\n      ")])})):_vm._e(),_vm._v(" "),(_vm.temp_type != null)?_c('button',{staticClass:"btn btn-outline-success",on:{"click":_vm.exit_and_save}},[_vm._v("\n      Save\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_type != null)?_c('button',{staticClass:"btn btn-outline-danger",on:{"click":_vm.exit_create_context}},[_vm._v("\n      Cancel\n    ")]):_vm._e()])])}
-__vue__options__.staticRenderFns = []
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"row container-fluid px-5"},[_vm._m(0),_vm._v(" "),_c('div',{staticClass:"col-auto ml-auto p-0",staticStyle:{"width":"1200px","height":"900px"}},[_c('svg',{attrs:{"id":"place-canvas","width":"1200","height":"900"},on:{"click":function($event){_vm.generate_temp_point($event)}}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"5","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_c('rect',{attrs:{"width":"1200","height":"900","fill":"transparent","stroke":"black","stroke-width":"2"}}),_vm._v(" "),_vm._l((_vm.shapes),function(shape){return [(shape.dimensions === 2)?_c('g',[_c('polygon',{class:'place-type-' + shape.type,attrs:{"points":_vm.points_to_pointstring(shape.points),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:_vm.hoverable_place_class + ' place-poly-outline place-type-' + shape.type,attrs:{"points":_vm.points_to_pointstring(shape.points),"id":'place-' + shape.id},on:{"click":function($event){_vm.place_clicked($event)}}})]):(shape.dimensions === 1)?_c('polyline',{class:_vm.hoverable_place_class + ' place-type-' + shape.type,attrs:{"points":_vm.points_to_pointstring(shape.points),"id":'place-' + shape.id},on:{"click":function($event){_vm.place_clicked($event)}}}):(shape.dimensions === 0)?_vm._l((shape.points),function(pt){return _c('circle',{class:_vm.hoverable_place_class + ' place-type-' + shape.type,attrs:{"cx":pt.x,"cy":pt.y,"r":"5","id":'place-' + shape.id},on:{"click":function($event){_vm.place_clicked($event)}}})}):_vm._e()]}),_vm._v(" "),(200 <= _vm.temp_type)?_c('g',[_c('polygon',{class:'place-type-' + _vm.temp_type,attrs:{"points":_vm.points_to_pointstring(_vm.temp_points),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:'place-poly-outline place-type-' + _vm.temp_type,attrs:{"points":_vm.points_to_pointstring(_vm.temp_points)}})]):(100 <= _vm.temp_type)?_c('polyline',{class:'place-type-' + _vm.temp_type,attrs:{"points":_vm.points_to_pointstring(_vm.temp_points)}}):_vm._e(),_vm._v(" "),_vm._l((_vm.temp_points),function(pt){return _c('circle',{class:_vm.get_temp_circle_class(),attrs:{"cx":pt.x,"cy":pt.y,"r":"5"}})})],2)]),_vm._v(" "),_c('div',{staticClass:"col-auto ml-2"},[_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white"},[_vm._v("\n        Key\n      ")]),_vm._v(" "),_c('ul',{staticClass:"list-group list-group-flush"},_vm._l((_vm.place_types),function(name,type){return _c('li',{staticClass:"list-group-item"},[_c('svg',{attrs:{"width":"16","height":"16"}},[(type < 100)?_c('circle',{class:'place-type-' + type,attrs:{"cx":"8","cy":"8","r":"5"}}):(type < 200)?_c('polyline',{class:'place-type-' + type,attrs:{"points":"2,2 4,12 14,14"}}):_c('g',[_c('polygon',{class:'place-type-' + type,attrs:{"points":"2,2 50,0 0,50","filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:'place-poly-outline place-type-' + type,attrs:{"points":"2,2 50,0 0,50"}})])]),_vm._v("\n          "+_vm._s(name)+"\n          "),_c('button',{staticClass:"btn btn-sm btn-light rounded-circle",on:{"click":function($event){_vm.enter_create_context(type)}}},[_vm._v("+")])])}))]),_vm._v(" "),(_vm.temp_type != null)?_c('button',{staticClass:"btn btn-outline-success",on:{"click":_vm.exit_and_save}},[_vm._v("\n      Save\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_type != null)?_c('button',{staticClass:"btn btn-outline-danger",on:{"click":_vm.exit_create_context}},[_vm._v("\n      Cancel\n    ")]):_vm._e()])])}
+__vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"col"},[_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white"},[_vm._v("\n        Place name\n      ")]),_vm._v(" "),_c('div',{staticClass:"card-body"},[_vm._v("\n        Lorem ipsum\n      ")]),_vm._v(" "),_c('div',{staticClass:"card-footer"},[_vm._v("\n        footer stuff\n      ")])])])}]
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
@@ -565,7 +559,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-43273a22", __vue__options__)
   } else {
-    hotAPI.rerender("data-v-43273a22", __vue__options__)
+    hotAPI.reload("data-v-43273a22", __vue__options__)
   }
 })()}
 });
