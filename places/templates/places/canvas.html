@@ -1,4 +1,5 @@
 {% extends 'base/base.html' %}
+{% load base %}
 
 {% block content %}
   <div id="canvas"></div>
@@ -6,7 +7,8 @@
 
 {% block custom_scripts %}
   <script>
-    require('js/places-vue/main.js')
+    let user = {{ user|user_props_json }};
+    require('js/places-vue/main.js');
   </script>
 {% endblock %}
 

@@ -1,11 +1,31 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_201_CREATED
+from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_201_CREATED, HTTP_202_ACCEPTED
 from shapely.geometry import Point, LineString, Polygon
+from django.http import Http404
 
 from places.models import Place
 from places.utils import topological_sort_shapes
-from .serializers import PlaceSerializer
+from .serializers import PlaceSerializer, PlaceInfoSerializer
+
+
+class PlaceInfo(APIView):
+
+    def get(self, request, pk, format=None):
+        place = Place.objects.get(id=pk)
+        serializer = PlaceInfoSerializer(place)
+        return Response(serializer.data)
+
+    def post(self, request, pk, format=None):
+        try:
+            place = Place.objects.get(pk=pk)
+        except Place.DoesNotExist:
+            raise Http404
+        serializer = PlaceInfoSerializer(place, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=HTTP_202_ACCEPTED)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 
 class PlaceList(APIView):
@@ -19,10 +39,9 @@ class PlaceList(APIView):
 
     def post(self, request, format=None):
         coords = [(datum['x'], datum['y']) for datum in request.data['points']]
-        dimensions = request.data['dimensions']
-        type = request.data['type']
+        type = int(request.data['type'])
         place = Place()
-        if dimensions == 0:
+        if type < 100:
             try:
                 shape = Point(coords)
             except ValueError:
@@ -30,7 +49,7 @@ class PlaceList(APIView):
                     'points': {
                         'errors': 'Points cannot have more than one coordinate pair.'
                     }}, HTTP_400_BAD_REQUEST)
-        elif dimensions == 1:
+        elif type < 200:
             try:
                 shape = LineString(coords)
             except ValueError:

@@ -1,4 +1,8 @@
+from json import dumps as json_dumps
+
 from django import template
+from django.utils.safestring import mark_safe
+
 from statblocks.models import Action, Monster, StatblockBit, AbilityScore
 from base.utils import Die
 import markdown
@@ -142,3 +146,14 @@ def markdownify(text):
         'markdown.extensions.tables',
         'markdown.extensions.sane_lists',
     ])
+
+
+@register.filter
+def user_props_json(user):
+    try:
+        props = {
+            'is_authenticated': user.is_authenticated
+        }
+    except AttributeError:
+        props = {}
+    return mark_safe(json_dumps(props))

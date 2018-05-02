@@ -13,3 +13,9 @@ class PlaceSerializer(serializers.Serializer):
     dimensions = serializers.IntegerField()
     points = PointSerializer(many=True)
     type = serializers.IntegerField()
+
+
+class PlaceInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Place
+        fields = ('id', 'name', 'description', 'type')

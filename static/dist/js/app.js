@@ -448,6 +448,8 @@ exports.default = {
             temp_points: [],
             temp_type: null,
             hoverable_place_class: 'hoverable-place',
+            selected_place: null,
+            selected_place_edits: null,
             place_types: {
                 200: 'misc region',
                 201: 'geological',
@@ -461,7 +463,9 @@ exports.default = {
                 1: 'settlement',
                 2: 'natural',
                 3: 'dungeon'
-            }
+            },
+            user: null,
+            editing: false
         };
     },
 
@@ -475,6 +479,15 @@ exports.default = {
                 console.log(e);
             });
         },
+        load_place_details: function load_place_details(place_id) {
+            var _this2 = this;
+
+            _axios2.default.get('/api/places/' + place_id + '/').then(function (r) {
+                _this2.selected_place = r.data;
+            }).catch(function (e) {
+                console.log(e);
+            });
+        },
         get_click_coords: function get_click_coords(event) {
             var bound = document.getElementById('place-canvas').getBoundingClientRect();
             var html = document.documentElement;
@@ -484,19 +497,18 @@ exports.default = {
             var y = event.pageY - top;
             return { x: x, y: y };
         },
-        enter_create_context: function enter_create_context(context) {
+        enter_create_shape_context: function enter_create_shape_context(context) {
             this.temp_type = context;
             this.hoverable_place_class = '';
         },
-        exit_and_save: function exit_and_save() {
-            var _this2 = this;
+        exit_and_save_shape: function exit_and_save_shape() {
+            var _this3 = this;
 
             _axios2.default.post('/api/places/', {
                 points: this.temp_points,
-                dimensions: ~~(this.temp_type / 100),
                 type: this.temp_type
             }).then(function (_) {
-                _this2.load_shapes();
+                _this3.load_shapes();
             }).catch(function (e) {
                 console.log(e);
             });
@@ -524,15 +536,21 @@ exports.default = {
             return pointstring;
         },
         place_clicked: function place_clicked(event) {
+            if (this.temp_type) {
+                return;
+            }
+
             var $clicked = $(event.target);
             var was_active = $clicked.hasClass('active');
             $('.active').removeClass('active');
             if (!was_active) {
                 $clicked.addClass('active');
-            }
 
-            var pk = event.target.id.split('-')[1];
-            console.log(pk);
+                var pk = parseInt(event.target.id.split('-')[1]);
+                this.load_place_details(pk);
+            } else {
+                this.selected_place = null;
+            }
         },
         get_temp_circle_class: function get_temp_circle_class() {
             if (this.temp_type < 100) {
@@ -540,18 +558,37 @@ exports.default = {
             } else {
                 return 'place-temp-point';
             }
+        },
+        enter_edit_selected_place_context: function enter_edit_selected_place_context() {
+            this.editing = true;
+            this.selected_place_edits = JSON.parse(JSON.stringify(this.selected_place));
+        },
+        exit_and_save_selected_place: function exit_and_save_selected_place() {
+            var _this4 = this;
+
+            _axios2.default.post('/api/places/' + this.selected_place_edits.id + '/', this.selected_place_edits).then(function (_) {
+                _this4.load_place_details(parseInt(_this4.selected_place_edits.id));
+                _this4.exit_edit_context();
+            }).catch(function (e) {
+                console.log(e);
+            });
+        },
+        exit_edit_context: function exit_edit_context() {
+            this.editing = false;
+            this.selected_place_edits = null;
         }
     },
     created: function created() {
         this.load_shapes();
+        this.user = user;
     }
 };
 })()
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"row container-fluid px-5"},[_vm._m(0),_vm._v(" "),_c('div',{staticClass:"col-auto ml-auto p-0",staticStyle:{"width":"1200px","height":"900px"}},[_c('svg',{attrs:{"id":"place-canvas","width":"1200","height":"900"},on:{"click":function($event){_vm.generate_temp_point($event)}}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"5","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_c('rect',{attrs:{"width":"1200","height":"900","fill":"transparent","stroke":"black","stroke-width":"2"}}),_vm._v(" "),_vm._l((_vm.shapes),function(shape){return [(shape.dimensions === 2)?_c('g',[_c('polygon',{class:'place-type-' + shape.type,attrs:{"points":_vm.points_to_pointstring(shape.points),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:_vm.hoverable_place_class + ' place-poly-outline place-type-' + shape.type,attrs:{"points":_vm.points_to_pointstring(shape.points),"id":'place-' + shape.id},on:{"click":function($event){_vm.place_clicked($event)}}})]):(shape.dimensions === 1)?_c('polyline',{class:_vm.hoverable_place_class + ' place-type-' + shape.type,attrs:{"points":_vm.points_to_pointstring(shape.points),"id":'place-' + shape.id},on:{"click":function($event){_vm.place_clicked($event)}}}):(shape.dimensions === 0)?_vm._l((shape.points),function(pt){return _c('circle',{class:_vm.hoverable_place_class + ' place-type-' + shape.type,attrs:{"cx":pt.x,"cy":pt.y,"r":"5","id":'place-' + shape.id},on:{"click":function($event){_vm.place_clicked($event)}}})}):_vm._e()]}),_vm._v(" "),(200 <= _vm.temp_type)?_c('g',[_c('polygon',{class:'place-type-' + _vm.temp_type,attrs:{"points":_vm.points_to_pointstring(_vm.temp_points),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:'place-poly-outline place-type-' + _vm.temp_type,attrs:{"points":_vm.points_to_pointstring(_vm.temp_points)}})]):(100 <= _vm.temp_type)?_c('polyline',{class:'place-type-' + _vm.temp_type,attrs:{"points":_vm.points_to_pointstring(_vm.temp_points)}}):_vm._e(),_vm._v(" "),_vm._l((_vm.temp_points),function(pt){return _c('circle',{class:_vm.get_temp_circle_class(),attrs:{"cx":pt.x,"cy":pt.y,"r":"5"}})})],2)]),_vm._v(" "),_c('div',{staticClass:"col-auto ml-2"},[_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white"},[_vm._v("\n        Key\n      ")]),_vm._v(" "),_c('ul',{staticClass:"list-group list-group-flush"},_vm._l((_vm.place_types),function(name,type){return _c('li',{staticClass:"list-group-item"},[_c('svg',{attrs:{"width":"16","height":"16"}},[(type < 100)?_c('circle',{class:'place-type-' + type,attrs:{"cx":"8","cy":"8","r":"5"}}):(type < 200)?_c('polyline',{class:'place-type-' + type,attrs:{"points":"2,2 4,12 14,14"}}):_c('g',[_c('polygon',{class:'place-type-' + type,attrs:{"points":"2,2 50,0 0,50","filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:'place-poly-outline place-type-' + type,attrs:{"points":"2,2 50,0 0,50"}})])]),_vm._v("\n          "+_vm._s(name)+"\n          "),_c('button',{staticClass:"btn btn-sm btn-light rounded-circle",on:{"click":function($event){_vm.enter_create_context(type)}}},[_vm._v("+")])])}))]),_vm._v(" "),(_vm.temp_type != null)?_c('button',{staticClass:"btn btn-outline-success",on:{"click":_vm.exit_and_save}},[_vm._v("\n      Save\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_type != null)?_c('button',{staticClass:"btn btn-outline-danger",on:{"click":_vm.exit_create_context}},[_vm._v("\n      Cancel\n    ")]):_vm._e()])])}
-__vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"col"},[_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white"},[_vm._v("\n        Place name\n      ")]),_vm._v(" "),_c('div',{staticClass:"card-body"},[_vm._v("\n        Lorem ipsum\n      ")]),_vm._v(" "),_c('div',{staticClass:"card-footer"},[_vm._v("\n        footer stuff\n      ")])])])}]
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"row container-fluid px-5"},[_c('div',{staticClass:"col"},[(_vm.selected_place)?_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white"},[_c('div',{staticClass:"row form-inline"},[(! _vm.editing)?_c('h4',{staticClass:"col"},[_vm._v(_vm._s(_vm.selected_place.name))]):_c('label',[_vm._v("\n            Name: "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.name),expression:"selected_place_edits.name"}],staticClass:"mx-1 col form-control",domProps:{"value":(_vm.selected_place_edits.name)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.selected_place_edits, "name", $event.target.value)}}})]),_vm._v(" "),(! _vm.editing)?_c('button',{staticClass:"btn btn-outline-light col-auto ml-auto mr-1",on:{"click":_vm.enter_edit_selected_place_context}},[_vm._v("\n            Edit\n          ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-success col-auto ml-auto mr-1",on:{"click":_vm.exit_and_save_selected_place}},[_vm._v("Save\n          ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-danger col-auto mr-1",on:{"click":_vm.exit_edit_context}},[_vm._v("Cancel")]):_vm._e()])]),_vm._v(" "),_c('div',{staticClass:"card-body"},[(! _vm.editing)?[_vm._v(_vm._s(_vm.selected_place.description))]:[_c('label',{attrs:{"for":"selected-place-description"}},[_vm._v("Description: ")]),_vm._v(" "),_c('textarea',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.description),expression:"selected_place_edits.description"}],staticClass:"form-control",attrs:{"id":"selected-place-description"},domProps:{"value":(_vm.selected_place_edits.description)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.selected_place_edits, "description", $event.target.value)}}})]],2),_vm._v(" "),_c('div',{staticClass:"card-footer"},[_vm._v("\n        "+_vm._s(_vm.selected_place.type)+"\n      ")])]):_vm._e()]),_vm._v(" "),_c('div',{staticClass:"col-auto ml-auto p-0",staticStyle:{"width":"1200px","height":"900px"}},[_c('svg',{attrs:{"id":"place-canvas","width":"1200","height":"900"},on:{"click":function($event){_vm.generate_temp_point($event)}}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"5","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_c('rect',{attrs:{"width":"1200","height":"900","fill":"transparent","stroke":"black","stroke-width":"2"}}),_vm._v(" "),_vm._l((_vm.shapes),function(shape){return [(shape.dimensions === 2)?_c('g',[_c('polygon',{class:'place-type-' + shape.type,attrs:{"points":_vm.points_to_pointstring(shape.points),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:_vm.hoverable_place_class + ' place-poly-outline place-type-' + shape.type,attrs:{"points":_vm.points_to_pointstring(shape.points),"id":'place-' + shape.id},on:{"click":function($event){_vm.place_clicked($event)}}})]):(shape.dimensions === 1)?_c('polyline',{class:_vm.hoverable_place_class + ' place-type-' + shape.type,attrs:{"points":_vm.points_to_pointstring(shape.points),"id":'place-' + shape.id},on:{"click":function($event){_vm.place_clicked($event)}}}):(shape.dimensions === 0)?_vm._l((shape.points),function(pt){return _c('circle',{class:_vm.hoverable_place_class + ' place-type-' + shape.type,attrs:{"cx":pt.x,"cy":pt.y,"r":"5","id":'place-' + shape.id},on:{"click":function($event){_vm.place_clicked($event)}}})}):_vm._e()]}),_vm._v(" "),(200 <= _vm.temp_type)?_c('g',[_c('polygon',{class:'place-type-' + _vm.temp_type,attrs:{"points":_vm.points_to_pointstring(_vm.temp_points),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:'place-poly-outline place-type-' + _vm.temp_type,attrs:{"points":_vm.points_to_pointstring(_vm.temp_points)}})]):(100 <= _vm.temp_type)?_c('polyline',{class:'place-type-' + _vm.temp_type,attrs:{"points":_vm.points_to_pointstring(_vm.temp_points)}}):_vm._e(),_vm._v(" "),_vm._l((_vm.temp_points),function(pt){return _c('circle',{class:_vm.get_temp_circle_class(),attrs:{"cx":pt.x,"cy":pt.y,"r":"5"}})})],2)]),_vm._v(" "),_c('div',{staticClass:"col-auto ml-2"},[_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white"},[_vm._v("\n        Key\n      ")]),_vm._v(" "),_c('ul',{staticClass:"list-group list-group-flush"},_vm._l((_vm.place_types),function(name,type){return _c('li',{staticClass:"list-group-item"},[_c('svg',{attrs:{"width":"16","height":"16"}},[(type < 100)?_c('circle',{class:'place-type-' + type,attrs:{"cx":"8","cy":"8","r":"5"}}):(type < 200)?_c('polyline',{class:'place-type-' + type,attrs:{"points":"2,2 4,12 14,14"}}):_c('g',[_c('polygon',{class:'place-type-' + type,attrs:{"points":"2,2 50,0 0,50","filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:'place-poly-outline place-type-' + type,attrs:{"points":"2,2 50,0 0,50"}})])]),_vm._v("\n          "+_vm._s(name)+"\n          "),_c('button',{staticClass:"btn btn-sm btn-outline-dark",on:{"click":function($event){_vm.enter_create_shape_context(type)}}},[_vm._v("+")])])}))]),_vm._v(" "),(_vm.temp_type != null)?_c('button',{staticClass:"btn btn-outline-success",on:{"click":_vm.exit_and_save_shape}},[_vm._v("\n      Save\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_type != null)?_c('button',{staticClass:"btn btn-outline-danger",on:{"click":_vm.exit_create_context}},[_vm._v("\n      Cancel\n    ")]):_vm._e()])])}
+__vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
