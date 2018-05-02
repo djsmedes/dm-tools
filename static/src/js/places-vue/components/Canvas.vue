@@ -92,9 +92,10 @@
         </g>
         <polyline v-else-if="100 <= temp_type" :points="points_to_pointstring(temp_points)"
                   :class="'place-type-' + temp_type"></polyline>
-        <circle v-for="pt in temp_points"
+        <circle v-for="(pt, index) in temp_points" :id="'temp-circle-' + index"
                 :cx="pt.x" :cy="pt.y" r="5"
-                :class="get_temp_circle_class()"></circle>
+                @mousedown="temp_point_mousedown($event)"
+                :class="get_temp_circle_classes()"></circle>
       </svg>
 
     </div>
@@ -165,6 +166,7 @@
                 },
                 user: null,
                 editing: null,
+                create_new_points: true,
             }
         },
         methods: {
@@ -221,15 +223,13 @@
                 this.hoverable_place_class = 'hoverable-place';
             },
             generate_temp_point: function (event) {
-                if (this.temp_type != null) {
+                if ( ! this.create_new_points) return;
+                if (this.temp_type) {
                     let coords = this.get_click_coords(event);
                     if (this.temp_type < 100) {
                         this.temp_points.pop();
                     }
                     this.temp_points.push(coords);
-                    if (this.editing) {
-                        this.selected_place_edits.points = JSON.parse(JSON.stringify(this.temp_points));
-                    }
                 }
             },
             points_to_pointstring: function (points_obj) {
@@ -258,20 +258,23 @@
                     this.selected_place = null;
                 }
             },
-            get_temp_circle_class: function () {
+            get_temp_circle_classes: function () {
                 if (this.temp_type < 100) {
                     return 'place-type-' + this.temp_type
                 } else {
-                    return 'place-temp-point'
+                    return 'place-temp-point hoverable-place'
                 }
             },
             enter_edit_selected_place_context: function () {
+                this.hoverable_place_class = '';
                 this.editing = this.selected_place.id;
                 this.temp_type = this.selected_place.type;
                 this.temp_points = this.selected_place.points;
                 this.selected_place_edits = JSON.parse(JSON.stringify(this.selected_place));
             },
             exit_and_save_selected_place: function () {
+                this.selected_place_edits.points = this.temp_points;
+
                 axios
                     .post(
                         '/api/places/' + this.selected_place_edits.id + '/',
@@ -293,6 +296,23 @@
             },
             same_dimensions: function (type1, type2) {
                 return ~~(type1 / 100) === ~~(type2 / 100)
+            },
+            temp_point_mousedown: function (event) {
+                let id = parseInt(event.target.id.split('-')[2]);
+                let $body = $('body');
+                let parent = this;
+                this.create_new_points = false;
+                $body.on('mousemove click', function handler(event) {
+                    if (event.type === 'mousemove') {
+                        let coords = parent.get_click_coords(event);
+                        parent.temp_points[id].x = coords.x;
+                        parent.temp_points[id].y = coords.y;
+                    } else {
+                        $body.off('mousemove click', handler);
+                        parent.create_new_points = true;
+                    }
+                });
+
             }
         },
         created() {

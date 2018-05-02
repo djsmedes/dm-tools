@@ -465,7 +465,8 @@ exports.default = {
                 3: 'dungeon'
             },
             user: null,
-            editing: null
+            editing: null,
+            create_new_points: true
         };
     },
 
@@ -520,15 +521,13 @@ exports.default = {
             this.hoverable_place_class = 'hoverable-place';
         },
         generate_temp_point: function generate_temp_point(event) {
-            if (this.temp_type != null) {
+            if (!this.create_new_points) return;
+            if (this.temp_type) {
                 var coords = this.get_click_coords(event);
                 if (this.temp_type < 100) {
                     this.temp_points.pop();
                 }
                 this.temp_points.push(coords);
-                if (this.editing) {
-                    this.selected_place_edits.points = JSON.parse(JSON.stringify(this.temp_points));
-                }
             }
         },
         points_to_pointstring: function points_to_pointstring(points_obj) {
@@ -555,14 +554,15 @@ exports.default = {
                 this.selected_place = null;
             }
         },
-        get_temp_circle_class: function get_temp_circle_class() {
+        get_temp_circle_classes: function get_temp_circle_classes() {
             if (this.temp_type < 100) {
                 return 'place-type-' + this.temp_type;
             } else {
-                return 'place-temp-point';
+                return 'place-temp-point hoverable-place';
             }
         },
         enter_edit_selected_place_context: function enter_edit_selected_place_context() {
+            this.hoverable_place_class = '';
             this.editing = this.selected_place.id;
             this.temp_type = this.selected_place.type;
             this.temp_points = this.selected_place.points;
@@ -570,6 +570,8 @@ exports.default = {
         },
         exit_and_save_selected_place: function exit_and_save_selected_place() {
             var _this4 = this;
+
+            this.selected_place_edits.points = this.temp_points;
 
             _axios2.default.post('/api/places/' + this.selected_place_edits.id + '/', this.selected_place_edits).then(function (_) {
                 _this4.load_place_details(parseInt(_this4.selected_place_edits.id));
@@ -586,6 +588,22 @@ exports.default = {
         },
         same_dimensions: function same_dimensions(type1, type2) {
             return ~~(type1 / 100) === ~~(type2 / 100);
+        },
+        temp_point_mousedown: function temp_point_mousedown(event) {
+            var id = parseInt(event.target.id.split('-')[2]);
+            var $body = $('body');
+            var parent = this;
+            this.create_new_points = false;
+            $body.on('mousemove click', function handler(event) {
+                if (event.type === 'mousemove') {
+                    var coords = parent.get_click_coords(event);
+                    parent.temp_points[id].x = coords.x;
+                    parent.temp_points[id].y = coords.y;
+                } else {
+                    $body.off('mousemove click', handler);
+                    parent.create_new_points = true;
+                }
+            });
         }
     },
     created: function created() {
@@ -597,7 +615,7 @@ exports.default = {
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"row container-fluid px-5"},[_c('div',{staticClass:"col"},[(_vm.selected_place)?_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white"},[_c('div',{staticClass:"row form-inline"},[(! _vm.editing)?_c('h4',{staticClass:"col"},[_vm._v(_vm._s(_vm.selected_place.name))]):_c('label',[_vm._v("\n            Name: "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.name),expression:"selected_place_edits.name"}],staticClass:"mx-1 col form-control",domProps:{"value":(_vm.selected_place_edits.name)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.selected_place_edits, "name", $event.target.value)}}})]),_vm._v(" "),(! _vm.editing)?_c('button',{staticClass:"btn btn-outline-light col-auto ml-auto mr-1",on:{"click":_vm.enter_edit_selected_place_context}},[_vm._v("\n            Edit\n          ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-success col-auto ml-auto mr-1",on:{"click":_vm.exit_and_save_selected_place}},[_vm._v("\n            Save\n          ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-danger col-auto mr-1",on:{"click":_vm.exit_edit_context}},[_vm._v("Cancel")]):_vm._e()])]),_vm._v(" "),_c('div',{staticClass:"card-body"},[(! _vm.editing)?[_vm._v(_vm._s(_vm.selected_place.description))]:[_c('label',{attrs:{"for":"selected-place-description"}},[_vm._v("Description: ")]),_vm._v(" "),_c('textarea',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.description),expression:"selected_place_edits.description"}],staticClass:"form-control",attrs:{"id":"selected-place-description"},domProps:{"value":(_vm.selected_place_edits.description)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.selected_place_edits, "description", $event.target.value)}}})]],2),_vm._v(" "),_c('div',{staticClass:"card-footer"},[(! _vm.editing)?[_vm._v(_vm._s(_vm.place_types[_vm.selected_place.type]))]:[_c('label',{attrs:{"for":"selected-place-type"}},[_vm._v("Type: ")]),_vm._v(" "),_c('select',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.type),expression:"selected_place_edits.type"}],staticClass:"form-control",attrs:{"id":"selected-place-type"},on:{"change":function($event){var $$selectedVal = Array.prototype.filter.call($event.target.options,function(o){return o.selected}).map(function(o){var val = "_value" in o ? o._value : o.value;return val}); _vm.$set(_vm.selected_place_edits, "type", $event.target.multiple ? $$selectedVal : $$selectedVal[0])}}},[_vm._l((_vm.place_types),function(name,type){return [(_vm.same_dimensions(type, _vm.selected_place.type))?_c('option',{domProps:{"value":type}},[_vm._v("\n                "+_vm._s(name)+"\n              ")]):_vm._e()]})],2)]],2)]):_vm._e()]),_vm._v(" "),_c('div',{staticClass:"col-auto ml-auto p-0",staticStyle:{"width":"1200px","height":"900px"}},[_c('svg',{attrs:{"id":"place-canvas","width":"1200","height":"900"},on:{"click":function($event){_vm.generate_temp_point($event)}}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"5","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_c('rect',{attrs:{"width":"1200","height":"900","fill":"transparent","stroke":"black","stroke-width":"2"}}),_vm._v(" "),_vm._l((_vm.shapes),function(shape){return [(shape.id !== _vm.editing)?[(_vm.same_dimensions(shape.type, 200))?_c('g',[_c('polygon',{class:'place-type-' + shape.type,attrs:{"points":_vm.points_to_pointstring(shape.points),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:_vm.hoverable_place_class + ' place-poly-outline place-type-' + shape.type,attrs:{"points":_vm.points_to_pointstring(shape.points),"id":'place-' + shape.id},on:{"click":function($event){_vm.place_clicked($event)}}})]):(_vm.same_dimensions(shape.type, 100))?_c('polyline',{class:_vm.hoverable_place_class + ' place-type-' + shape.type,attrs:{"points":_vm.points_to_pointstring(shape.points),"id":'place-' + shape.id},on:{"click":function($event){_vm.place_clicked($event)}}}):(_vm.same_dimensions(shape.type, 0))?_vm._l((shape.points),function(pt){return _c('circle',{class:_vm.hoverable_place_class + ' place-type-' + shape.type,attrs:{"cx":pt.x,"cy":pt.y,"r":"5","id":'place-' + shape.id},on:{"click":function($event){_vm.place_clicked($event)}}})}):_vm._e()]:_vm._e()]}),_vm._v(" "),(200 <= _vm.temp_type)?_c('g',[_c('polygon',{class:'place-type-' + _vm.temp_type,attrs:{"points":_vm.points_to_pointstring(_vm.temp_points),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:'place-poly-outline place-type-' + _vm.temp_type,attrs:{"points":_vm.points_to_pointstring(_vm.temp_points)}})]):(100 <= _vm.temp_type)?_c('polyline',{class:'place-type-' + _vm.temp_type,attrs:{"points":_vm.points_to_pointstring(_vm.temp_points)}}):_vm._e(),_vm._v(" "),_vm._l((_vm.temp_points),function(pt){return _c('circle',{class:_vm.get_temp_circle_class(),attrs:{"cx":pt.x,"cy":pt.y,"r":"5"}})})],2)]),_vm._v(" "),_c('div',{staticClass:"col-auto ml-2"},[_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white"},[_vm._v("\n        Key\n      ")]),_vm._v(" "),_c('ul',{staticClass:"list-group list-group-flush"},_vm._l((_vm.place_types),function(name,type){return _c('li',{staticClass:"list-group-item"},[_c('svg',{attrs:{"width":"16","height":"16"}},[(type < 100)?_c('circle',{class:'place-type-' + type,attrs:{"cx":"8","cy":"8","r":"5"}}):(type < 200)?_c('polyline',{class:'place-type-' + type,attrs:{"points":"2,2 4,12 14,14"}}):_c('g',[_c('polygon',{class:'place-type-' + type,attrs:{"points":"2,2 50,0 0,50","filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:'place-poly-outline place-type-' + type,attrs:{"points":"2,2 50,0 0,50"}})])]),_vm._v("\n          "+_vm._s(name)+"\n          "),_c('button',{staticClass:"btn btn-sm btn-outline-dark",on:{"click":function($event){_vm.enter_create_shape_context(type)}}},[_vm._v("+")])])}))]),_vm._v(" "),(_vm.temp_type != null)?_c('button',{staticClass:"btn btn-outline-success",on:{"click":_vm.exit_and_save_shape}},[_vm._v("\n      Save\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_type != null)?_c('button',{staticClass:"btn btn-outline-danger",on:{"click":_vm.exit_edit_shape_context}},[_vm._v("\n      Cancel\n    ")]):_vm._e()])])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"row container-fluid px-5"},[_c('div',{staticClass:"col"},[(_vm.selected_place)?_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white"},[_c('div',{staticClass:"row form-inline"},[(! _vm.editing)?_c('h4',{staticClass:"col"},[_vm._v(_vm._s(_vm.selected_place.name))]):_c('label',[_vm._v("\n            Name: "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.name),expression:"selected_place_edits.name"}],staticClass:"mx-1 col form-control",domProps:{"value":(_vm.selected_place_edits.name)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.selected_place_edits, "name", $event.target.value)}}})]),_vm._v(" "),(! _vm.editing)?_c('button',{staticClass:"btn btn-outline-light col-auto ml-auto mr-1",on:{"click":_vm.enter_edit_selected_place_context}},[_vm._v("\n            Edit\n          ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-success col-auto ml-auto mr-1",on:{"click":_vm.exit_and_save_selected_place}},[_vm._v("\n            Save\n          ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-danger col-auto mr-1",on:{"click":_vm.exit_edit_context}},[_vm._v("Cancel")]):_vm._e()])]),_vm._v(" "),_c('div',{staticClass:"card-body"},[(! _vm.editing)?[_vm._v(_vm._s(_vm.selected_place.description))]:[_c('label',{attrs:{"for":"selected-place-description"}},[_vm._v("Description: ")]),_vm._v(" "),_c('textarea',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.description),expression:"selected_place_edits.description"}],staticClass:"form-control",attrs:{"id":"selected-place-description"},domProps:{"value":(_vm.selected_place_edits.description)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.selected_place_edits, "description", $event.target.value)}}})]],2),_vm._v(" "),_c('div',{staticClass:"card-footer"},[(! _vm.editing)?[_vm._v(_vm._s(_vm.place_types[_vm.selected_place.type]))]:[_c('label',{attrs:{"for":"selected-place-type"}},[_vm._v("Type: ")]),_vm._v(" "),_c('select',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.type),expression:"selected_place_edits.type"}],staticClass:"form-control",attrs:{"id":"selected-place-type"},on:{"change":function($event){var $$selectedVal = Array.prototype.filter.call($event.target.options,function(o){return o.selected}).map(function(o){var val = "_value" in o ? o._value : o.value;return val}); _vm.$set(_vm.selected_place_edits, "type", $event.target.multiple ? $$selectedVal : $$selectedVal[0])}}},[_vm._l((_vm.place_types),function(name,type){return [(_vm.same_dimensions(type, _vm.selected_place.type))?_c('option',{domProps:{"value":type}},[_vm._v("\n                "+_vm._s(name)+"\n              ")]):_vm._e()]})],2)]],2)]):_vm._e()]),_vm._v(" "),_c('div',{staticClass:"col-auto ml-auto p-0",staticStyle:{"width":"1200px","height":"900px"}},[_c('svg',{attrs:{"id":"place-canvas","width":"1200","height":"900"},on:{"click":function($event){_vm.generate_temp_point($event)}}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"5","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_c('rect',{attrs:{"width":"1200","height":"900","fill":"transparent","stroke":"black","stroke-width":"2"}}),_vm._v(" "),_vm._l((_vm.shapes),function(shape){return [(shape.id !== _vm.editing)?[(_vm.same_dimensions(shape.type, 200))?_c('g',[_c('polygon',{class:'place-type-' + shape.type,attrs:{"points":_vm.points_to_pointstring(shape.points),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:_vm.hoverable_place_class + ' place-poly-outline place-type-' + shape.type,attrs:{"points":_vm.points_to_pointstring(shape.points),"id":'place-' + shape.id},on:{"click":function($event){_vm.place_clicked($event)}}})]):(_vm.same_dimensions(shape.type, 100))?_c('polyline',{class:_vm.hoverable_place_class + ' place-type-' + shape.type,attrs:{"points":_vm.points_to_pointstring(shape.points),"id":'place-' + shape.id},on:{"click":function($event){_vm.place_clicked($event)}}}):(_vm.same_dimensions(shape.type, 0))?_vm._l((shape.points),function(pt){return _c('circle',{class:_vm.hoverable_place_class + ' place-type-' + shape.type,attrs:{"cx":pt.x,"cy":pt.y,"r":"5","id":'place-' + shape.id},on:{"click":function($event){_vm.place_clicked($event)}}})}):_vm._e()]:_vm._e()]}),_vm._v(" "),(200 <= _vm.temp_type)?_c('g',[_c('polygon',{class:'place-type-' + _vm.temp_type,attrs:{"points":_vm.points_to_pointstring(_vm.temp_points),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:'place-poly-outline place-type-' + _vm.temp_type,attrs:{"points":_vm.points_to_pointstring(_vm.temp_points)}})]):(100 <= _vm.temp_type)?_c('polyline',{class:'place-type-' + _vm.temp_type,attrs:{"points":_vm.points_to_pointstring(_vm.temp_points)}}):_vm._e(),_vm._v(" "),_vm._l((_vm.temp_points),function(pt,index){return _c('circle',{class:_vm.get_temp_circle_classes(),attrs:{"id":'temp-circle-' + index,"cx":pt.x,"cy":pt.y,"r":"5"},on:{"mousedown":function($event){_vm.temp_point_mousedown($event)}}})})],2)]),_vm._v(" "),_c('div',{staticClass:"col-auto ml-2"},[_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white"},[_vm._v("\n        Key\n      ")]),_vm._v(" "),_c('ul',{staticClass:"list-group list-group-flush"},_vm._l((_vm.place_types),function(name,type){return _c('li',{staticClass:"list-group-item"},[_c('svg',{attrs:{"width":"16","height":"16"}},[(type < 100)?_c('circle',{class:'place-type-' + type,attrs:{"cx":"8","cy":"8","r":"5"}}):(type < 200)?_c('polyline',{class:'place-type-' + type,attrs:{"points":"2,2 4,12 14,14"}}):_c('g',[_c('polygon',{class:'place-type-' + type,attrs:{"points":"2,2 50,0 0,50","filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:'place-poly-outline place-type-' + type,attrs:{"points":"2,2 50,0 0,50"}})])]),_vm._v("\n          "+_vm._s(name)+"\n          "),_c('button',{staticClass:"btn btn-sm btn-outline-dark",on:{"click":function($event){_vm.enter_create_shape_context(type)}}},[_vm._v("+")])])}))]),_vm._v(" "),(_vm.temp_type != null)?_c('button',{staticClass:"btn btn-outline-success",on:{"click":_vm.exit_and_save_shape}},[_vm._v("\n      Save\n    ")]):_vm._e(),_vm._v(" "),(_vm.temp_type != null)?_c('button',{staticClass:"btn btn-outline-danger",on:{"click":_vm.exit_edit_shape_context}},[_vm._v("\n      Cancel\n    ")]):_vm._e()])])}
 __vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -606,7 +624,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-43273a22", __vue__options__)
   } else {
-    hotAPI.rerender("data-v-43273a22", __vue__options__)
+    hotAPI.reload("data-v-43273a22", __vue__options__)
   }
 })()}
 });
