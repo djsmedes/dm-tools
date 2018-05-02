@@ -104,5 +104,17 @@ class Place(BaseModel):
             pts = self.shape.exterior.coords[:-1]
         return [{'x': int(pt[0]), 'y': int(pt[1])} for pt in pts]
 
+    @points.setter
+    def points(self, points: dict):
+        coords = [(pt['x'], pt['y']) for pt in points]
+        if self.dimensions == self.POINT:
+            self.shape = Point(coords)
+        elif self.dimensions == self.LINE:
+            self.shape = LineString(coords)
+        elif self.dimensions == self.POLYGON:
+            self.shape = Polygon(coords)
+        else:
+            raise ValueError('cannot set points on object until "shape" attribute has been set')
+
     def __str__(self):
         return str(self.id)

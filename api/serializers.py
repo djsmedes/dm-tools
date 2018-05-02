@@ -9,13 +9,23 @@ class PointSerializer(serializers.Serializer):
 
 
 class PlaceSerializer(serializers.Serializer):
+    # todo - convert to ModelSerializer
     id = serializers.IntegerField(read_only=True)
-    dimensions = serializers.IntegerField()
     points = PointSerializer(many=True)
     type = serializers.IntegerField()
 
 
 class PlaceInfoSerializer(serializers.ModelSerializer):
+    points = PointSerializer(many=True)
+
     class Meta:
         model = Place
-        fields = ('id', 'name', 'description', 'type')
+        fields = ('id', 'name', 'description', 'type', 'points')
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.description = validated_data.get('description', instance.description)
+        instance.type = validated_data.get('type', instance.type)
+        instance.points = validated_data.get('points', instance.points)
+        instance.save()
+        return instance
