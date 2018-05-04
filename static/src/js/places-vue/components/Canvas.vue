@@ -65,20 +65,29 @@
                        :class="'place-type-' + shape.type"
                        filter="url(#innershadow)"></polygon>
               <polygon :points="points_to_pointstring(shape.points)"
-                       :id="'place-' + shape.id"
-                       :class="hoverable_place_class + ' place-poly-outline place-type-' + shape.type"
+                       :id="pk_2_html_id(shape.id)"
+                       :class="hoverable_place_class +
+                               ' place-poly-outline place-type-' + shape.type + ' ' +
+                               active_if_active(shape.id)"
                        @click="place_clicked($event)"></polygon>
             </g>
-            <polyline v-else-if="same_dimensions(shape.type, 100)"
-                      :points="points_to_pointstring(shape.points)"
-                      :class="hoverable_place_class + ' place-type-' + shape.type"
-                      :id="'place-' + shape.id"
-                      @click="place_clicked($event)"></polyline>
+            <g v-else-if="same_dimensions(shape.type, 100)">
+              <polyline :points="points_to_pointstring(shape.points)"
+                        :class="'line-expander place-type-' + shape.type"
+                        @click="place_clicked($event)"></polyline>
+              <polyline
+                  :points="points_to_pointstring(shape.points)"
+                  :class="hoverable_place_class + ' place-type-' + shape.type + ' ' +
+                          active_if_active(shape.id)"
+                  :id="pk_2_html_id(shape.id)"
+                  @click="place_clicked($event)"></polyline>
+            </g>
             <circle v-else-if="same_dimensions(shape.type, 0)"
                     v-for="pt in shape.points"
                     :cx="pt.x" :cy="pt.y" r="5"
-                    :id="'place-' + shape.id"
-                    :class="hoverable_place_class + ' place-type-' + shape.type"
+                    :id="pk_2_html_id(shape.id)"
+                    :class="hoverable_place_class + ' place-type-' + shape.type + ' ' +
+                            active_if_active(shape.id)"
                     @click="place_clicked($event)"></circle>
           </template>
         </template>
@@ -92,22 +101,46 @@
         </g>
         <polyline v-else-if="100 <= temp_type" :points="points_to_pointstring(temp_points)"
                   :class="'place-type-' + temp_type"></polyline>
-        <circle v-for="(pt, index) in temp_points" :id="'temp-circle-' + index"
+        <circle v-else v-for="pt in temp_points"
+                :cx="pt.x" :cy="pt.y" r="5"
+                :class="place_type_2_class(temp_type)"
+        ></circle>
+        <circle v-if="100 <= temp_type" v-for="(pt, index) in temp_points"
+                :id="'temp-circle-' + index"
                 :cx="pt.x" :cy="pt.y" r="5"
                 @mousedown="temp_point_mousedown($event)"
-                :class="get_temp_circle_classes()"></circle>
+                @click="temp_point_click($event)"
+                :class="{ 'place-temp-point': true,
+                          'hoverable-place': true,
+                          active: pt.selected }"></circle>
       </svg>
 
     </div>
 
     <div class="col-auto ml-2">
+      <div v-if="editing" class="mb-1">
+        <button :class="delete_points_button_classes"
+                @click="delete_temp_points">
+          Delete point(s)
+        </button>
+      </div>
+      <div v-if="temp_type && !editing" class="mb-1">
+        <button class="btn btn-outline-success"
+                @click="exit_and_save_shape">
+          Save
+        </button>
+        <button class="btn btn-outline-danger"
+                @click="exit_edit_shape_context">
+          Cancel
+        </button>
+      </div>
       <div class="card">
         <div class="card-header bg-dark text-white">
           Key
         </div>
         <ul class="list-group list-group-flush">
-          <li v-for="(name, type) in place_types" class="list-group-item">
-            <svg width="16" height="16">
+          <li v-for="(name, type) in place_types" class="list-group-item d-flex align-items-center px-3">
+            <svg width="16" height="16" class="mr-1">
               <circle v-if="type < 100" cx="8" cy="8" r="5" :class="'place-type-' + type"></circle>
               <polyline v-else-if="type < 200" points="2,2 4,12 14,14" :class="'place-type-' + type"></polyline>
               <g v-else>
@@ -115,21 +148,20 @@
                 <polygon points="2,2 50,0 0,50" :class="'place-poly-outline place-type-' + type"></polygon>
               </g>
             </svg>
-            {{ name }}
+            <span class="mr-1">{{ name }}</span>
+            <button class="btn btn-sm btn-outline-dark ml-auto mr-1"
+                    data-toggle="button" aria-pressed="false"
+                    style="position: relative;"
+                    @click="toggle_type_visibility(type)">
+              <svg width="14" height="14" style="position: absolute; top: 7px; left: 8px">
+                <polyline points="14,0 0,14" stroke="white" fill="none" stroke-width="2"></polyline>
+              </svg>
+              <span class="oi oi-eye" title="visibility" aria-hidden="true"></span>
+            </button>
             <button class="btn btn-sm btn-outline-dark" @click="enter_create_shape_context(type)">+</button>
           </li>
         </ul>
       </div>
-      <button v-if="temp_type != null"
-              class="btn btn-outline-success"
-              @click="exit_and_save_shape">
-        Save
-      </button>
-      <button v-if="temp_type != null"
-              class="btn btn-outline-danger"
-              @click="exit_edit_shape_context">
-        Cancel
-      </button>
     </div>
 
   </div>
@@ -166,7 +198,13 @@
                 },
                 user: null,
                 editing: null,
-                create_new_points: true,
+                mousedown_on_temp_point: false,
+                mouse_moving_on_temp_point: false,
+                delete_points_button_classes: {
+                    btn: true,
+                    'btn-danger': true,
+                    disabled: true
+                }
             }
         },
         methods: {
@@ -223,7 +261,7 @@
                 this.hoverable_place_class = 'hoverable-place';
             },
             generate_temp_point: function (event) {
-                if ( ! this.create_new_points) return;
+                if (this.mousedown_on_temp_point) return;
                 if (this.temp_type) {
                     let coords = this.get_click_coords(event);
                     if (this.temp_type < 100) {
@@ -244,32 +282,28 @@
                 if (this.temp_type) {
                     return;
                 }
-
-                // toggle display active state
-                let $clicked = $(event.target);
-                let was_active = $clicked.hasClass('active');
-                $('.active').removeClass('active');
-                if (!was_active) {
-                    $clicked.addClass('active');
-                    // load details about place
-                    let pk = parseInt(event.target.id.split('-')[1]);
-                    this.load_place_details(pk);
-                } else {
-                    this.selected_place = null;
+                let place = $(event.target);
+                if (place.hasClass('line-expander')) {
+                    place = place.next();
                 }
+                this.select_place(place);
             },
-            get_temp_circle_classes: function () {
-                if (this.temp_type < 100) {
-                    return 'place-type-' + this.temp_type
+            select_place: function ($shape_element) {
+                // toggle display active state
+
+                let pk = this.html_id_2_pk($shape_element.attr('id'));
+                if (this.selected_place && (this.selected_place.id === pk)) {
+                    this.selected_place = null;
                 } else {
-                    return 'place-temp-point hoverable-place'
+                    // load details about place
+                    this.load_place_details(pk);
                 }
             },
             enter_edit_selected_place_context: function () {
                 this.hoverable_place_class = '';
                 this.editing = this.selected_place.id;
                 this.temp_type = this.selected_place.type;
-                this.temp_points = this.selected_place.points;
+                this.temp_points = JSON.parse(JSON.stringify(this.selected_place.points));
                 this.selected_place_edits = JSON.parse(JSON.stringify(this.selected_place));
             },
             exit_and_save_selected_place: function () {
@@ -301,18 +335,66 @@
                 let id = parseInt(event.target.id.split('-')[2]);
                 let $body = $('body');
                 let parent = this;
-                this.create_new_points = false;
+                this.mousedown_on_temp_point = true;
                 $body.on('mousemove click', function handler(event) {
                     if (event.type === 'mousemove') {
                         let coords = parent.get_click_coords(event);
                         parent.temp_points[id].x = coords.x;
                         parent.temp_points[id].y = coords.y;
+                        parent.mouse_moving_on_temp_point = true;
                     } else {
                         $body.off('mousemove click', handler);
-                        parent.create_new_points = true;
+                        parent.mousedown_on_temp_point = false;
+                        parent.mouse_moving_on_temp_point = false;
                     }
                 });
+            },
+            temp_point_click: function (event) {
+                if (this.mouse_moving_on_temp_point) return;
 
+                let $clicked = $(event.target);
+                let id = parseInt($clicked.attr('id').split('-')[2]);
+                if (this.temp_points[id].selected) {
+                    this.temp_points[id].selected = false;
+                } else {
+                    this.$set(this.temp_points[id], 'selected', true);
+                    // this.temp_points[id].selected = true;
+                }
+                for (let i=0; i<this.temp_points.length; i++) {
+                    if (this.temp_points[i].selected) {
+                        this.delete_points_button_classes.disabled = false;
+                        break;
+                    }
+                    this.delete_points_button_classes.disabled = true;
+                }
+            },
+            delete_temp_points: function() {
+                for (let i = this.temp_points.length-1; i >= 0; i--) {
+                    if (this.temp_points[i].selected) {
+                        this.temp_points.splice(i, 1);
+                    }
+                }
+                this.delete_points_button_classes.disabled = true;
+            },
+            html_id_2_pk: function (html_id) {
+                return parseInt(html_id.split('-')[1]);
+            },
+            pk_2_html_id: function (pk) {
+                return 'place-' + pk
+            },
+            place_type_2_class: function (type) {
+                return 'place-type-' + type;
+            },
+            class_2_place_type: function (cls) {
+                return parseInt(cls.split('-')[2]);
+            },
+            active_if_active: function (pk) {
+                if (this.selected_place && this.selected_place.id === pk) {
+                    return 'active'
+                } else return ''
+            },
+            toggle_type_visibility: function (type) {
+                $('.' + this.place_type_2_class(type)).toggleClass('d-none')
             }
         },
         created() {

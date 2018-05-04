@@ -25,6 +25,10 @@ p.hanging-indent {
   }
 }
 
+#place-canvas .line-expander:hover + .hoverable-place {
+  stroke-width: 4;
+}
+
 .place-type-point {
   stroke-width: 2;
   fill: transparent;
@@ -63,6 +67,11 @@ $place-color-map: (
     stroke-width: 2;
     fill: none;
     stroke: map_get($place-color-map, $i);
+
+    &.line-expander {
+      stroke: transparent;
+      stroke-width: 12;
+    }
   }
 }
 
