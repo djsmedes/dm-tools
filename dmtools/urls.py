@@ -41,6 +41,7 @@ accounts_patterns = [
 ]
 
 urlpatterns = [
+    path('api/', include('api.urls')),
     path('admin/', admin.site.urls),
     path('', HomepageView.as_view(extra_context={'breadcrumbs': breadcrumbs}), name='home'),
     path('', include('base.urls')),
@@ -50,4 +51,5 @@ urlpatterns = [
     path('plot/', include('plot.urls')),
     path('ajax/', include(ajax_patterns)),
     path('accounts/', include(accounts_patterns)),
+    path('api-auth/', include('rest_framework.urls')),
 ]

@@ -9,8 +9,9 @@ $theme-colors: (
 
 @import "dmscreen_tables";
 @import "homepage";
+@import "place_canvas";
 
 p.hanging-indent {
-    text-indent: -2em;
-    padding-left: 2em;
+  text-indent: -2em;
+  padding-left: 2em;
 }

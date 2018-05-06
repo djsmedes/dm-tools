@@ -15,6 +15,9 @@ exports.files = {
 };
 
 exports.plugins = {
+    babel: {
+        presets: ['env']
+    },
     sass: {
         precision: 8
     },
