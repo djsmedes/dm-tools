@@ -1,0 +1,79 @@
+$place-color-map: (
+        0: map_get($theme-colors, 'dark'),
+        1: map_get($theme-colors, 'danger'),
+        2: map_get($theme-colors, 'brown'),
+        3: map_get($theme-colors, 'warning'),
+        100: map_get($theme-colors, 'dark'),
+        101: map_get($theme-colors, 'danger'),
+        102: map_get($theme-colors, 'primary'),
+        200: map_get($theme-colors, 'dark'),
+        201: map_get($theme-colors, 'brown'),
+        202: map_get($theme-colors, 'success'),
+        203: map_get($theme-colors, 'primary'),
+        204: map_get($theme-colors, 'danger'),
+);
+$place-stroke-width: 2;
+$place-emph-stroke-width: 4;
+
+#place-canvas {
+  width: 1200px;
+  height: 900px;
+  background: #eeeeee;
+}
+
+.place-type-point {
+  stroke-width: $place-stroke-width;
+  fill: transparent;
+}
+
+.place-temp-point {
+  @extend .place-type-point;
+  stroke: map_get($theme-colors, 'secondary');
+}
+
+@for $i from 0 through 3 {
+  .place-type-#{$i} {
+    @extend .place-type-point;
+    stroke: map_get($place-color-map, $i);
+  }
+}
+
+@for $i from 100 through 102 {
+  .place-type-#{$i} {
+    stroke-width: $place-stroke-width;
+    fill: none;
+    stroke: map_get($place-color-map, $i);
+
+    &.line-expander {
+      stroke: transparent;
+      stroke-width: 12;
+    }
+  }
+}
+
+@for $i from 200 through 204 {
+  .place-type-#{$i} {
+    fill: map_get($place-color-map, $i);
+
+    &.place-poly-outline {
+      stroke-width: $place-stroke-width;
+      fill: transparent;
+      stroke: map_get($place-color-map, $i);
+    }
+  }
+}
+
+.hoverable-place {
+  &.active {
+    stroke-width: $place-emph-stroke-width;
+  }
+
+  @include hover-focus() {
+    stroke-width: $place-emph-stroke-width;
+  }
+}
+
+.line-expander:hover + .hoverable-place {
+  stroke-width: $place-emph-stroke-width;
+}
+

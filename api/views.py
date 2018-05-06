@@ -27,6 +27,14 @@ class PlaceInfo(APIView):
             return Response(serializer.data, status=HTTP_202_ACCEPTED)
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, pk, format=None):
+        try:
+            place = Place.objects.get(pk=pk)
+        except Place.DoesNotExist:
+            raise Http404
+        place.delete()
+        return Response({}, status=HTTP_202_ACCEPTED)
+
 
 class PlaceList(APIView):
 

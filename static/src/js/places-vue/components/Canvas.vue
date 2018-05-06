@@ -1,166 +1,205 @@
 <template>
-  <div class="row container-fluid px-5">
+  <div class="m-0 p-0">
 
-    <div class="col">
-      <div v-if="selected_place" class="card">
-        <div class="card-header bg-dark text-white">
-          <div class="row form-inline">
-            <h4 class="col" v-if="! editing">{{ selected_place.name }}</h4>
-            <label v-else>
-              Name: <input v-model="selected_place_edits.name" class="mx-1 col form-control">
-            </label>
-            <button v-if="! editing" class="btn btn-outline-light col-auto ml-auto mr-1"
-                    @click="enter_edit_selected_place_context">
-              Edit
-            </button>
-            <button v-if="editing" class="btn btn-success col-auto ml-auto mr-1" @click="exit_and_save_selected_place">
-              Save
-            </button>
-            <button v-if="editing" class="btn btn-danger col-auto mr-1" @click="exit_edit_context">Cancel</button>
+    <div class="row container-fluid px-5">
+
+      <div class="col">
+        <div v-if="selected_place" class="card">
+          <div class="card-header bg-dark text-white">
+            <div class="row form-inline">
+              <h4 class="col" v-if="! editing">{{ selected_place.name }}</h4>
+              <label v-else>
+                Name: <input v-model="selected_place_edits.name" class="mx-1 col form-control">
+              </label>
+              <button v-if="! editing" class="btn btn-outline-light col-auto ml-auto mr-1"
+                      @click="enter_edit_selected_place_context">
+                Edit
+              </button>
+              <button v-if="editing"
+                      class="btn btn-danger col-auto ml-auto mr-1"
+                      data-toggle="modal" data-target="#confirm-delete-modal">
+                Delete
+              </button>
+              <button v-if="editing" class="btn btn-secondary col-auto mr-1" @click="exit_edit_context">
+                Cancel
+              </button>
+              <button v-if="editing" class="btn btn-success col-auto mr-1" @click="exit_and_save_selected_place">
+                Save
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <template v-if="! editing">{{ selected_place.description }}</template>
+            <template v-else>
+              <label for="selected-place-description">Description: </label>
+              <textarea v-model="selected_place_edits.description"
+                        class="form-control"
+                        id="selected-place-description"
+              ></textarea>
+            </template>
+          </div>
+          <div class="card-footer">
+            <template v-if="! editing">{{ place_types[selected_place.type] }}</template>
+            <template v-else>
+              <label for="selected-place-type">Type: </label>
+              <select id="selected-place-type" class="form-control" v-model="selected_place_edits.type">
+                <template v-for="(name, type) in place_types">
+                  <option v-if="have_same_dimensions(type, selected_place.type)" :value="type">
+                    {{ name }}
+                  </option>
+                </template>
+              </select>
+            </template>
           </div>
         </div>
-        <div class="card-body">
-          <template v-if="! editing">{{ selected_place.description }}</template>
-          <template v-else>
-            <label for="selected-place-description">Description: </label>
-            <textarea v-model="selected_place_edits.description"
-                      class="form-control"
-                      id="selected-place-description"
-            ></textarea>
-          </template>
-        </div>
-        <div class="card-footer">
-          <template v-if="! editing">{{ place_types[selected_place.type] }}</template>
-          <template v-else>
-            <label for="selected-place-type">Type: </label>
-            <select id="selected-place-type" class="form-control" v-model="selected_place_edits.type">
-              <template v-for="(name, type) in place_types">
-                <option v-if="same_dimensions(type, selected_place.type)" :value="type">
-                  {{ name }}
-                </option>
-              </template>
-            </select>
-          </template>
-        </div>
       </div>
-    </div>
 
-    <div class="col-auto ml-auto p-0" style="width: 1200px; height: 900px">
+      <div class="col-auto ml-auto p-0">
 
-      <svg id="place-canvas" width="1200" height="900" @click="generate_temp_point($event)">
-        <defs>
-          <filter id="innershadow">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"></feGaussianBlur>
-            <feComposite in2="SourceGraphic" operator="arithmetic" k2="-1" k3="1" result="shadowDiff"></feComposite>
-          </filter>
+        <svg id="place-canvas" @click="generate_temp_point($event)">
+          <defs>
+            <filter id="innershadow">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"></feGaussianBlur>
+              <feComposite in2="SourceGraphic" operator="arithmetic" k2="-1" k3="1" result="shadowDiff"></feComposite>
+            </filter>
 
-        </defs>
-
-        <rect width="1200" height="900" fill="transparent" stroke="black" stroke-width="2"></rect>
-
-        <template v-for="shape in shapes">
-          <template v-if="shape.id !== editing">
-            <g v-if="same_dimensions(shape.type, 200)">
-              <polygon :points="points_to_pointstring(shape.points)"
-                       :class="'place-type-' + shape.type"
-                       filter="url(#innershadow)"></polygon>
-              <polygon :points="points_to_pointstring(shape.points)"
-                       :id="pk_2_html_id(shape.id)"
-                       :class="hoverable_place_class +
-                               ' place-poly-outline place-type-' + shape.type + ' ' +
-                               active_if_active(shape.id)"
-                       @click="place_clicked($event)"></polygon>
-            </g>
-            <g v-else-if="same_dimensions(shape.type, 100)">
-              <polyline :points="points_to_pointstring(shape.points)"
-                        :class="'line-expander place-type-' + shape.type"
-                        @click="place_clicked($event)"></polyline>
-              <polyline
-                  :points="points_to_pointstring(shape.points)"
-                  :class="hoverable_place_class + ' place-type-' + shape.type + ' ' +
-                          active_if_active(shape.id)"
-                  :id="pk_2_html_id(shape.id)"
-                  @click="place_clicked($event)"></polyline>
-            </g>
-            <circle v-else-if="same_dimensions(shape.type, 0)"
-                    v-for="pt in shape.points"
-                    :cx="pt.x" :cy="pt.y" r="5"
+          </defs>
+          
+          <template v-for="shape in shapes">
+            <template v-if="shape.id !== editing">
+              <g v-if="have_same_dimensions(shape.type, 200)">
+                <polygon :points="points_to_pointstring(shape.points)"
+                         :class="place_type_2_class(shape.type)"
+                         filter="url(#innershadow)"></polygon>
+                <polygon :points="points_to_pointstring(shape.points)"
+                         :id="pk_2_html_id(shape.id)"
+                         :class="[{ 'hoverable-place': hovering_enabled},
+                                  is_active(shape.id) ? 'active' : '',
+                                  'place-poly-outline',
+                                  place_type_2_class(shape.type)]"
+                         @click="place_clicked($event)"></polygon>
+              </g>
+              <g v-else-if="have_same_dimensions(shape.type, 100)">
+                <polyline :points="points_to_pointstring(shape.points)"
+                          :class="['line-expander', place_type_2_class(shape.type)]"
+                          @click="place_clicked($event)"></polyline>
+                <polyline
+                    :points="points_to_pointstring(shape.points)"
+                    :class="[{ 'hoverable-place': hovering_enabled},
+                             place_type_2_class(shape.type),
+                             is_active(shape.id) ? 'active' : '']"
                     :id="pk_2_html_id(shape.id)"
-                    :class="hoverable_place_class + ' place-type-' + shape.type + ' ' +
-                            active_if_active(shape.id)"
-                    @click="place_clicked($event)"></circle>
+                    @click="place_clicked($event)"></polyline>
+              </g>
+              <circle v-else-if="have_same_dimensions(shape.type, 0)"
+                      v-for="pt in shape.points"
+                      :cx="pt.x" :cy="pt.y" r="5"
+                      :id="pk_2_html_id(shape.id)"
+                      :class="[{ 'hoverable-place': hovering_enabled},
+                               place_type_2_class(shape.type),
+                               is_active(shape.id) ? 'active' : '']"
+                      @click="place_clicked($event)"></circle>
+            </template>
           </template>
-        </template>
 
-        <g v-if="200 <= temp_type">
-          <polygon :points="points_to_pointstring(temp_points)"
-                   :class="'place-type-' + temp_type"
-                   filter="url(#innershadow)"></polygon>
-          <polygon :points="points_to_pointstring(temp_points)"
-                   :class="'place-poly-outline place-type-' + temp_type"></polygon>
-        </g>
-        <polyline v-else-if="100 <= temp_type" :points="points_to_pointstring(temp_points)"
-                  :class="'place-type-' + temp_type"></polyline>
-        <circle v-else v-for="pt in temp_points"
-                :cx="pt.x" :cy="pt.y" r="5"
-                :class="place_type_2_class(temp_type)"
-        ></circle>
-        <circle v-if="100 <= temp_type" v-for="(pt, index) in temp_points"
-                :id="'temp-circle-' + index"
-                :cx="pt.x" :cy="pt.y" r="5"
-                @mousedown="temp_point_mousedown($event)"
-                @click="temp_point_click($event)"
-                :class="{ 'place-temp-point': true,
+          <g v-if="200 <= temp_type">
+            <polygon :points="points_to_pointstring(temp_points)"
+                     :class="place_type_2_class(temp_type)"
+                     filter="url(#innershadow)"></polygon>
+            <polygon :points="points_to_pointstring(temp_points)"
+                     :class="['place-poly-outline',
+                              place_type_2_class(temp_type)]"></polygon>
+          </g>
+          <polyline v-else-if="100 <= temp_type" :points="points_to_pointstring(temp_points)"
+                    :class="place_type_2_class(temp_type)"></polyline>
+          <circle v-else v-for="pt in temp_points"
+                  :cx="pt.x" :cy="pt.y" r="5"
+                  :class="place_type_2_class(temp_type)"
+          ></circle>
+          <circle v-if="100 <= temp_type" v-for="(pt, index) in temp_points"
+                  :id="'temp-circle-' + index"
+                  :cx="pt.x" :cy="pt.y" r="5"
+                  @mousedown="temp_point_mousedown($event)"
+                  @click="temp_point_click($event)"
+                  :class="{ 'place-temp-point': true,
                           'hoverable-place': true,
                           active: pt.selected }"></circle>
-      </svg>
+        </svg>
+
+      </div>
+
+      <div class="col-auto ml-2">
+        <div v-if="editing" class="mb-1">
+          <button :class="['btn', 'btn-danger',
+                           {'disabled': no_temp_points_selected}]"
+                  @click="delete_temp_points">
+            Delete point(s)
+          </button>
+        </div>
+        <div v-if="temp_type && !editing" class="mb-1">
+          <button class="btn btn-outline-success"
+                  @click="exit_and_save_shape">
+            Save
+          </button>
+          <button class="btn btn-outline-danger"
+                  @click="exit_edit_shape_context">
+            Cancel
+          </button>
+        </div>
+        <div class="card">
+          <div class="card-header bg-dark text-white">
+            Key
+          </div>
+          <ul class="list-group list-group-flush">
+            <li v-for="(name, type) in place_types" class="list-group-item d-flex align-items-center px-3">
+              <svg width="16" height="16" class="mr-1">
+                <circle v-if="type < 100" cx="8" cy="8" r="5" :class="place_type_2_class(type)"></circle>
+                <polyline v-else-if="type < 200" points="2,2 4,12 14,14" :class="place_type_2_class(type)"></polyline>
+                <g v-else>
+                  <polygon points="2,2 50,0 0,50" :class="place_type_2_class(type)" filter="url(#innershadow)"></polygon>
+                  <polygon points="2,2 50,0 0,50" :class="['place-poly-outline', place_type_2_class(type)]"></polygon>
+                </g>
+              </svg>
+              <span class="mr-1">{{ name }}</span>
+              <button class="btn btn-sm btn-outline-dark ml-auto mr-1"
+                      data-toggle="button" aria-pressed="false"
+                      style="position: relative;"
+                      @click="toggle_type_visibility(type)">
+                <svg width="14" height="14" style="position: absolute; top: 7px; left: 8px">
+                  <polyline points="14,0 0,14" stroke="white" fill="none" stroke-width="2"></polyline>
+                </svg>
+                <span class="oi oi-eye" title="visibility" aria-hidden="true"></span>
+              </button>
+              <button class="btn btn-sm btn-outline-dark" @click="enter_create_shape_context(type)">+</button>
+            </li>
+          </ul>
+        </div>
+      </div>
 
     </div>
 
-    <div class="col-auto ml-2">
-      <div v-if="editing" class="mb-1">
-        <button :class="delete_points_button_classes"
-                @click="delete_temp_points">
-          Delete point(s)
-        </button>
-      </div>
-      <div v-if="temp_type && !editing" class="mb-1">
-        <button class="btn btn-outline-success"
-                @click="exit_and_save_shape">
-          Save
-        </button>
-        <button class="btn btn-outline-danger"
-                @click="exit_edit_shape_context">
-          Cancel
-        </button>
-      </div>
-      <div class="card">
-        <div class="card-header bg-dark text-white">
-          Key
-        </div>
-        <ul class="list-group list-group-flush">
-          <li v-for="(name, type) in place_types" class="list-group-item d-flex align-items-center px-3">
-            <svg width="16" height="16" class="mr-1">
-              <circle v-if="type < 100" cx="8" cy="8" r="5" :class="'place-type-' + type"></circle>
-              <polyline v-else-if="type < 200" points="2,2 4,12 14,14" :class="'place-type-' + type"></polyline>
-              <g v-else>
-                <polygon points="2,2 50,0 0,50" :class="'place-type-' + type" filter="url(#innershadow)"></polygon>
-                <polygon points="2,2 50,0 0,50" :class="'place-poly-outline place-type-' + type"></polygon>
-              </g>
-            </svg>
-            <span class="mr-1">{{ name }}</span>
-            <button class="btn btn-sm btn-outline-dark ml-auto mr-1"
-                    data-toggle="button" aria-pressed="false"
-                    style="position: relative;"
-                    @click="toggle_type_visibility(type)">
-              <svg width="14" height="14" style="position: absolute; top: 7px; left: 8px">
-                <polyline points="14,0 0,14" stroke="white" fill="none" stroke-width="2"></polyline>
-              </svg>
-              <span class="oi oi-eye" title="visibility" aria-hidden="true"></span>
+    <div v-if="selected_place && editing" class="modal fade" id="confirm-delete-modal" tabindex="-1" role="dialog"
+         aria-labelledby="confirm-delete-title"
+         aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirm-delete-title">Confirm delete</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
             </button>
-            <button class="btn btn-sm btn-outline-dark" @click="enter_create_shape_context(type)">+</button>
-          </li>
-        </ul>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete {{ selected_place.name }}? This cannot be undone.
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal"
+                    @click="delete_selected_place">
+              Yes, delete {{ selected_place.name }}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -180,6 +219,7 @@
                 temp_points: [],
                 temp_type: null,
                 hoverable_place_class: 'hoverable-place',
+                hovering_enabled: true,
                 selected_place: null,
                 selected_place_edits: null,
                 place_types: {
@@ -200,11 +240,16 @@
                 editing: null,
                 mousedown_on_temp_point: false,
                 mouse_moving_on_temp_point: false,
-                delete_points_button_classes: {
-                    btn: true,
-                    'btn-danger': true,
-                    disabled: true
+            }
+        },
+        computed: {
+            no_temp_points_selected: function() {
+                for (let i = 0; i < this.temp_points.length; i++) {
+                    if (this.temp_points[i].selected) {
+                        return false;
+                    }
                 }
+                return true;
             }
         },
         methods: {
@@ -240,6 +285,7 @@
             enter_create_shape_context: function (context) {
                 this.temp_type = context;
                 this.hoverable_place_class = '';
+                this.hovering_enabled = false;
             },
             exit_and_save_shape: function () {
                 axios
@@ -259,6 +305,7 @@
                 this.temp_points = [];
                 this.temp_type = null;
                 this.hoverable_place_class = 'hoverable-place';
+                this.hovering_enabled = true;
             },
             generate_temp_point: function (event) {
                 if (this.mousedown_on_temp_point) return;
@@ -301,6 +348,7 @@
             },
             enter_edit_selected_place_context: function () {
                 this.hoverable_place_class = '';
+                this.hovering_enabled = false;
                 this.editing = this.selected_place.id;
                 this.temp_type = this.selected_place.type;
                 this.temp_points = JSON.parse(JSON.stringify(this.selected_place.points));
@@ -315,9 +363,23 @@
                         this.selected_place_edits
                     )
                     .then(_ => {
+                        this.load_shapes();
                         this.load_place_details(parseInt(this.selected_place_edits.id));
                         this.exit_edit_context();
+                    })
+                    .catch(e => {
+                        console.log(e)
+                    });
+            },
+            delete_selected_place: function () {
+                axios
+                    .delete(
+                        '/api/places/' + this.selected_place.id + '/'
+                    )
+                    .then(_ => {
                         this.load_shapes();
+                        this.exit_edit_context();
+                        this.selected_place = null;
                     })
                     .catch(e => {
                         console.log(e)
@@ -328,7 +390,7 @@
                 this.selected_place_edits = null;
                 this.exit_edit_shape_context();
             },
-            same_dimensions: function (type1, type2) {
+            have_same_dimensions: function (type1, type2) {
                 return ~~(type1 / 100) === ~~(type2 / 100)
             },
             temp_point_mousedown: function (event) {
@@ -358,23 +420,14 @@
                     this.temp_points[id].selected = false;
                 } else {
                     this.$set(this.temp_points[id], 'selected', true);
-                    // this.temp_points[id].selected = true;
-                }
-                for (let i=0; i<this.temp_points.length; i++) {
-                    if (this.temp_points[i].selected) {
-                        this.delete_points_button_classes.disabled = false;
-                        break;
-                    }
-                    this.delete_points_button_classes.disabled = true;
                 }
             },
-            delete_temp_points: function() {
-                for (let i = this.temp_points.length-1; i >= 0; i--) {
+            delete_temp_points: function () {
+                for (let i = this.temp_points.length - 1; i >= 0; i--) {
                     if (this.temp_points[i].selected) {
                         this.temp_points.splice(i, 1);
                     }
                 }
-                this.delete_points_button_classes.disabled = true;
             },
             html_id_2_pk: function (html_id) {
                 return parseInt(html_id.split('-')[1]);
@@ -392,6 +445,9 @@
                 if (this.selected_place && this.selected_place.id === pk) {
                     return 'active'
                 } else return ''
+            },
+            is_active: function (pk) {
+                return (this.selected_place && this.selected_place.id === pk)
             },
             toggle_type_visibility: function (type) {
                 $('.' + this.place_type_2_class(type)).toggleClass('d-none')
