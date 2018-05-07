@@ -2,17 +2,20 @@
   <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
     Context
   </a>
-  <div class="dropdown-menu dropdown-menu-right">
+  <div class="dropdown-menu dropdown-menu-right" style="width: 20em">
+    <h6 class="dropdown-header">
+      Campaign
+    </h6>
     <span class="dropdown-item-text">
-      {% if user.is_authenticated %}
-        Current campaign: <strong>{{ user.profile.cur_campaign.name }}</strong>
-      {% else %}
-        Todo: campaigns based on cookies for non-DMs
-      {% endif %}
+      {{ user.profile.cur_campaign.name|default:'None specified' }}
     </span>
     <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header">
+      Location
+    </h6>
     <span class="dropdown-item-text">
-      Current location: <strong>{{ user.profile.cur_campaign.current_location.name }}</strong>
+      {{ user.profile.cur_campaign.current_location.name|default:'None specified' }}
     </span>
+    <place-inclusion-distance></place-inclusion-distance>
   </div>
 </div>

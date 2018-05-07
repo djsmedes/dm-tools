@@ -148,20 +148,6 @@ var __makeRelativeRequire = function(require, mappings, pref) {
     return require(name);
   }
 };
-require.register("js/clickable_row.js", function(exports, require, module) {
-"use strict";
-
-module.exports = {
-
-    initialize: function initialize() {
-        $('.clickable-row').click(function () {
-            window.location = $(this).data("href");
-        });
-    }
-
-};
-});
-
 require.register("js/homepagescripts.js", function(exports, require, module) {
 "use strict";
 
@@ -419,12 +405,15 @@ function label_matched_combatants() {
 'use strict';
 
 document.addEventListener('DOMContentLoaded', function () {
-    // setup?
-    console.log('Initialized app');
+    $('.clickable-row').click(function () {
+        window.location = $(this).data("href");
+    });
+
+    require('js/vue/main.js');
 });
 });
 
-require.register("js/places-vue/components/Canvas.vue", function(exports, require, module) {
+require.register("js/vue/components/place_canvas.vue", function(exports, require, module) {
 ;(function(){
 'use strict';
 
@@ -697,35 +686,76 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-43273a22", __vue__options__)
+    hotAPI.createRecord("data-v-7661dca8", __vue__options__)
   } else {
-    hotAPI.reload("data-v-43273a22", __vue__options__)
+    hotAPI.rerender("data-v-7661dca8", __vue__options__)
   }
 })()}
 });
 
-;require.register("js/places-vue/main.js", function(exports, require, module) {
+;require.register("js/vue/components/place_inclusion_distance.vue", function(exports, require, module) {
+;(function(){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    data: function data() {
+        return {
+            inclusion_distance: 0
+        };
+    },
+
+    computed: {},
+    methods: {},
+    created: function created() {}
+};
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"form-group"},[_c('label',{staticClass:"dropdown-header",attrs:{"for":"navbar-inclusion-distance"}},[_vm._v("Inclusion distance")]),_vm._v(" "),_c('div',{staticClass:"px-4"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.inclusion_distance),expression:"inclusion_distance"}],staticClass:"form-control",attrs:{"id":"navbar-inclusion-distance","type":"number"},domProps:{"value":(_vm.inclusion_distance)},on:{"input":function($event){if($event.target.composing){ return; }_vm.inclusion_distance=$event.target.value}}})])])}
+__vue__options__.staticRenderFns = []
+if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-82b131f0", __vue__options__)
+  } else {
+    hotAPI.reload("data-v-82b131f0", __vue__options__)
+  }
+})()}
+});
+
+;require.register("js/vue/main.js", function(exports, require, module) {
 'use strict';
 
 var _axios = require('axios');
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _vue = require('vue');
+var _vue = require('vue/dist/vue');
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _Canvas = require('./components/Canvas.vue');
+var _place_canvas = require('./components/place_canvas');
 
-var _Canvas2 = _interopRequireDefault(_Canvas);
+var _place_canvas2 = _interopRequireDefault(_place_canvas);
+
+var _place_inclusion_distance = require('./components/place_inclusion_distance');
+
+var _place_inclusion_distance2 = _interopRequireDefault(_place_inclusion_distance);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+_vue2.default.component('place-canvas', require('./components/place_canvas'));
+_vue2.default.component('place-inclusion-distance', require('./components/place_inclusion_distance'));
+
 new _vue2.default({
-    el: '#canvas',
-    render: function render(h) {
-        return h(_Canvas2.default);
-    }
+    el: '#app',
+    components: { place_canvas: _place_canvas2.default, place_inclusion_distance: _place_inclusion_distance2.default }
 });
 });
 
@@ -740,5 +770,5 @@ window.bootstrap = require("bootstrap");
 
 });})();require('___globals___');
 
-
+require('js/initialize');
 //# sourceMappingURL=app.js.map

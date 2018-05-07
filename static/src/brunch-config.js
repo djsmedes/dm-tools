@@ -29,6 +29,12 @@ exports.plugins = {
     }
 };
 
+exports.modules = {
+    autoRequire: {
+        'js/app.js': ['js/initialize']
+    }
+};
+
 exports.npm = {
     globals: {
         $: 'jquery',

@@ -1,6 +1,8 @@
 <template>
   <div class="m-0 p-0">
 
+    <!--<slot></slot>-->
+
     <div class="row container-fluid px-5">
 
       <div class="col">

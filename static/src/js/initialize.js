@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // setup?
-    console.log('Initialized app');
+    $('.clickable-row').click(function () {
+        window.location = $(this).data("href");
+    });
+
+    require('js/vue/main.js');
 });
