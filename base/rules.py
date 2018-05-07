@@ -1,13 +1,10 @@
-from rules import predicate, add_perm
+import rules
 
 
-@predicate
+@rules.predicate
 def is_owner(user, obj):
-    # assert isinstance(user, User)
-    # assert hasattr(obj, 'owner')
-    print(user, user.profile, obj, obj.owner)
     return user.profile == obj.owner
 
 
-add_perm('base.change_campaign', is_owner)
-add_perm('places.change_place', is_owner)
+rules.add_perm('base.change_campaign', is_owner)
+rules.add_perm('base.delete_campaign', is_owner)

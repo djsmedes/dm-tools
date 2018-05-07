@@ -170,6 +170,6 @@ REST_FRAMEWORK = {
 # authentication backends
 # https://docs.djangoproject.com/en/2.0/topics/auth/customizing/#specifying-authentication-backends
 AUTHENTICATION_BACKENDS = [
-    # 'rules.permissions.ObjectPermissionBackend',
+    'rules.permissions.ObjectPermissionBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
