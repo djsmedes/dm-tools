@@ -123,7 +123,7 @@ class Place(BaseModel):
             raise ValueError('cannot set points on object until "shape" attribute has been set')
 
     def __str__(self):
-        return str(self.id)
+        return self.name
 
 
 class PlacePair(models.Model):

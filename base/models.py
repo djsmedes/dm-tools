@@ -5,9 +5,21 @@ from django.urls import reverse
 from multiselectfield import MultiSelectField
 
 
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', null=True)
+
+    def __str__(self):
+        return self.user.__str__()
+
+
 class BaseModel(models.Model):
 
     name = models.CharField(max_length=255)
+    owner = models.ForeignKey(
+        'base.Profile',
+        on_delete=models.CASCADE,
+        related_name="%(app_label)s_%(class)s_owned_set"
+    )
 
     def __str__(self):
         return self.name
@@ -65,10 +77,6 @@ class DmScreenTabForm(ModelForm):
     class Meta:
         model = DmScreenTab
         fields = '__all__'
-
-
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
 
 
 class Campaign(BaseModel):
