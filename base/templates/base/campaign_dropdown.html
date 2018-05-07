@@ -1,0 +1,18 @@
+<div class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
+    Context
+  </a>
+  <div class="dropdown-menu dropdown-menu-right">
+    <span class="dropdown-item-text">
+      {% if user.is_authenticated %}
+        Current campaign: <strong>{{ user.profile.cur_campaign.name }}</strong>
+      {% else %}
+        Todo: campaigns based on cookies for non-DMs
+      {% endif %}
+    </span>
+    <div class="dropdown-divider"></div>
+    <span class="dropdown-item-text">
+      Current location: <strong>{{ user.profile.cur_campaign.current_location.name }}</strong>
+    </span>
+  </div>
+</div>
