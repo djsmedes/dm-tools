@@ -5,7 +5,9 @@ from rules import predicate, add_perm
 def is_owner(user, obj):
     # assert isinstance(user, User)
     # assert hasattr(obj, 'owner')
-    return user.profile is obj.owner
+    print(user, user.profile, obj, obj.owner)
+    return user.profile == obj.owner
 
 
-add_perm('places.add_place', is_owner)
+add_perm('base.change_campaign', is_owner)
+add_perm('places.change_place', is_owner)

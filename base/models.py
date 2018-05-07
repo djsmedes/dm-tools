@@ -6,7 +6,7 @@ from multiselectfield import MultiSelectField
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', null=True)
 
 
 class BaseModel(models.Model):
