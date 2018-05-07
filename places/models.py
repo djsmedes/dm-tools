@@ -8,7 +8,7 @@ from base.models import BaseModel
 
 
 class Place(BaseModel):
-    # actual Place details
+    # lore-related details
 
     description = models.TextField(null=True, blank=True)
 
@@ -46,7 +46,7 @@ class Place(BaseModel):
 
     type = models.IntegerField(choices=TYPE_CHOICES, null=True, blank=True)
 
-    # Shapely stuff
+    # location-related details
 
     POINT = 0
     LINE = 1
@@ -60,6 +60,12 @@ class Place(BaseModel):
     _shape = models.BinaryField(db_column='shape', null=True, blank=True)
     _dimensions = models.IntegerField(db_column='dimensions', choices=DIMENSIONS_CHOICES, null=True, blank=True)
     _shapely_object = None
+    other_places = models.ManyToManyField(
+        'self', through='places.PlacePair',
+        through_fields=('place1', 'place2'),
+        symmetrical=False,
+    )
+
 
     class Meta:
         ordering = ['-_dimensions']
@@ -118,3 +124,12 @@ class Place(BaseModel):
 
     def __str__(self):
         return str(self.id)
+
+
+class PlacePair(models.Model):
+    place1 = models.ForeignKey('places.Place', on_delete=models.CASCADE, related_name='placepairs_out')
+    place2 = models.ForeignKey('places.Place', on_delete=models.CASCADE, related_name='placepairs_in')
+    min_distance = models.FloatField()
+
+    class Meta:
+        ordering = ['min_distance']
