@@ -7,7 +7,6 @@ from base.models import Profile
 def create_profile(sender, instance: User, **kwargs):
     if not hasattr(instance, 'profile'):
         Profile.objects.create(user=instance)
-    print(type(instance.profile))
 
 
 post_save.connect(create_profile, User)
