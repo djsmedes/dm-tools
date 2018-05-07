@@ -7,6 +7,7 @@ from multiselectfield import MultiSelectField
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', null=True)
+    cur_campaign = models.ForeignKey('base.Campaign', on_delete=models.SET_NULL, related_name='cur_campaign_of', null=True, blank=True)
 
     def __str__(self):
         return self.user.__str__()
