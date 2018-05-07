@@ -1,7 +1,7 @@
 <template>
   <div class="m-0 p-0">
 
-    <!--<slot></slot>-->
+    <div class="mx-5">{{ inclusion_distance }}</div>
 
     <div class="row container-fluid px-5">
 
@@ -245,13 +245,16 @@
             }
         },
         computed: {
-            no_temp_points_selected: function() {
+            no_temp_points_selected () {
                 for (let i = 0; i < this.temp_points.length; i++) {
                     if (this.temp_points[i].selected) {
                         return false;
                     }
                 }
                 return true;
+            },
+            inclusion_distance() {
+                return this.$store.state.place_inclusion_distance
             }
         },
         methods: {
