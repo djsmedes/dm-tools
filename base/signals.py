@@ -10,7 +10,10 @@ def create_profile(sender, instance: User, **kwargs):
 
 
 def add_to_users(sender, instance: User, **kwargs):
-    users = Group.objects.get(name='Users')
+    try:
+        users = Group.objects.get(name='Users')
+    except Group.DoesNotExist:
+        users = Group.objects.create(name='Users')
     if instance not in users.user_set.all():
         users.user_set.add(instance)
 
