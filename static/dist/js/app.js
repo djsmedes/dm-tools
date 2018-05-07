@@ -469,6 +469,9 @@ exports.default = {
                 }
             }
             return true;
+        },
+        inclusion_distance: function inclusion_distance() {
+            return this.$store.state.place_inclusion_distance;
         }
     },
     methods: {
@@ -668,7 +671,7 @@ exports.default = {
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"m-0 p-0"},[_c('div',{staticClass:"row container-fluid px-5"},[_c('div',{staticClass:"col"},[(_vm.selected_place)?_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white"},[_c('div',{staticClass:"row form-inline"},[(! _vm.editing)?_c('h4',{staticClass:"col"},[_vm._v(_vm._s(_vm.selected_place.name))]):_c('label',[_vm._v("\n              Name: "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.name),expression:"selected_place_edits.name"}],staticClass:"mx-1 col form-control",domProps:{"value":(_vm.selected_place_edits.name)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.selected_place_edits, "name", $event.target.value)}}})]),_vm._v(" "),(! _vm.editing)?_c('button',{staticClass:"btn btn-outline-light col-auto ml-auto mr-1",on:{"click":_vm.enter_edit_selected_place_context}},[_vm._v("\n              Edit\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-danger col-auto ml-auto mr-1",attrs:{"data-toggle":"modal","data-target":"#confirm-delete-modal"}},[_vm._v("\n              Delete\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-secondary col-auto mr-1",on:{"click":_vm.exit_edit_context}},[_vm._v("\n              Cancel\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-success col-auto mr-1",on:{"click":_vm.exit_and_save_selected_place}},[_vm._v("\n              Save\n            ")]):_vm._e()])]),_vm._v(" "),_c('div',{staticClass:"card-body"},[(! _vm.editing)?[_vm._v(_vm._s(_vm.selected_place.description))]:[_c('label',{attrs:{"for":"selected-place-description"}},[_vm._v("Description: ")]),_vm._v(" "),_c('textarea',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.description),expression:"selected_place_edits.description"}],staticClass:"form-control",attrs:{"id":"selected-place-description"},domProps:{"value":(_vm.selected_place_edits.description)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.selected_place_edits, "description", $event.target.value)}}})]],2),_vm._v(" "),_c('div',{staticClass:"card-footer"},[(! _vm.editing)?[_vm._v(_vm._s(_vm.place_types[_vm.selected_place.type]))]:[_c('label',{attrs:{"for":"selected-place-type"}},[_vm._v("Type: ")]),_vm._v(" "),_c('select',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.type),expression:"selected_place_edits.type"}],staticClass:"form-control",attrs:{"id":"selected-place-type"},on:{"change":function($event){var $$selectedVal = Array.prototype.filter.call($event.target.options,function(o){return o.selected}).map(function(o){var val = "_value" in o ? o._value : o.value;return val}); _vm.$set(_vm.selected_place_edits, "type", $event.target.multiple ? $$selectedVal : $$selectedVal[0])}}},[_vm._l((_vm.place_types),function(name,type){return [(_vm.have_same_dimensions(type, _vm.selected_place.type))?_c('option',{domProps:{"value":type}},[_vm._v("\n                  "+_vm._s(name)+"\n                ")]):_vm._e()]})],2)]],2)]):_vm._e()]),_vm._v(" "),_c('div',{staticClass:"col-auto ml-auto p-0"},[_c('svg',{attrs:{"id":"place-canvas"},on:{"click":function($event){_vm.generate_temp_point($event)}}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"5","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_vm._l((_vm.shapes),function(shape){return [(shape.id !== _vm.editing)?[(_vm.have_same_dimensions(shape.type, 200))?_c('g',[_c('polygon',{class:_vm.place_type_2_class(shape.type),attrs:{"points":_vm.points_to_pointstring(shape.points),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:[{ 'hoverable-place': _vm.hovering_enabled},
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"m-0 p-0"},[_c('div',{staticClass:"mx-5"},[_vm._v(_vm._s(_vm.inclusion_distance))]),_vm._v(" "),_c('div',{staticClass:"row container-fluid px-5"},[_c('div',{staticClass:"col"},[(_vm.selected_place)?_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white"},[_c('div',{staticClass:"row form-inline"},[(! _vm.editing)?_c('h4',{staticClass:"col"},[_vm._v(_vm._s(_vm.selected_place.name))]):_c('label',[_vm._v("\n              Name: "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.name),expression:"selected_place_edits.name"}],staticClass:"mx-1 col form-control",domProps:{"value":(_vm.selected_place_edits.name)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.selected_place_edits, "name", $event.target.value)}}})]),_vm._v(" "),(! _vm.editing)?_c('button',{staticClass:"btn btn-outline-light col-auto ml-auto mr-1",on:{"click":_vm.enter_edit_selected_place_context}},[_vm._v("\n              Edit\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-danger col-auto ml-auto mr-1",attrs:{"data-toggle":"modal","data-target":"#confirm-delete-modal"}},[_vm._v("\n              Delete\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-secondary col-auto mr-1",on:{"click":_vm.exit_edit_context}},[_vm._v("\n              Cancel\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-success col-auto mr-1",on:{"click":_vm.exit_and_save_selected_place}},[_vm._v("\n              Save\n            ")]):_vm._e()])]),_vm._v(" "),_c('div',{staticClass:"card-body"},[(! _vm.editing)?[_vm._v(_vm._s(_vm.selected_place.description))]:[_c('label',{attrs:{"for":"selected-place-description"}},[_vm._v("Description: ")]),_vm._v(" "),_c('textarea',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.description),expression:"selected_place_edits.description"}],staticClass:"form-control",attrs:{"id":"selected-place-description"},domProps:{"value":(_vm.selected_place_edits.description)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.selected_place_edits, "description", $event.target.value)}}})]],2),_vm._v(" "),_c('div',{staticClass:"card-footer"},[(! _vm.editing)?[_vm._v(_vm._s(_vm.place_types[_vm.selected_place.type]))]:[_c('label',{attrs:{"for":"selected-place-type"}},[_vm._v("Type: ")]),_vm._v(" "),_c('select',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.type),expression:"selected_place_edits.type"}],staticClass:"form-control",attrs:{"id":"selected-place-type"},on:{"change":function($event){var $$selectedVal = Array.prototype.filter.call($event.target.options,function(o){return o.selected}).map(function(o){var val = "_value" in o ? o._value : o.value;return val}); _vm.$set(_vm.selected_place_edits, "type", $event.target.multiple ? $$selectedVal : $$selectedVal[0])}}},[_vm._l((_vm.place_types),function(name,type){return [(_vm.have_same_dimensions(type, _vm.selected_place.type))?_c('option',{domProps:{"value":type}},[_vm._v("\n                  "+_vm._s(name)+"\n                ")]):_vm._e()]})],2)]],2)]):_vm._e()]),_vm._v(" "),_c('div',{staticClass:"col-auto ml-auto p-0"},[_c('svg',{attrs:{"id":"place-canvas"},on:{"click":function($event){_vm.generate_temp_point($event)}}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"5","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_vm._l((_vm.shapes),function(shape){return [(shape.id !== _vm.editing)?[(_vm.have_same_dimensions(shape.type, 200))?_c('g',[_c('polygon',{class:_vm.place_type_2_class(shape.type),attrs:{"points":_vm.points_to_pointstring(shape.points),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:[{ 'hoverable-place': _vm.hovering_enabled},
                                 _vm.is_active(shape.id) ? 'active' : '',
                                 'place-poly-outline',
                                 _vm.place_type_2_class(shape.type)],attrs:{"points":_vm.points_to_pointstring(shape.points),"id":_vm.pk_2_html_id(shape.id)},on:{"click":function($event){_vm.place_clicked($event)}}})]):(_vm.have_same_dimensions(shape.type, 100))?_c('g',[_c('polyline',{class:['line-expander', _vm.place_type_2_class(shape.type)],attrs:{"points":_vm.points_to_pointstring(shape.points)},on:{"click":function($event){_vm.place_clicked($event)}}}),_vm._v(" "),_c('polyline',{class:[{ 'hoverable-place': _vm.hovering_enabled},
@@ -695,19 +698,26 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
 
 ;require.register("js/vue/components/place_inclusion_distance.vue", function(exports, require, module) {
 ;(function(){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = {
     data: function data() {
-        return {
-            inclusion_distance: 0
-        };
+        return {};
     },
 
-    computed: {},
+    computed: {
+        inclusion_distance: {
+            get: function get() {
+                return this.$store.state.place_inclusion_distance;
+            },
+            set: function set(value) {
+                this.$store.commit('set_place_inclusion_distance', value);
+            }
+        }
+    },
     methods: {},
     created: function created() {}
 };
@@ -715,7 +725,7 @@ exports.default = {
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"form-group"},[_c('label',{staticClass:"dropdown-header",attrs:{"for":"navbar-inclusion-distance"}},[_vm._v("Inclusion distance")]),_vm._v(" "),_c('div',{staticClass:"px-4"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.inclusion_distance),expression:"inclusion_distance"}],staticClass:"form-control",attrs:{"id":"navbar-inclusion-distance","type":"number"},domProps:{"value":(_vm.inclusion_distance)},on:{"input":function($event){if($event.target.composing){ return; }_vm.inclusion_distance=$event.target.value}}})])])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"form-group"},[_c('label',{staticClass:"dropdown-header",attrs:{"for":"navbar-inclusion-distance"}},[_vm._v("Inclusion distance")]),_vm._v(" "),_c('div',{staticClass:"px-4"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.inclusion_distance),expression:"inclusion_distance"}],staticClass:"form-control",attrs:{"id":"navbar-inclusion-distance","type":"number","min":"0"},domProps:{"value":(_vm.inclusion_distance)},on:{"input":function($event){if($event.target.composing){ return; }_vm.inclusion_distance=$event.target.value}}})])])}
 __vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -724,7 +734,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-82b131f0", __vue__options__)
   } else {
-    hotAPI.reload("data-v-82b131f0", __vue__options__)
+    hotAPI.rerender("data-v-82b131f0", __vue__options__)
   }
 })()}
 });
@@ -740,6 +750,10 @@ var _vue = require('vue/dist/vue');
 
 var _vue2 = _interopRequireDefault(_vue);
 
+var _vuex = require('vuex');
+
+var _vuex2 = _interopRequireDefault(_vuex);
+
 var _place_canvas = require('./components/place_canvas');
 
 var _place_canvas2 = _interopRequireDefault(_place_canvas);
@@ -750,11 +764,25 @@ var _place_inclusion_distance2 = _interopRequireDefault(_place_inclusion_distanc
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+_vue2.default.use(_vuex2.default);
+
 _vue2.default.component('place-canvas', require('./components/place_canvas'));
 _vue2.default.component('place-inclusion-distance', require('./components/place_inclusion_distance'));
 
+var store = new _vuex2.default.Store({
+    state: {
+        place_inclusion_distance: 0
+    },
+    mutations: {
+        set_place_inclusion_distance: function set_place_inclusion_distance(state, n) {
+            state.place_inclusion_distance = n;
+        }
+    }
+});
+
 new _vue2.default({
     el: '#app',
+    store: store,
     components: { place_canvas: _place_canvas2.default, place_inclusion_distance: _place_inclusion_distance2.default }
 });
 });

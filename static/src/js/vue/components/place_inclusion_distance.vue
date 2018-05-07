@@ -3,7 +3,7 @@
     <label for="navbar-inclusion-distance" class="dropdown-header">Inclusion distance</label>
     <div class="px-4">
       <input id="navbar-inclusion-distance"
-             type="number"
+             type="number" min="0"
              class="form-control"
              v-model="inclusion_distance">
     </div>
@@ -13,11 +13,18 @@
 <script>
     export default {
         data() {
-            return {
-                inclusion_distance: 0,
+            return {}
+        },
+        computed: {
+            inclusion_distance: {
+                get() {
+                    return this.$store.state.place_inclusion_distance
+                },
+                set(value) {
+                    this.$store.commit('set_place_inclusion_distance', value);
+                }
             }
         },
-        computed: {},
         methods: {},
         created() {
         },
