@@ -1,7 +1,6 @@
 from django.db import models
 from django.forms import ModelForm
-
-# Create your models here.
+from django.contrib.auth.models import User
 from django.urls import reverse
 from multiselectfield import MultiSelectField
 
@@ -66,3 +65,11 @@ class DmScreenTabForm(ModelForm):
     class Meta:
         model = DmScreenTab
         fields = '__all__'
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+
+
+class Campaign(BaseModel):
+    dm = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='campaigns')
