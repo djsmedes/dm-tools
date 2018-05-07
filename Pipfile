@@ -23,6 +23,7 @@ django-autocomplete-light = "==3.3.0rc6"
 markdown = "*"
 shapely = "*"
 djangorestframework = "*"
+rules = "*"
 
 
 [dev-packages]
