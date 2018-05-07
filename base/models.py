@@ -8,6 +8,9 @@ from multiselectfield import MultiSelectField
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', null=True)
 
+    def __str__(self):
+        return self.user.__str__()
+
 
 class BaseModel(models.Model):
 
