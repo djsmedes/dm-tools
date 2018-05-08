@@ -437,10 +437,9 @@ _axios2.default.defaults.xsrfHeaderName = 'X-CSRFToken';
 exports.default = {
     data: function data() {
         return {
-            shapes: [],
+            places: [],
             temp_points: [],
             temp_type: null,
-            hoverable_place_class: 'hoverable-place',
             hovering_enabled: true,
             selected_place: null,
             selected_place_edits: null,
@@ -458,7 +457,6 @@ exports.default = {
                 2: 'natural',
                 3: 'dungeon'
             },
-            user: null,
             editing: null,
             mousedown_on_temp_point: false,
             mouse_moving_on_temp_point: false
@@ -484,11 +482,11 @@ exports.default = {
         }
     },
     methods: {
-        load_shapes: function load_shapes() {
+        load_places: function load_places() {
             var _this = this;
 
             _axios2.default.get('/api/places/').then(function (r) {
-                _this.shapes = r.data;
+                _this.places = r.data;
             }).catch(function (e) {
                 console.log(e);
             });
@@ -519,29 +517,28 @@ exports.default = {
             var y = event.pageY - top;
             return { x: x, y: y };
         },
-        enter_create_shape_context: function enter_create_shape_context(context) {
+        enter_create_place_context: function enter_create_place_context(context) {
             this.temp_type = context;
-            this.hoverable_place_class = '';
             this.hovering_enabled = false;
             this.selected_place = null;
         },
-        exit_and_save_shape: function exit_and_save_shape() {
+        exit_and_save_place: function exit_and_save_place() {
             var _this3 = this;
 
             _axios2.default.post('/api/places/', {
+                name: 'new Place',
                 points: this.temp_points,
                 type: this.temp_type
             }).then(function (_) {
-                _this3.load_shapes();
+                _this3.load_places();
             }).catch(function (e) {
                 console.log(e);
             });
-            this.exit_edit_shape_context();
+            this.exit_edit_place_context();
         },
-        exit_edit_shape_context: function exit_edit_shape_context() {
+        exit_edit_place_context: function exit_edit_place_context() {
             this.temp_points = [];
             this.temp_type = null;
-            this.hoverable_place_class = 'hoverable-place';
             this.hovering_enabled = true;
         },
         generate_temp_point: function generate_temp_point(event) {
@@ -579,7 +576,6 @@ exports.default = {
             }
         },
         enter_edit_selected_place_context: function enter_edit_selected_place_context() {
-            this.hoverable_place_class = '';
             this.hovering_enabled = false;
             this.editing = this.selected_place.id;
             this.temp_type = this.selected_place.type;
@@ -592,7 +588,7 @@ exports.default = {
             this.selected_place_edits.points = this.temp_points;
 
             _axios2.default.post('/api/places/' + this.selected_place_edits.id + '/', this.selected_place_edits).then(function (_) {
-                _this4.load_shapes();
+                _this4.load_places();
                 _this4.load_place_details(parseInt(_this4.selected_place_edits.id));
                 _this4.exit_edit_context();
             }).catch(function (e) {
@@ -603,7 +599,7 @@ exports.default = {
             var _this5 = this;
 
             _axios2.default.delete('/api/places/' + this.selected_place.id + '/').then(function (_) {
-                _this5.load_shapes();
+                _this5.load_places();
                 _this5.exit_edit_context();
                 _this5.selected_place = null;
             }).catch(function (e) {
@@ -613,7 +609,7 @@ exports.default = {
         exit_edit_context: function exit_edit_context() {
             this.editing = null;
             this.selected_place_edits = null;
-            this.exit_edit_shape_context();
+            this.exit_edit_place_context();
         },
         have_same_dimensions: function have_same_dimensions(type1, type2) {
             return ~~(type1 / 100) === ~~(type2 / 100);
@@ -679,7 +675,7 @@ exports.default = {
         }
     },
     created: function created() {
-        this.load_shapes();
+        this.load_places();
         this.debounced_load_selected_place_details = _lodash2.default.debounce(this.load_selected_place_details, 350);
     }
 };
@@ -687,18 +683,18 @@ exports.default = {
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"m-0 p-0"},[_c('div',{staticClass:"row container-fluid px-5"},[_c('div',{staticClass:"col"},[(_vm.selected_place)?_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white"},[_c('div',{staticClass:"row form-inline"},[(! _vm.editing)?_c('h4',{staticClass:"col"},[_vm._v(_vm._s(_vm.selected_place.name))]):_c('label',[_vm._v("\n              Name: "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.name),expression:"selected_place_edits.name"}],staticClass:"mx-1 col form-control",domProps:{"value":(_vm.selected_place_edits.name)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.selected_place_edits, "name", $event.target.value)}}})]),_vm._v(" "),(! _vm.editing)?_c('button',{staticClass:"btn btn-outline-light col-auto ml-auto mr-1",on:{"click":_vm.enter_edit_selected_place_context}},[_vm._v("\n              Edit\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-danger col-auto ml-auto mr-1",attrs:{"data-toggle":"modal","data-target":"#confirm-delete-modal"}},[_vm._v("\n              Delete\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-secondary col-auto mr-1",on:{"click":_vm.exit_edit_context}},[_vm._v("\n              Cancel\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-success col-auto mr-1",on:{"click":_vm.exit_and_save_selected_place}},[_vm._v("\n              Save\n            ")]):_vm._e()])]),_vm._v(" "),_c('div',{staticClass:"card-body"},[(! _vm.editing)?[_vm._v(_vm._s(_vm.selected_place.description))]:[_c('label',{attrs:{"for":"selected-place-description"}},[_vm._v("Description: ")]),_vm._v(" "),_c('textarea',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.description),expression:"selected_place_edits.description"}],staticClass:"form-control",attrs:{"id":"selected-place-description"},domProps:{"value":(_vm.selected_place_edits.description)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.selected_place_edits, "description", $event.target.value)}}})]],2),_vm._v(" "),(! _vm.editing)?[_c('hr'),_vm._v(" "),_c('div',{staticClass:"card-body"},[_vm._v("\n            Nearby places:\n            "),_c('ul',{staticClass:"list-inline"},_vm._l((_vm.selected_place.nearby_places),function(place){return _c('li',{staticClass:"list-inline-item"},[_c('button',{staticClass:"btn btn-outline-dark",on:{"click":function($event){_vm.select_place(parseInt(place.id))}}},[_vm._v("\n                  "+_vm._s(place.name)+"\n                ")])])}))])]:_vm._e(),_vm._v(" "),_c('div',{staticClass:"card-footer"},[(! _vm.editing)?[_vm._v(_vm._s(_vm.place_types[_vm.selected_place.type]))]:[_c('label',{attrs:{"for":"selected-place-type"}},[_vm._v("Type: ")]),_vm._v(" "),_c('select',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.type),expression:"selected_place_edits.type"}],staticClass:"form-control",attrs:{"id":"selected-place-type"},on:{"change":function($event){var $$selectedVal = Array.prototype.filter.call($event.target.options,function(o){return o.selected}).map(function(o){var val = "_value" in o ? o._value : o.value;return val}); _vm.$set(_vm.selected_place_edits, "type", $event.target.multiple ? $$selectedVal : $$selectedVal[0])}}},[_vm._l((_vm.place_types),function(name,type){return [(_vm.have_same_dimensions(type, _vm.selected_place.type))?_c('option',{domProps:{"value":type}},[_vm._v("\n                  "+_vm._s(name)+"\n                ")]):_vm._e()]})],2)]],2)],2):_vm._e()]),_vm._v(" "),_c('div',{staticClass:"col-auto ml-auto p-0"},[_c('svg',{attrs:{"id":"place-canvas"},on:{"click":function($event){_vm.generate_temp_point($event)}}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"5","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_vm._l((_vm.shapes),function(shape){return [(shape.id !== _vm.editing)?[(_vm.have_same_dimensions(shape.type, 200))?_c('g',[_c('polygon',{class:_vm.place_type_2_class(shape.type),attrs:{"points":_vm.points_to_pointstring(shape.points),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:[{ 'hoverable-place': _vm.hovering_enabled},
-                                _vm.is_active(shape.id) ? 'active' : '',
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"m-0 p-0"},[_c('div',{staticClass:"row container-fluid px-5"},[_c('div',{staticClass:"col"},[(_vm.selected_place)?_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white"},[_c('div',{staticClass:"row form-inline"},[(! _vm.editing)?_c('h4',{staticClass:"col"},[_vm._v(_vm._s(_vm.selected_place.name))]):_c('label',[_vm._v("\n              Name: "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.name),expression:"selected_place_edits.name"}],staticClass:"mx-1 col form-control",domProps:{"value":(_vm.selected_place_edits.name)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.selected_place_edits, "name", $event.target.value)}}})]),_vm._v(" "),(! _vm.editing)?_c('button',{staticClass:"btn btn-outline-light col-auto ml-auto mr-1",on:{"click":_vm.enter_edit_selected_place_context}},[_vm._v("\n              Edit\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-danger col-auto ml-auto mr-1",attrs:{"data-toggle":"modal","data-target":"#confirm-delete-modal"}},[_vm._v("\n              Delete\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-secondary col-auto mr-1",on:{"click":_vm.exit_edit_context}},[_vm._v("\n              Cancel\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-success col-auto mr-1",on:{"click":_vm.exit_and_save_selected_place}},[_vm._v("\n              Save\n            ")]):_vm._e()])]),_vm._v(" "),_c('div',{staticClass:"card-body"},[(! _vm.editing)?[_vm._v(_vm._s(_vm.selected_place.description))]:[_c('label',{attrs:{"for":"selected-place-description"}},[_vm._v("Description: ")]),_vm._v(" "),_c('textarea',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.description),expression:"selected_place_edits.description"}],staticClass:"form-control",attrs:{"id":"selected-place-description"},domProps:{"value":(_vm.selected_place_edits.description)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.selected_place_edits, "description", $event.target.value)}}})]],2),_vm._v(" "),(! _vm.editing)?[_c('hr'),_vm._v(" "),_c('div',{staticClass:"card-body"},[_vm._v("\n            Nearby places:\n            "),_c('ul',{staticClass:"list-inline"},_vm._l((_vm.selected_place.nearby_places),function(place){return _c('li',{staticClass:"list-inline-item"},[_c('button',{staticClass:"btn btn-outline-dark",on:{"click":function($event){_vm.select_place(parseInt(place.id))}}},[_vm._v("\n                  "+_vm._s(place.name)+"\n                ")])])}))])]:_vm._e(),_vm._v(" "),_c('div',{staticClass:"card-footer"},[(! _vm.editing)?[_vm._v(_vm._s(_vm.place_types[_vm.selected_place.type]))]:[_c('label',{attrs:{"for":"selected-place-type"}},[_vm._v("Type: ")]),_vm._v(" "),_c('select',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.type),expression:"selected_place_edits.type"}],staticClass:"form-control",attrs:{"id":"selected-place-type"},on:{"change":function($event){var $$selectedVal = Array.prototype.filter.call($event.target.options,function(o){return o.selected}).map(function(o){var val = "_value" in o ? o._value : o.value;return val}); _vm.$set(_vm.selected_place_edits, "type", $event.target.multiple ? $$selectedVal : $$selectedVal[0])}}},[_vm._l((_vm.place_types),function(name,type){return [(_vm.have_same_dimensions(type, _vm.selected_place.type))?_c('option',{domProps:{"value":type}},[_vm._v("\n                  "+_vm._s(name)+"\n                ")]):_vm._e()]})],2)]],2)],2):_vm._e()]),_vm._v(" "),_c('div',{staticClass:"col-auto ml-auto p-0"},[_c('svg',{attrs:{"id":"place-canvas"},on:{"click":function($event){_vm.generate_temp_point($event)}}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"5","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_vm._l((_vm.places),function(place){return [(place.id !== _vm.editing)?[(_vm.have_same_dimensions(place.type, 200))?_c('g',[_c('polygon',{class:_vm.place_type_2_class(place.type),attrs:{"points":_vm.points_to_pointstring(place.points),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:[{ 'hoverable-place': _vm.hovering_enabled},
+                                _vm.is_active(place.id) ? 'active' : '',
                                 'place-poly-outline',
-                                _vm.place_type_2_class(shape.type)],attrs:{"points":_vm.points_to_pointstring(shape.points),"id":_vm.pk_2_html_id(shape.id)},on:{"click":function($event){_vm.place_clicked($event)}}})]):(_vm.have_same_dimensions(shape.type, 100))?_c('g',[_c('polyline',{class:['line-expander', _vm.place_type_2_class(shape.type)],attrs:{"points":_vm.points_to_pointstring(shape.points)},on:{"click":function($event){_vm.place_clicked($event)}}}),_vm._v(" "),_c('polyline',{class:[{ 'hoverable-place': _vm.hovering_enabled},
-                           _vm.place_type_2_class(shape.type),
-                           _vm.is_active(shape.id) ? 'active' : ''],attrs:{"points":_vm.points_to_pointstring(shape.points),"id":_vm.pk_2_html_id(shape.id)},on:{"click":function($event){_vm.place_clicked($event)}}})]):(_vm.have_same_dimensions(shape.type, 0))?_vm._l((shape.points),function(pt){return _c('circle',{class:[{ 'hoverable-place': _vm.hovering_enabled},
-                             _vm.place_type_2_class(shape.type),
-                             _vm.is_active(shape.id) ? 'active' : ''],attrs:{"cx":pt.x,"cy":pt.y,"r":"5","id":_vm.pk_2_html_id(shape.id)},on:{"click":function($event){_vm.place_clicked($event)}}})}):_vm._e()]:_vm._e()]}),_vm._v(" "),(200 <= _vm.temp_type)?_c('g',[_c('polygon',{class:_vm.place_type_2_class(_vm.temp_type),attrs:{"points":_vm.points_to_pointstring(_vm.temp_points),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:['place-poly-outline',
+                                _vm.place_type_2_class(place.type)],attrs:{"points":_vm.points_to_pointstring(place.points),"id":_vm.pk_2_html_id(place.id)},on:{"click":function($event){_vm.place_clicked($event)}}})]):(_vm.have_same_dimensions(place.type, 100))?_c('g',[_c('polyline',{class:['line-expander', _vm.place_type_2_class(place.type)],attrs:{"points":_vm.points_to_pointstring(place.points)},on:{"click":function($event){_vm.place_clicked($event)}}}),_vm._v(" "),_c('polyline',{class:[{ 'hoverable-place': _vm.hovering_enabled},
+                           _vm.place_type_2_class(place.type),
+                           _vm.is_active(place.id) ? 'active' : ''],attrs:{"points":_vm.points_to_pointstring(place.points),"id":_vm.pk_2_html_id(place.id)},on:{"click":function($event){_vm.place_clicked($event)}}})]):(_vm.have_same_dimensions(place.type, 0))?_vm._l((place.points),function(pt){return _c('circle',{class:[{ 'hoverable-place': _vm.hovering_enabled},
+                             _vm.place_type_2_class(place.type),
+                             _vm.is_active(place.id) ? 'active' : ''],attrs:{"cx":pt.x,"cy":pt.y,"r":"5","id":_vm.pk_2_html_id(place.id)},on:{"click":function($event){_vm.place_clicked($event)}}})}):_vm._e()]:_vm._e()]}),_vm._v(" "),(200 <= _vm.temp_type)?_c('g',[_c('polygon',{class:_vm.place_type_2_class(_vm.temp_type),attrs:{"points":_vm.points_to_pointstring(_vm.temp_points),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:['place-poly-outline',
                             _vm.place_type_2_class(_vm.temp_type)],attrs:{"points":_vm.points_to_pointstring(_vm.temp_points)}})]):(100 <= _vm.temp_type)?_c('polyline',{class:_vm.place_type_2_class(_vm.temp_type),attrs:{"points":_vm.points_to_pointstring(_vm.temp_points)}}):_vm._l((_vm.temp_points),function(pt){return _c('circle',{class:_vm.place_type_2_class(_vm.temp_type),attrs:{"cx":pt.x,"cy":pt.y,"r":"5"}})}),_vm._v(" "),_vm._l((_vm.temp_points),function(pt,index){return (100 <= _vm.temp_type)?_c('circle',{class:{ 'place-temp-point': true,
                         'hoverable-place': true,
                         active: pt.selected },attrs:{"id":'temp-circle-' + index,"cx":pt.x,"cy":pt.y,"r":"5"},on:{"mousedown":function($event){_vm.temp_point_mousedown($event)},"click":function($event){_vm.temp_point_click($event)}}}):_vm._e()})],2)]),_vm._v(" "),_c('div',{staticClass:"col-auto ml-2"},[(_vm.editing)?_c('div',{staticClass:"mb-1"},[_c('button',{class:['btn', 'btn-danger',
-                         {'disabled': _vm.no_temp_points_selected}],on:{"click":_vm.delete_temp_points}},[_vm._v("\n          Delete point(s)\n        ")])]):_vm._e(),_vm._v(" "),(_vm.temp_type && !_vm.editing)?_c('div',{staticClass:"mb-1"},[_c('button',{staticClass:"btn btn-outline-success",on:{"click":_vm.exit_and_save_shape}},[_vm._v("\n          Save\n        ")]),_vm._v(" "),_c('button',{staticClass:"btn btn-outline-danger",on:{"click":_vm.exit_edit_shape_context}},[_vm._v("\n          Cancel\n        ")])]):_vm._e(),_vm._v(" "),_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white"},[_vm._v("\n          Key\n        ")]),_vm._v(" "),_c('ul',{staticClass:"list-group list-group-flush"},_vm._l((_vm.place_types),function(name,type){return _c('li',{staticClass:"list-group-item d-flex align-items-center px-3"},[_c('svg',{staticClass:"mr-1",attrs:{"width":"16","height":"16"}},[(type < 100)?_c('circle',{class:_vm.place_type_2_class(type),attrs:{"cx":"8","cy":"8","r":"5"}}):(type < 200)?_c('polyline',{class:_vm.place_type_2_class(type),attrs:{"points":"2,2 4,12 14,14"}}):_c('g',[_c('polygon',{class:_vm.place_type_2_class(type),attrs:{"points":"2,2 50,0 0,50","filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:['place-poly-outline', _vm.place_type_2_class(type)],attrs:{"points":"2,2 50,0 0,50"}})])]),_vm._v(" "),_c('span',{staticClass:"mr-1"},[_vm._v(_vm._s(name))]),_vm._v(" "),_c('button',{staticClass:"btn btn-sm btn-outline-dark ml-auto mr-1",staticStyle:{"position":"relative"},attrs:{"data-toggle":"button","aria-pressed":"false"},on:{"click":function($event){_vm.toggle_type_visibility(type)}}},[_c('svg',{staticStyle:{"position":"absolute","top":"7px","left":"8px"},attrs:{"width":"14","height":"14"}},[_c('polyline',{attrs:{"points":"14,0 0,14","stroke":"white","fill":"none","stroke-width":"2"}})]),_vm._v(" "),_c('span',{staticClass:"oi oi-eye",attrs:{"title":"visibility","aria-hidden":"true"}})]),_vm._v(" "),_c('button',{staticClass:"btn btn-sm btn-outline-dark",on:{"click":function($event){_vm.enter_create_shape_context(type)}}},[_vm._v("+")])])}))])])]),_vm._v(" "),(_vm.selected_place && _vm.editing)?_c('div',{staticClass:"modal fade",attrs:{"id":"confirm-delete-modal","tabindex":"-1","role":"dialog","aria-labelledby":"confirm-delete-title","aria-hidden":"true"}},[_c('div',{staticClass:"modal-dialog modal-dialog-centered",attrs:{"role":"document"}},[_c('div',{staticClass:"modal-content"},[_vm._m(0),_vm._v(" "),_c('div',{staticClass:"modal-body"},[_vm._v("\n          Are you sure you want to delete "+_vm._s(_vm.selected_place.name)+"? This cannot be undone.\n        ")]),_vm._v(" "),_c('div',{staticClass:"modal-footer"},[_c('button',{staticClass:"btn btn-secondary",attrs:{"type":"button","data-dismiss":"modal"}},[_vm._v("Cancel")]),_vm._v(" "),_c('button',{staticClass:"btn btn-danger",attrs:{"type":"button","data-dismiss":"modal"},on:{"click":_vm.delete_selected_place}},[_vm._v("\n            Yes, delete "+_vm._s(_vm.selected_place.name)+"\n          ")])])])])]):_vm._e()])}
+                         {'disabled': _vm.no_temp_points_selected}],on:{"click":_vm.delete_temp_points}},[_vm._v("\n          Delete point(s)\n        ")])]):_vm._e(),_vm._v(" "),(_vm.temp_type && !_vm.editing)?_c('div',{staticClass:"mb-1"},[_c('button',{staticClass:"btn btn-outline-success",on:{"click":_vm.exit_and_save_place}},[_vm._v("\n          Save\n        ")]),_vm._v(" "),_c('button',{staticClass:"btn btn-outline-danger",on:{"click":_vm.exit_edit_place_context}},[_vm._v("\n          Cancel\n        ")])]):_vm._e(),_vm._v(" "),_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white"},[_vm._v("\n          Key\n        ")]),_vm._v(" "),_c('ul',{staticClass:"list-group list-group-flush"},_vm._l((_vm.place_types),function(name,type){return _c('li',{staticClass:"list-group-item d-flex align-items-center px-3"},[_c('svg',{staticClass:"mr-1",attrs:{"width":"16","height":"16"}},[(type < 100)?_c('circle',{class:_vm.place_type_2_class(type),attrs:{"cx":"8","cy":"8","r":"5"}}):(type < 200)?_c('polyline',{class:_vm.place_type_2_class(type),attrs:{"points":"2,2 4,12 14,14"}}):_c('g',[_c('polygon',{class:_vm.place_type_2_class(type),attrs:{"points":"2,2 50,0 0,50","filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:['place-poly-outline', _vm.place_type_2_class(type)],attrs:{"points":"2,2 50,0 0,50"}})])]),_vm._v(" "),_c('span',{staticClass:"mr-1"},[_vm._v(_vm._s(name))]),_vm._v(" "),_c('button',{staticClass:"btn btn-sm btn-outline-dark ml-auto mr-1",staticStyle:{"position":"relative"},attrs:{"data-toggle":"button","aria-pressed":"false"},on:{"click":function($event){_vm.toggle_type_visibility(type)}}},[_c('svg',{staticStyle:{"position":"absolute","top":"7px","left":"8px"},attrs:{"width":"14","height":"14"}},[_c('polyline',{attrs:{"points":"14,0 0,14","stroke":"white","fill":"none","stroke-width":"2"}})]),_vm._v(" "),_c('span',{staticClass:"oi oi-eye",attrs:{"title":"visibility","aria-hidden":"true"}})]),_vm._v(" "),_c('button',{staticClass:"btn btn-sm btn-outline-dark",on:{"click":function($event){_vm.enter_create_place_context(type)}}},[_vm._v("+")])])}))])])]),_vm._v(" "),(_vm.selected_place && _vm.editing)?_c('div',{staticClass:"modal fade",attrs:{"id":"confirm-delete-modal","tabindex":"-1","role":"dialog","aria-labelledby":"confirm-delete-title","aria-hidden":"true"}},[_c('div',{staticClass:"modal-dialog modal-dialog-centered",attrs:{"role":"document"}},[_c('div',{staticClass:"modal-content"},[_vm._m(0),_vm._v(" "),_c('div',{staticClass:"modal-body"},[_vm._v("\n          Are you sure you want to delete "+_vm._s(_vm.selected_place.name)+"? This cannot be undone.\n        ")]),_vm._v(" "),_c('div',{staticClass:"modal-footer"},[_c('button',{staticClass:"btn btn-secondary",attrs:{"type":"button","data-dismiss":"modal"}},[_vm._v("Cancel")]),_vm._v(" "),_c('button',{staticClass:"btn btn-danger",attrs:{"type":"button","data-dismiss":"modal"},on:{"click":_vm.delete_selected_place}},[_vm._v("\n            Yes, delete "+_vm._s(_vm.selected_place.name)+"\n          ")])])])])]):_vm._e()])}
 __vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"modal-header"},[_c('h5',{staticClass:"modal-title",attrs:{"id":"confirm-delete-title"}},[_vm._v("Confirm delete")]),_vm._v(" "),_c('button',{staticClass:"close",attrs:{"type":"button","data-dismiss":"modal","aria-label":"Close"}},[_c('span',{attrs:{"aria-hidden":"true"}},[_vm._v("×")])])])}]
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)

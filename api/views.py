@@ -1,31 +1,58 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from shapely.geometry import Point, LineString, Polygon
-from django.http import Http404
 
 from places.models import Place
 from places.utils import topological_sort_shapes
-from .serializers import PlaceSerializer, PlaceInfoSerializer
+from .serializers import PlaceSerializer, PlaceLiteSerializer
 
 
-class PlaceInfo(APIView):
+class PlaceList(APIView):
+    """Get a list of Places or create a new one"""
+    def get(self, request, format=None):
+        # todo add ability to get other owners stuff somehow for non-logged-in users
+        owner = request.user.profile
+        polygons = topological_sort_shapes(
+            Place.objects.filter(_dimensions=2).filter(owner=owner)
+        )
+        places = polygons + list(
+            Place.objects.filter(_dimensions__lt=2).filter(owner=owner)
+        )
+        serializer = PlaceLiteSerializer(places, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
+    def post(self, request, format=None):
+        if not request.user.has_perm('places.add_place'):
+            return Response({}, status=status.HTTP_403_FORBIDDEN)
+        data = {k: v for k, v in request.data.items()}
+        data['owner'] = request.user.profile.pk
+        serializer = PlaceSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PlaceDetail(APIView):
+    """Retrieve, update, or delete an existing Place"""
     def get(self, request, pk, format=None):
-        place = Place.objects.get(id=pk)
-        serializer = PlaceInfoSerializer(place, context={
+        try:
+            place = Place.objects.get(id=pk, owner=request.user.profile)
+        except Place.DoesNotExist:
+            return Response({}, status.HTTP_404_NOT_FOUND)
+        serializer = PlaceSerializer(place, context={
             'inclusion_distance': request.query_params.get('inclusion_distance', 0)
         })
-        return Response(serializer.data)
+        return Response(serializer.data, status.HTTP_200_OK)
 
     def post(self, request, pk, format=None):
         try:
-            place = Place.objects.get(pk=pk)
+            place = Place.objects.get(pk=pk, owner=request.user.profile)
         except Place.DoesNotExist:
-            raise Http404
+            return Response({}, status.HTTP_404_NOT_FOUND)
         if not request.user.has_perm('places.change_place', place):
             return Response({}, status=status.HTTP_403_FORBIDDEN)
-        serializer = PlaceInfoSerializer(place, data=request.data)
+        serializer = PlaceSerializer(place, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
@@ -33,59 +60,10 @@ class PlaceInfo(APIView):
 
     def delete(self, request, pk, format=None):
         try:
-            place = Place.objects.get(pk=pk)
+            place = Place.objects.get(pk=pk, owner=request.user.profile)
         except Place.DoesNotExist:
-            raise Http404
+            return Response({}, status.HTTP_404_NOT_FOUND)
         if not request.user.has_perm('places.delete_place', place):
             return Response({}, status=status.HTTP_403_FORBIDDEN)
         place.delete()
         return Response({}, status=status.HTTP_202_ACCEPTED)
-
-
-class PlaceList(APIView):
-
-    def get(self, request, format=None):
-        polygons = topological_sort_shapes(
-            Place.objects.filter(_dimensions=2).filter(owner=request.user.profile)
-        )
-        places = polygons + list(
-            Place.objects.filter(_dimensions__lt=2).filter(owner=request.user.profile)
-        )
-        serializer = PlaceSerializer(places, many=True)
-        return Response(serializer.data)
-
-    def post(self, request, format=None):
-        coords = [(datum['x'], datum['y']) for datum in request.data['points']]
-        type = int(request.data['type'])
-        place = Place()
-        if type < 100:
-            try:
-                shape = Point(coords)
-            except ValueError:
-                return Response({
-                    'points': {
-                        'errors': 'Points cannot have more than one coordinate pair.'
-                    }}, status.HTTP_400_BAD_REQUEST)
-        elif type < 200:
-            try:
-                shape = LineString(coords)
-            except ValueError:
-                return Response({
-                    'points': {
-                        'errors': 'Lines must have at least two coordinate pairs.'
-                    }}, status.HTTP_400_BAD_REQUEST)
-        else:  # dimensions == 2
-            try:
-                shape = Polygon(coords)
-            except ValueError:
-                return Response({
-                    'points': {
-                        'errors': 'Polygons must have at least three coordinate pairs.'
-                    }}, status.HTTP_400_BAD_REQUEST)
-        place.shape = shape
-        place.type = type
-        if not request.user.has_perm('places.add_place'):
-            return Response({}, status.HTTP_403_FORBIDDEN)
-        place.owner = request.user.profile
-        place.save()
-        return Response({}, status.HTTP_201_CREATED)

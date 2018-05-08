@@ -79,39 +79,39 @@
 
           </defs>
 
-          <template v-for="shape in shapes">
-            <template v-if="shape.id !== editing">
-              <g v-if="have_same_dimensions(shape.type, 200)">
-                <polygon :points="points_to_pointstring(shape.points)"
-                         :class="place_type_2_class(shape.type)"
+          <template v-for="place in places">
+            <template v-if="place.id !== editing">
+              <g v-if="have_same_dimensions(place.type, 200)">
+                <polygon :points="points_to_pointstring(place.points)"
+                         :class="place_type_2_class(place.type)"
                          filter="url(#innershadow)"></polygon>
-                <polygon :points="points_to_pointstring(shape.points)"
-                         :id="pk_2_html_id(shape.id)"
+                <polygon :points="points_to_pointstring(place.points)"
+                         :id="pk_2_html_id(place.id)"
                          :class="[{ 'hoverable-place': hovering_enabled},
-                                  is_active(shape.id) ? 'active' : '',
+                                  is_active(place.id) ? 'active' : '',
                                   'place-poly-outline',
-                                  place_type_2_class(shape.type)]"
+                                  place_type_2_class(place.type)]"
                          @click="place_clicked($event)"></polygon>
               </g>
-              <g v-else-if="have_same_dimensions(shape.type, 100)">
-                <polyline :points="points_to_pointstring(shape.points)"
-                          :class="['line-expander', place_type_2_class(shape.type)]"
+              <g v-else-if="have_same_dimensions(place.type, 100)">
+                <polyline :points="points_to_pointstring(place.points)"
+                          :class="['line-expander', place_type_2_class(place.type)]"
                           @click="place_clicked($event)"></polyline>
                 <polyline
-                    :points="points_to_pointstring(shape.points)"
+                    :points="points_to_pointstring(place.points)"
                     :class="[{ 'hoverable-place': hovering_enabled},
-                             place_type_2_class(shape.type),
-                             is_active(shape.id) ? 'active' : '']"
-                    :id="pk_2_html_id(shape.id)"
+                             place_type_2_class(place.type),
+                             is_active(place.id) ? 'active' : '']"
+                    :id="pk_2_html_id(place.id)"
                     @click="place_clicked($event)"></polyline>
               </g>
-              <circle v-else-if="have_same_dimensions(shape.type, 0)"
-                      v-for="pt in shape.points"
+              <circle v-else-if="have_same_dimensions(place.type, 0)"
+                      v-for="pt in place.points"
                       :cx="pt.x" :cy="pt.y" r="5"
-                      :id="pk_2_html_id(shape.id)"
+                      :id="pk_2_html_id(place.id)"
                       :class="[{ 'hoverable-place': hovering_enabled},
-                               place_type_2_class(shape.type),
-                               is_active(shape.id) ? 'active' : '']"
+                               place_type_2_class(place.type),
+                               is_active(place.id) ? 'active' : '']"
                       @click="place_clicked($event)"></circle>
             </template>
           </template>
@@ -152,11 +152,11 @@
         </div>
         <div v-if="temp_type && !editing" class="mb-1">
           <button class="btn btn-outline-success"
-                  @click="exit_and_save_shape">
+                  @click="exit_and_save_place">
             Save
           </button>
           <button class="btn btn-outline-danger"
-                  @click="exit_edit_shape_context">
+                  @click="exit_edit_place_context">
             Cancel
           </button>
         </div>
@@ -185,7 +185,7 @@
                 </svg>
                 <span class="oi oi-eye" title="visibility" aria-hidden="true"></span>
               </button>
-              <button class="btn btn-sm btn-outline-dark" @click="enter_create_shape_context(type)">+</button>
+              <button class="btn btn-sm btn-outline-dark" @click="enter_create_place_context(type)">+</button>
             </li>
           </ul>
         </div>
@@ -231,10 +231,9 @@
     export default {
         data() {
             return {
-                shapes: [],
+                places: [],
                 temp_points: [],
                 temp_type: null,
-                hoverable_place_class: 'hoverable-place',
                 hovering_enabled: true,
                 selected_place: null,
                 selected_place_edits: null,
@@ -252,7 +251,6 @@
                     2: 'natural',
                     3: 'dungeon'
                 },
-                user: null,
                 editing: null,
                 mousedown_on_temp_point: false,
                 mouse_moving_on_temp_point: false,
@@ -277,11 +275,11 @@
             }
         },
         methods: {
-            load_shapes: function () {
+            load_places: function () {
                 axios
                     .get('/api/places/')
                     .then(r => {
-                        this.shapes = r.data;
+                        this.places = r.data;
                     })
                     .catch(e => {
                         console.log(e);
@@ -313,30 +311,29 @@
                 let y = event.pageY - top;
                 return {x: x, y: y};
             },
-            enter_create_shape_context: function (context) {
+            enter_create_place_context: function (context) {
                 this.temp_type = context;
-                this.hoverable_place_class = '';
                 this.hovering_enabled = false;
                 this.selected_place = null;
             },
-            exit_and_save_shape: function () {
+            exit_and_save_place: function () {
                 axios
                     .post('/api/places/', {
+                        name: 'new Place',
                         points: this.temp_points,
                         type: this.temp_type
                     })
                     .then(_ => {
-                        this.load_shapes()
+                        this.load_places()
                     })
                     .catch(e => {
                         console.log(e)
                     });
-                this.exit_edit_shape_context();
+                this.exit_edit_place_context();
             },
-            exit_edit_shape_context: function () {
+            exit_edit_place_context: function () {
                 this.temp_points = [];
                 this.temp_type = null;
-                this.hoverable_place_class = 'hoverable-place';
                 this.hovering_enabled = true;
             },
             generate_temp_point: function (event) {
@@ -376,7 +373,6 @@
                 }
             },
             enter_edit_selected_place_context: function () {
-                this.hoverable_place_class = '';
                 this.hovering_enabled = false;
                 this.editing = this.selected_place.id;
                 this.temp_type = this.selected_place.type;
@@ -392,7 +388,7 @@
                         this.selected_place_edits
                     )
                     .then(_ => {
-                        this.load_shapes();
+                        this.load_places();
                         this.load_place_details(parseInt(this.selected_place_edits.id));
                         this.exit_edit_context();
                     })
@@ -406,7 +402,7 @@
                         '/api/places/' + this.selected_place.id + '/'
                     )
                     .then(_ => {
-                        this.load_shapes();
+                        this.load_places();
                         this.exit_edit_context();
                         this.selected_place = null;
                     })
@@ -417,7 +413,7 @@
             exit_edit_context: function () {
                 this.editing = null;
                 this.selected_place_edits = null;
-                this.exit_edit_shape_context();
+                this.exit_edit_place_context();
             },
             have_same_dimensions: function (type1, type2) {
                 return ~~(type1 / 100) === ~~(type2 / 100)
@@ -483,7 +479,7 @@
             }
         },
         created() {
-            this.load_shapes();
+            this.load_places();
             this.debounced_load_selected_place_details = _.debounce(this.load_selected_place_details, 350)
         },
 
