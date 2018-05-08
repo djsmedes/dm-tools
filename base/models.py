@@ -49,10 +49,6 @@ class BaseModel(models.Model):
     def get_delete_url(self):
         return reverse('{}-delete'.format(self.url_prefix()), kwargs={'pk': self.pk})
 
-    @property
-    def multiselect_field_names(self):
-        return [field.name for field in self._meta.fields if isinstance(field, MultiSelectField)]
-
     @classmethod
     def login_protected_field_names(cls) -> list:
         return []

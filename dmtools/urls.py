@@ -41,7 +41,6 @@ accounts_patterns = [
 ]
 
 urlpatterns = [
-    path('api/', include('api.urls')),
     path('admin/', admin.site.urls),
     path('', HomepageView.as_view(extra_context={'breadcrumbs': breadcrumbs}), name='home'),
     path('', include('base.urls')),
