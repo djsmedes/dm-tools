@@ -47,7 +47,7 @@ urlpatterns = [
     path('', include('base.urls')),
     path('', include('people.urls')),
     path('', include('statblocks.urls')),
-    path('places/', include('places.urls')),
+    path('', include('places.urls')),
     path('plot/', include('plot.urls')),
     path('ajax/', include(ajax_patterns)),
     path('accounts/', include(accounts_patterns)),
