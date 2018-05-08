@@ -235,7 +235,7 @@
                 temp_points: [],
                 temp_type: null,
                 hovering_enabled: true,
-                selected_place: null,
+                // selected_place: null,
                 selected_place_edits: null,
                 place_types: {
                     200: 'misc region',
@@ -267,11 +267,14 @@
             },
             inclusion_distance() {
                 return this.$store.state.campaign.place_inclusion_distance
+            },
+            selected_place() {
+                return this.$store.state.model;
             }
         },
         watch: {
             inclusion_distance(new_dist, old_dist) {
-                this.debounced_load_selected_place_details()
+                this.$store.state.refresh_model();
             }
         },
         methods: {
@@ -289,18 +292,7 @@
                 if (this.selected_place) this.load_place_details(this.selected_place.id);
             },
             load_place_details: function (place_id) {
-                axios
-                    .get('/api/places/' + place_id + '/', {
-                        params: {
-                            inclusion_distance: this.inclusion_distance
-                        }
-                    })
-                    .then(r => {
-                        this.selected_place = r.data;
-                    })
-                    .catch(e => {
-                        console.log(e);
-                    });
+                this.$store.dispatch('get_model', place_id);
             },
             get_click_coords: function (event) {
                 let bound = document.getElementById('place-canvas').getBoundingClientRect();
@@ -466,11 +458,6 @@
             class_2_place_type: function (cls) {
                 return parseInt(cls.split('-')[2]);
             },
-            active_if_active: function (pk) {
-                if (this.selected_place && this.selected_place.id === pk) {
-                    return 'active'
-                } else return ''
-            },
             is_active: function (pk) {
                 return (this.selected_place && this.selected_place.id === pk)
             },
@@ -480,7 +467,6 @@
         },
         created() {
             this.load_places();
-            this.debounced_load_selected_place_details = _.debounce(this.load_selected_place_details, 350)
         },
 
     }

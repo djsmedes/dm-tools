@@ -441,7 +441,7 @@ exports.default = {
             temp_points: [],
             temp_type: null,
             hovering_enabled: true,
-            selected_place: null,
+
             selected_place_edits: null,
             place_types: {
                 200: 'misc region',
@@ -474,11 +474,14 @@ exports.default = {
         },
         inclusion_distance: function inclusion_distance() {
             return this.$store.state.campaign.place_inclusion_distance;
+        },
+        selected_place: function selected_place() {
+            return this.$store.state.model;
         }
     },
     watch: {
         inclusion_distance: function inclusion_distance(new_dist, old_dist) {
-            this.debounced_load_selected_place_details();
+            this.$store.state.refresh_model();
         }
     },
     methods: {
@@ -496,17 +499,7 @@ exports.default = {
         },
 
         load_place_details: function load_place_details(place_id) {
-            var _this2 = this;
-
-            _axios2.default.get('/api/places/' + place_id + '/', {
-                params: {
-                    inclusion_distance: this.inclusion_distance
-                }
-            }).then(function (r) {
-                _this2.selected_place = r.data;
-            }).catch(function (e) {
-                console.log(e);
-            });
+            this.$store.dispatch('get_model', place_id);
         },
         get_click_coords: function get_click_coords(event) {
             var bound = document.getElementById('place-canvas').getBoundingClientRect();
@@ -523,14 +516,14 @@ exports.default = {
             this.selected_place = null;
         },
         exit_and_save_place: function exit_and_save_place() {
-            var _this3 = this;
+            var _this2 = this;
 
             _axios2.default.post('/api/places/', {
                 name: 'new Place',
                 points: this.temp_points,
                 type: this.temp_type
             }).then(function (_) {
-                _this3.load_places();
+                _this2.load_places();
             }).catch(function (e) {
                 console.log(e);
             });
@@ -583,25 +576,25 @@ exports.default = {
             this.selected_place_edits = JSON.parse(JSON.stringify(this.selected_place));
         },
         exit_and_save_selected_place: function exit_and_save_selected_place() {
-            var _this4 = this;
+            var _this3 = this;
 
             this.selected_place_edits.points = this.temp_points;
 
             _axios2.default.post('/api/places/' + this.selected_place_edits.id + '/', this.selected_place_edits).then(function (_) {
-                _this4.load_places();
-                _this4.load_place_details(parseInt(_this4.selected_place_edits.id));
-                _this4.exit_edit_context();
+                _this3.load_places();
+                _this3.load_place_details(parseInt(_this3.selected_place_edits.id));
+                _this3.exit_edit_context();
             }).catch(function (e) {
                 console.log(e);
             });
         },
         delete_selected_place: function delete_selected_place() {
-            var _this5 = this;
+            var _this4 = this;
 
             _axios2.default.delete('/api/places/' + this.selected_place.id + '/').then(function (_) {
-                _this5.load_places();
-                _this5.exit_edit_context();
-                _this5.selected_place = null;
+                _this4.load_places();
+                _this4.exit_edit_context();
+                _this4.selected_place = null;
             }).catch(function (e) {
                 console.log(e);
             });
@@ -662,11 +655,6 @@ exports.default = {
         class_2_place_type: function class_2_place_type(cls) {
             return parseInt(cls.split('-')[2]);
         },
-        active_if_active: function active_if_active(pk) {
-            if (this.selected_place && this.selected_place.id === pk) {
-                return 'active';
-            } else return '';
-        },
         is_active: function is_active(pk) {
             return this.selected_place && this.selected_place.id === pk;
         },
@@ -676,7 +664,6 @@ exports.default = {
     },
     created: function created() {
         this.load_places();
-        this.debounced_load_selected_place_details = _lodash2.default.debounce(this.load_selected_place_details, 350);
     }
 };
 })()
@@ -785,16 +772,51 @@ _vue2.default.use(_vuex2.default);
 _vue2.default.component('place-canvas', require('./components/place_canvas'));
 _vue2.default.component('place-inclusion-distance', require('./components/place_inclusion_distance'));
 
-var start_state = Object.assign({}, template_context);
+_axios2.default.defaults.xsrfCookieName = 'csrftoken';
+_axios2.default.defaults.xsrfHeaderName = 'X-CSRFToken';
+// axios.defaults.baseURL = template_context.api_url;
+
+var model_actions = {
+    get_model: function get_model(context, id) {
+        var url = context.state.api_url + id + '/';
+        _axios2.default.get(url, {
+            baseURL: '/',
+            params: {
+                inclusion_distance: context.state.campaign.place_inclusion_distance
+            }
+        }).then(function (r) {
+            context.commit('set_model', r.data);
+        }).catch(function (e) {
+            console.log(e);
+        });
+    },
+    add_model: function add_model(context) {},
+    change_model: function change_model(context) {},
+    delete_model: function delete_model(context) {}
+};
+
+var model_mutators = {
+    set_model: function set_model(state, new_data) {
+        state.model = new_data;
+    }
+};
 
 var store = new _vuex2.default.Store({
-    state: start_state,
-    mutations: {
+    state: Object.assign({}, template_context, {
+        model: null
+    }),
+    mutations: Object.assign({}, {
         set_place_inclusion_distance: function set_place_inclusion_distance(state, n) {
             state.campaign.place_inclusion_distance = n;
         }
-    }
+    }, model_mutators),
+    actions: model_actions
 });
+
+store.state.refresh_model = _lodash2.default.debounce(function () {
+    if (!store.state.model) return;
+    store.dispatch('get_model', store.state.model.id);
+}, 300);
 
 new _vue2.default({
     el: '#app',
