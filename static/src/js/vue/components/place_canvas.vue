@@ -223,19 +223,13 @@
 
 <script>
     import axios from 'axios';
-    import _ from 'lodash';
-
-    axios.defaults.xsrfCookieName = 'csrftoken';
-    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
     export default {
         data() {
             return {
-                places: [],
                 temp_points: [],
                 temp_type: null,
                 hovering_enabled: true,
-                // selected_place: null,
                 selected_place_edits: null,
                 place_types: {
                     200: 'misc region',
@@ -270,7 +264,10 @@
             },
             selected_place() {
                 return this.$store.state.model;
-            }
+            },
+            places() {
+               return this.$store.state.model_list;
+            },
         },
         watch: {
             inclusion_distance(new_dist, old_dist) {
@@ -278,22 +275,6 @@
             }
         },
         methods: {
-            load_places: function () {
-                axios
-                    .get('/api/places/')
-                    .then(r => {
-                        this.places = r.data;
-                    })
-                    .catch(e => {
-                        console.log(e);
-                    });
-            },
-            load_selected_place_details() {
-                if (this.selected_place) this.load_place_details(this.selected_place.id);
-            },
-            load_place_details: function (place_id) {
-                this.$store.dispatch('get_model', place_id);
-            },
             get_click_coords: function (event) {
                 let bound = document.getElementById('place-canvas').getBoundingClientRect();
                 let html = document.documentElement;
@@ -309,18 +290,12 @@
                 this.selected_place = null;
             },
             exit_and_save_place: function () {
-                axios
-                    .post('/api/places/', {
+                let new_place = {
                         name: 'new Place',
                         points: this.temp_points,
                         type: this.temp_type
-                    })
-                    .then(_ => {
-                        this.load_places()
-                    })
-                    .catch(e => {
-                        console.log(e)
-                    });
+                };
+                this.$store.dispatch('add_model', new_place);
                 this.exit_edit_place_context();
             },
             exit_edit_place_context: function () {
@@ -361,7 +336,7 @@
                     this.selected_place = null;
                 } else {
                     // load details about place
-                    this.load_place_details(pk);
+                    this.$store.dispatch('get_model', pk);
                 }
             },
             enter_edit_selected_place_context: function () {
@@ -373,34 +348,12 @@
             },
             exit_and_save_selected_place: function () {
                 this.selected_place_edits.points = this.temp_points;
-
-                axios
-                    .post(
-                        '/api/places/' + this.selected_place_edits.id + '/',
-                        this.selected_place_edits
-                    )
-                    .then(_ => {
-                        this.load_places();
-                        this.load_place_details(parseInt(this.selected_place_edits.id));
-                        this.exit_edit_context();
-                    })
-                    .catch(e => {
-                        console.log(e)
-                    });
+                this.$store.dispatch('change_model', this.selected_place_edits);
+                this.exit_edit_context();
             },
             delete_selected_place: function () {
-                axios
-                    .delete(
-                        '/api/places/' + this.selected_place.id + '/'
-                    )
-                    .then(_ => {
-                        this.load_places();
-                        this.exit_edit_context();
-                        this.selected_place = null;
-                    })
-                    .catch(e => {
-                        console.log(e)
-                    });
+                this.$store.dispatch('delete_model', this.selected_place.id);
+                this.exit_edit_context();
             },
             exit_edit_context: function () {
                 this.editing = null;
@@ -466,7 +419,7 @@
             }
         },
         created() {
-            this.load_places();
+            this.$store.dispatch('get_model_list');
         },
 
     }

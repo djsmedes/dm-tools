@@ -13,49 +13,77 @@ Vue.component('place-inclusion-distance', require('./components/place_inclusion_
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-// axios.defaults.baseURL = template_context.api_url;
+
+const model_api_url = '/' + template_context.api_url;
 
 const model_actions = {
     get_model(context, id) {
-        let url = context.state.api_url + id + '/';
-        axios.get(url, {
-            baseURL: '/',
+        axios.get(id + '/', {
+            baseURL: model_api_url,
             params: {
                 inclusion_distance: context.state.campaign.place_inclusion_distance
             }
-        }).then(
-            r => {
-                context.commit('set_model', r.data);
-            }
-        ).catch(
-            e => {
-                console.log(e);
-            }
-        );
+        }).then(r => {
+            context.commit('set_model', r.data);
+        }).catch(e => {
+            console.log(e);
+        });
     },
-    add_model(context) {
-
-    }
-    ,
-    change_model(context) {
-
-    }
-    ,
-    delete_model(context) {
-
+    get_model_list(context) {
+        axios.get('', {
+            baseURL: model_api_url,
+        }).then(r => {
+            context.commit('set_model_list', r.data);
+        }).catch(e => {
+            console.log(e);
+        });
+    },
+    add_model(context, model) {
+        axios.post('', model, {
+            baseURL: model_api_url,
+        }).then(_ => {
+            context.dispatch('get_model_list');
+        }).catch(e => {
+            console.log(e)
+        });
+    },
+    change_model(context, model) {
+        let id = model.id;
+        axios.post(id + '/', model, {
+            baseURL: model_api_url,
+        }).then(_ => {
+            context.dispatch('get_model_list');
+            context.dispatch('get_model', id);
+        }).catch(e => {
+            console.log(e)
+        });
+    },
+    delete_model(context, id) {
+        axios.delete(id + '/', {
+            baseURL: model_api_url
+        }).then(_ => {
+            context.dispatch('get_model_list');
+            context.commit('set_model', null);
+        }).catch(e => {
+            console.log(e)
+        });
     }
 };
 
 const model_mutators = {
     set_model(state, new_data) {
-        state.model = new_data
+        state.model = new_data;
+    },
+    set_model_list(state, new_data) {
+        state.model_list = new_data;
     }
 };
 
 
 const store = new Vuex.Store({
     state: Object.assign({}, template_context, {
-        model: null
+        model: null,
+        model_list: null,
     }),
     mutations: Object.assign({},
         {

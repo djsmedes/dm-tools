@@ -425,23 +425,14 @@ var _axios = require('axios');
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _lodash = require('lodash');
-
-var _lodash2 = _interopRequireDefault(_lodash);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-_axios2.default.defaults.xsrfCookieName = 'csrftoken';
-_axios2.default.defaults.xsrfHeaderName = 'X-CSRFToken';
 
 exports.default = {
     data: function data() {
         return {
-            places: [],
             temp_points: [],
             temp_type: null,
             hovering_enabled: true,
-
             selected_place_edits: null,
             place_types: {
                 200: 'misc region',
@@ -477,6 +468,9 @@ exports.default = {
         },
         selected_place: function selected_place() {
             return this.$store.state.model;
+        },
+        places: function places() {
+            return this.$store.state.model_list;
         }
     },
     watch: {
@@ -485,22 +479,6 @@ exports.default = {
         }
     },
     methods: {
-        load_places: function load_places() {
-            var _this = this;
-
-            _axios2.default.get('/api/places/').then(function (r) {
-                _this.places = r.data;
-            }).catch(function (e) {
-                console.log(e);
-            });
-        },
-        load_selected_place_details: function load_selected_place_details() {
-            if (this.selected_place) this.load_place_details(this.selected_place.id);
-        },
-
-        load_place_details: function load_place_details(place_id) {
-            this.$store.dispatch('get_model', place_id);
-        },
         get_click_coords: function get_click_coords(event) {
             var bound = document.getElementById('place-canvas').getBoundingClientRect();
             var html = document.documentElement;
@@ -516,17 +494,12 @@ exports.default = {
             this.selected_place = null;
         },
         exit_and_save_place: function exit_and_save_place() {
-            var _this2 = this;
-
-            _axios2.default.post('/api/places/', {
+            var new_place = {
                 name: 'new Place',
                 points: this.temp_points,
                 type: this.temp_type
-            }).then(function (_) {
-                _this2.load_places();
-            }).catch(function (e) {
-                console.log(e);
-            });
+            };
+            this.$store.dispatch('add_model', new_place);
             this.exit_edit_place_context();
         },
         exit_edit_place_context: function exit_edit_place_context() {
@@ -565,7 +538,7 @@ exports.default = {
             if (this.selected_place && this.selected_place.id === pk) {
                 this.selected_place = null;
             } else {
-                this.load_place_details(pk);
+                this.$store.dispatch('get_model', pk);
             }
         },
         enter_edit_selected_place_context: function enter_edit_selected_place_context() {
@@ -576,28 +549,13 @@ exports.default = {
             this.selected_place_edits = JSON.parse(JSON.stringify(this.selected_place));
         },
         exit_and_save_selected_place: function exit_and_save_selected_place() {
-            var _this3 = this;
-
             this.selected_place_edits.points = this.temp_points;
-
-            _axios2.default.post('/api/places/' + this.selected_place_edits.id + '/', this.selected_place_edits).then(function (_) {
-                _this3.load_places();
-                _this3.load_place_details(parseInt(_this3.selected_place_edits.id));
-                _this3.exit_edit_context();
-            }).catch(function (e) {
-                console.log(e);
-            });
+            this.$store.dispatch('change_model', this.selected_place_edits);
+            this.exit_edit_context();
         },
         delete_selected_place: function delete_selected_place() {
-            var _this4 = this;
-
-            _axios2.default.delete('/api/places/' + this.selected_place.id + '/').then(function (_) {
-                _this4.load_places();
-                _this4.exit_edit_context();
-                _this4.selected_place = null;
-            }).catch(function (e) {
-                console.log(e);
-            });
+            this.$store.dispatch('delete_model', this.selected_place.id);
+            this.exit_edit_context();
         },
         exit_edit_context: function exit_edit_context() {
             this.editing = null;
@@ -663,7 +621,7 @@ exports.default = {
         }
     },
     created: function created() {
-        this.load_places();
+        this.$store.dispatch('get_model_list');
     }
 };
 })()
@@ -774,13 +732,13 @@ _vue2.default.component('place-inclusion-distance', require('./components/place_
 
 _axios2.default.defaults.xsrfCookieName = 'csrftoken';
 _axios2.default.defaults.xsrfHeaderName = 'X-CSRFToken';
-// axios.defaults.baseURL = template_context.api_url;
+
+var model_api_url = '/' + template_context.api_url;
 
 var model_actions = {
     get_model: function get_model(context, id) {
-        var url = context.state.api_url + id + '/';
-        _axios2.default.get(url, {
-            baseURL: '/',
+        _axios2.default.get(id + '/', {
+            baseURL: model_api_url,
             params: {
                 inclusion_distance: context.state.campaign.place_inclusion_distance
             }
@@ -790,20 +748,60 @@ var model_actions = {
             console.log(e);
         });
     },
-    add_model: function add_model(context) {},
-    change_model: function change_model(context) {},
-    delete_model: function delete_model(context) {}
+    get_model_list: function get_model_list(context) {
+        _axios2.default.get('', {
+            baseURL: model_api_url
+        }).then(function (r) {
+            context.commit('set_model_list', r.data);
+        }).catch(function (e) {
+            console.log(e);
+        });
+    },
+    add_model: function add_model(context, model) {
+        _axios2.default.post('', model, {
+            baseURL: model_api_url
+        }).then(function (_) {
+            context.dispatch('get_model_list');
+        }).catch(function (e) {
+            console.log(e);
+        });
+    },
+    change_model: function change_model(context, model) {
+        var id = model.id;
+        _axios2.default.post(id + '/', model, {
+            baseURL: model_api_url
+        }).then(function (_) {
+            context.dispatch('get_model_list');
+            context.dispatch('get_model', id);
+        }).catch(function (e) {
+            console.log(e);
+        });
+    },
+    delete_model: function delete_model(context, id) {
+        _axios2.default.delete(id + '/', {
+            baseURL: model_api_url
+        }).then(function (_) {
+            context.dispatch('get_model_list');
+            context.commit('set_model', null);
+        }).catch(function (e) {
+            console.log(e);
+        });
+    }
 };
 
 var model_mutators = {
     set_model: function set_model(state, new_data) {
         state.model = new_data;
+    },
+    set_model_list: function set_model_list(state, new_data) {
+        state.model_list = new_data;
     }
 };
 
 var store = new _vuex2.default.Store({
     state: Object.assign({}, template_context, {
-        model: null
+        model: null,
+        model_list: null
     }),
     mutations: Object.assign({}, {
         set_place_inclusion_distance: function set_place_inclusion_distance(state, n) {
