@@ -484,7 +484,6 @@
         },
         created() {
             this.load_shapes();
-            this.user = user;
             this.debounced_load_selected_place_details = _.debounce(this.load_selected_place_details, 350)
         },
 

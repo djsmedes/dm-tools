@@ -157,3 +157,21 @@ def user_props_json(user):
     except AttributeError:
         props = {}
     return mark_safe(json_dumps(props))
+
+
+@register.simple_tag(takes_context=True)
+def template_context_to_json(context):
+    to_return = {}
+    user = context.get('user', None)
+    if user:
+        to_return['user'] = {
+            'is_authenticated': user.is_authenticated
+        }
+        profile = user.profile
+        campaign = profile.cur_campaign
+        if campaign:
+            to_return['campaign'] = {
+                'place_inclusion_distance': campaign.place_inclusion_distance
+            }
+
+    return mark_safe(json_dumps(to_return))

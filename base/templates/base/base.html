@@ -31,7 +31,7 @@
 <script src="{% static 'js/vendor.js' %}"></script>
 <script src="{% static 'js/app.js' %}"></script>
 <script>
-  let user = {{ user|user_props_json }};
+  let template_context = {% template_context_to_json %};
 </script>
 {% block custom_scripts %}{% endblock %}
 

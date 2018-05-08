@@ -680,7 +680,6 @@ exports.default = {
     },
     created: function created() {
         this.load_shapes();
-        this.user = user;
         this.debounced_load_selected_place_details = _lodash2.default.debounce(this.load_selected_place_details, 350);
     }
 };

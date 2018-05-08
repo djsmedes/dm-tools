@@ -83,4 +83,4 @@ class DmScreenTabForm(ModelForm):
 class Campaign(BaseModel):
     dm = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='campaigns')
     current_location = models.ForeignKey('places.Place', on_delete=models.SET_NULL, null=True, blank=True)
-    location_inclusion_distance = models.FloatField(default=0, blank=True)
+    place_inclusion_distance = models.FloatField(default=0, blank=True)
