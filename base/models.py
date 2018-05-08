@@ -1,14 +1,26 @@
 from django.db import models
 from django.forms import ModelForm
-
-# Create your models here.
+from django.contrib.auth.models import User
 from django.urls import reverse
 from multiselectfield import MultiSelectField
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', null=True)
+    cur_campaign = models.ForeignKey('base.Campaign', on_delete=models.SET_NULL, related_name='cur_campaign_of', null=True, blank=True)
+
+    def __str__(self):
+        return self.user.__str__()
 
 
 class BaseModel(models.Model):
 
     name = models.CharField(max_length=255)
+    owner = models.ForeignKey(
+        'base.Profile',
+        on_delete=models.CASCADE,
+        related_name="%(app_label)s_%(class)s_owned_set"
+    )
 
     def __str__(self):
         return self.name
@@ -66,3 +78,9 @@ class DmScreenTabForm(ModelForm):
     class Meta:
         model = DmScreenTab
         fields = '__all__'
+
+
+class Campaign(BaseModel):
+    dm = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='campaigns')
+    current_location = models.ForeignKey('places.Place', on_delete=models.SET_NULL, null=True, blank=True)
+    place_inclusion_distance = models.FloatField(default=0, blank=True)

@@ -17,10 +17,11 @@ class PlaceSerializer(serializers.Serializer):
 
 class PlaceInfoSerializer(serializers.ModelSerializer):
     points = PointSerializer(many=True)
+    nearby_places = serializers.SerializerMethodField()
 
     class Meta:
         model = Place
-        fields = ('id', 'name', 'description', 'type', 'points')
+        fields = ('id', 'name', 'description', 'type', 'points', 'nearby_places')
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
@@ -29,3 +30,11 @@ class PlaceInfoSerializer(serializers.ModelSerializer):
         instance.points = validated_data.get('points', instance.points)
         instance.save()
         return instance
+
+    def get_nearby_places(self, obj: Place):
+        places = obj.get_nearby_places(float(self.context.get('inclusion_distance', 0)))
+        return [{
+            'name': place.name,
+            'id': place.id,
+            'type': place.type,
+        } for place in places]

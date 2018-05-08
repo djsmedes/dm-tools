@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     # other third party apps
     'widget_tweaks',
     'rest_framework',
+    'rules.apps.AutodiscoverRulesConfig',
 
     # local apps
     'base.apps.BaseConfig',
@@ -165,3 +166,10 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny'
     ]
 }
+
+# authentication backends
+# https://docs.djangoproject.com/en/2.0/topics/auth/customizing/#specifying-authentication-backends
+AUTHENTICATION_BACKENDS = [
+    'rules.permissions.ObjectPermissionBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]

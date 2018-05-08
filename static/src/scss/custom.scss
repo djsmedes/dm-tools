@@ -15,3 +15,7 @@ p.hanging-indent {
   text-indent: -2em;
   padding-left: 2em;
 }
+
+input[type='number'].no-spinner {
+  appearance: textfield;
+}
