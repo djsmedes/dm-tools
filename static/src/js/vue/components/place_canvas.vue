@@ -1,8 +1,6 @@
 <template>
   <div class="m-0 p-0">
 
-    <div class="mx-5">{{ inclusion_distance }}</div>
-
     <div class="row container-fluid px-5">
 
       <div class="col">
@@ -39,6 +37,13 @@
                         id="selected-place-description"
               ></textarea>
             </template>
+          </div>
+          <hr>
+          <div class="card-body">
+            Nearby places:
+            <ul class="list-inline">
+              <!--<li class="list-inline-item" v-for=""></li>-->
+            </ul>
           </div>
           <div class="card-footer">
             <template v-if="! editing">{{ place_types[selected_place.type] }}</template>

@@ -125,6 +125,15 @@ class Place(BaseModel):
     def __str__(self):
         return self.name
 
+    def get_nearby_places(self, within_distance=0):
+        ret = []
+        for placepair in self.placepairs_out.all():
+            if placepair.min_distance <= within_distance:
+                ret.append(placepair.place2)
+            else:
+                break
+        return ret
+
 
 class PlacePair(models.Model):
     place1 = models.ForeignKey('places.Place', on_delete=models.CASCADE, related_name='placepairs_out')
@@ -133,3 +142,6 @@ class PlacePair(models.Model):
 
     class Meta:
         ordering = ['min_distance']
+
+    def __str__(self):
+        return '{} -> {}'.format(self.place1.name, self.place2.name)
