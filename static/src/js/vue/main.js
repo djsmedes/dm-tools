@@ -14,7 +14,7 @@ Vue.component('place-inclusion-distance', require('./components/place_inclusion_
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
-const model_api_url = '/' + template_context.api_url;
+const model_api_url = template_context.api_url;
 
 const model_actions = {
     get_model(context, id) {

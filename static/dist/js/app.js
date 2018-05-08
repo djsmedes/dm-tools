@@ -733,7 +733,7 @@ _vue2.default.component('place-inclusion-distance', require('./components/place_
 _axios2.default.defaults.xsrfCookieName = 'csrftoken';
 _axios2.default.defaults.xsrfHeaderName = 'X-CSRFToken';
 
-var model_api_url = '/' + template_context.api_url;
+var model_api_url = template_context.api_url;
 
 var model_actions = {
     get_model: function get_model(context, id) {
