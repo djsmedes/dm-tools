@@ -1,20 +1,19 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.views.generic.base import TemplateView
 
-from base.views import BreadCrumbMixin
+from base.views import BaseComboView
 from places.models import Place
 from places.utils import topological_sort_shapes
 from .serializers import PlaceSerializer, PlaceLiteSerializer
 
 
-class CanvasView(BreadCrumbMixin, TemplateView):
-
+class PlaceComboView(BaseComboView):
+    model = Place
     template_name = 'places/canvas.html'
 
 
-class PlaceList(APIView):
+class PlaceListAPI(APIView):
     """Get a list of Places or create a new one"""
     def get(self, request, format=None):
         # todo add ability to get other owners stuff somehow for non-logged-in users
@@ -40,7 +39,7 @@ class PlaceList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class PlaceDetail(APIView):
+class PlaceDetailAPI(APIView):
     """Retrieve, update, or delete an existing Place"""
     def get(self, request, pk, format=None):
         try:

@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.views.generic.base import ContextMixin, TemplateView
+from django.views.generic.detail import SingleObjectMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from datetime import datetime
@@ -28,6 +29,15 @@ class BreadCrumbMixin(ContextMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['breadcrumbs'] = self.get_breadcrumbs()
+        return context
+
+
+class BaseComboView(BreadCrumbMixin, ListView):
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['api_url'] = self.model.api_url()
+        # context['object'] = None
         return context
 
 
