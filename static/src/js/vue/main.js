@@ -11,13 +11,13 @@ import place_inclusion_distance from './components/place_inclusion_distance'
 Vue.component('place-canvas', require('./components/place_canvas'));
 Vue.component('place-inclusion-distance', require('./components/place_inclusion_distance'));
 
+const start_state = Object.assign({}, template_context);
+
 const store = new Vuex.Store({
-    state: {
-        place_inclusion_distance: 0
-    },
+    state: start_state,
     mutations: {
-        set_place_inclusion_distance (state, n) {
-            state.place_inclusion_distance = n;
+        set_place_inclusion_distance(state, n) {
+            state.campaign.place_inclusion_distance = n;
         }
     }
 });
@@ -25,5 +25,5 @@ const store = new Vuex.Store({
 new Vue({
     el: '#app',
     store,
-    components: { place_canvas, place_inclusion_distance }
+    components: {place_canvas, place_inclusion_distance}
 });

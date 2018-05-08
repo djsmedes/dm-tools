@@ -475,7 +475,7 @@ exports.default = {
             return true;
         },
         inclusion_distance: function inclusion_distance() {
-            return this.$store.state.place_inclusion_distance;
+            return this.$store.state.campaign.place_inclusion_distance;
         }
     },
     watch: {
@@ -727,7 +727,7 @@ exports.default = {
     computed: {
         inclusion_distance: {
             get: function get() {
-                return this.$store.state.place_inclusion_distance;
+                return this.$store.state.campaign.place_inclusion_distance;
             },
             set: function set(value) {
                 this.$store.commit('set_place_inclusion_distance', value);
@@ -789,13 +789,13 @@ _vue2.default.use(_vuex2.default);
 _vue2.default.component('place-canvas', require('./components/place_canvas'));
 _vue2.default.component('place-inclusion-distance', require('./components/place_inclusion_distance'));
 
+var start_state = Object.assign({}, template_context);
+
 var store = new _vuex2.default.Store({
-    state: {
-        place_inclusion_distance: 0
-    },
+    state: start_state,
     mutations: {
         set_place_inclusion_distance: function set_place_inclusion_distance(state, n) {
-            state.place_inclusion_distance = n;
+            state.campaign.place_inclusion_distance = n;
         }
     }
 });

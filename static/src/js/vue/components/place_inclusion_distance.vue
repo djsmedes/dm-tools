@@ -18,7 +18,7 @@
         computed: {
             inclusion_distance: {
                 get() {
-                    return this.$store.state.place_inclusion_distance
+                    return this.$store.state.campaign.place_inclusion_distance
                 },
                 set(value) {
                     this.$store.commit('set_place_inclusion_distance', value);
