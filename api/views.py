@@ -13,7 +13,9 @@ class PlaceInfo(APIView):
 
     def get(self, request, pk, format=None):
         place = Place.objects.get(id=pk)
-        serializer = PlaceInfoSerializer(place)
+        serializer = PlaceInfoSerializer(place, context={
+            'inclusion_distance': request.query_params.get('inclusion_distance', 0)
+        })
         return Response(serializer.data)
 
     def post(self, request, pk, format=None):

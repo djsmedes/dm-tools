@@ -38,13 +38,20 @@
               ></textarea>
             </template>
           </div>
-          <hr>
-          <div class="card-body">
-            Nearby places:
-            <ul class="list-inline">
-              <!--<li class="list-inline-item" v-for=""></li>-->
-            </ul>
-          </div>
+          <template v-if="! editing">
+            <hr>
+            <div class="card-body">
+              Nearby places:
+              <ul class="list-inline">
+                <li class="list-inline-item" v-for="place in selected_place.nearby_places">
+                  <button class="btn btn-outline-dark"
+                          @click="select_place(parseInt(place.id))">
+                    {{ place.name }}
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </template>
           <div class="card-footer">
             <template v-if="! editing">{{ place_types[selected_place.type] }}</template>
             <template v-else>
@@ -71,7 +78,7 @@
             </filter>
 
           </defs>
-          
+
           <template v-for="shape in shapes">
             <template v-if="shape.id !== editing">
               <g v-if="have_same_dimensions(shape.type, 200)">
@@ -163,7 +170,8 @@
                 <circle v-if="type < 100" cx="8" cy="8" r="5" :class="place_type_2_class(type)"></circle>
                 <polyline v-else-if="type < 200" points="2,2 4,12 14,14" :class="place_type_2_class(type)"></polyline>
                 <g v-else>
-                  <polygon points="2,2 50,0 0,50" :class="place_type_2_class(type)" filter="url(#innershadow)"></polygon>
+                  <polygon points="2,2 50,0 0,50" :class="place_type_2_class(type)"
+                           filter="url(#innershadow)"></polygon>
                   <polygon points="2,2 50,0 0,50" :class="['place-poly-outline', place_type_2_class(type)]"></polygon>
                 </g>
               </svg>
@@ -215,6 +223,7 @@
 
 <script>
     import axios from 'axios';
+    import _ from 'lodash';
 
     axios.defaults.xsrfCookieName = 'csrftoken';
     axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -250,7 +259,7 @@
             }
         },
         computed: {
-            no_temp_points_selected () {
+            no_temp_points_selected() {
                 for (let i = 0; i < this.temp_points.length; i++) {
                     if (this.temp_points[i].selected) {
                         return false;
@@ -260,6 +269,11 @@
             },
             inclusion_distance() {
                 return this.$store.state.place_inclusion_distance
+            }
+        },
+        watch: {
+            inclusion_distance(new_dist, old_dist) {
+                this.debounced_load_selected_place_details()
             }
         },
         methods: {
@@ -273,9 +287,16 @@
                         console.log(e);
                     });
             },
+            load_selected_place_details() {
+                if (this.selected_place) this.load_place_details(this.selected_place.id);
+            },
             load_place_details: function (place_id) {
                 axios
-                    .get('/api/places/' + place_id + '/')
+                    .get('/api/places/' + place_id + '/', {
+                        params: {
+                            inclusion_distance: this.inclusion_distance
+                        }
+                    })
                     .then(r => {
                         this.selected_place = r.data;
                     })
@@ -296,6 +317,7 @@
                 this.temp_type = context;
                 this.hoverable_place_class = '';
                 this.hovering_enabled = false;
+                this.selected_place = null;
             },
             exit_and_save_shape: function () {
                 axios
@@ -343,12 +365,9 @@
                 if (place.hasClass('line-expander')) {
                     place = place.next();
                 }
-                this.select_place(place);
+                this.select_place(this.html_id_2_pk(place.attr('id')));
             },
-            select_place: function ($shape_element) {
-                // toggle display active state
-
-                let pk = this.html_id_2_pk($shape_element.attr('id'));
+            select_place: function (pk) {
                 if (this.selected_place && (this.selected_place.id === pk)) {
                     this.selected_place = null;
                 } else {
@@ -466,6 +485,7 @@
         created() {
             this.load_shapes();
             this.user = user;
+            this.debounced_load_selected_place_details = _.debounce(this.load_selected_place_details, 350)
         },
 
     }

@@ -425,6 +425,10 @@ var _axios = require('axios');
 
 var _axios2 = _interopRequireDefault(_axios);
 
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 _axios2.default.defaults.xsrfCookieName = 'csrftoken';
@@ -474,6 +478,11 @@ exports.default = {
             return this.$store.state.place_inclusion_distance;
         }
     },
+    watch: {
+        inclusion_distance: function inclusion_distance(new_dist, old_dist) {
+            this.debounced_load_selected_place_details();
+        }
+    },
     methods: {
         load_shapes: function load_shapes() {
             var _this = this;
@@ -484,10 +493,18 @@ exports.default = {
                 console.log(e);
             });
         },
+        load_selected_place_details: function load_selected_place_details() {
+            if (this.selected_place) this.load_place_details(this.selected_place.id);
+        },
+
         load_place_details: function load_place_details(place_id) {
             var _this2 = this;
 
-            _axios2.default.get('/api/places/' + place_id + '/').then(function (r) {
+            _axios2.default.get('/api/places/' + place_id + '/', {
+                params: {
+                    inclusion_distance: this.inclusion_distance
+                }
+            }).then(function (r) {
                 _this2.selected_place = r.data;
             }).catch(function (e) {
                 console.log(e);
@@ -506,6 +523,7 @@ exports.default = {
             this.temp_type = context;
             this.hoverable_place_class = '';
             this.hovering_enabled = false;
+            this.selected_place = null;
         },
         exit_and_save_shape: function exit_and_save_shape() {
             var _this3 = this;
@@ -551,11 +569,9 @@ exports.default = {
             if (place.hasClass('line-expander')) {
                 place = place.next();
             }
-            this.select_place(place);
+            this.select_place(this.html_id_2_pk(place.attr('id')));
         },
-        select_place: function select_place($shape_element) {
-
-            var pk = this.html_id_2_pk($shape_element.attr('id'));
+        select_place: function select_place(pk) {
             if (this.selected_place && this.selected_place.id === pk) {
                 this.selected_place = null;
             } else {
@@ -665,13 +681,14 @@ exports.default = {
     created: function created() {
         this.load_shapes();
         this.user = user;
+        this.debounced_load_selected_place_details = _lodash2.default.debounce(this.load_selected_place_details, 350);
     }
 };
 })()
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"m-0 p-0"},[_c('div',{staticClass:"row container-fluid px-5"},[_c('div',{staticClass:"col"},[(_vm.selected_place)?_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white"},[_c('div',{staticClass:"row form-inline"},[(! _vm.editing)?_c('h4',{staticClass:"col"},[_vm._v(_vm._s(_vm.selected_place.name))]):_c('label',[_vm._v("\n              Name: "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.name),expression:"selected_place_edits.name"}],staticClass:"mx-1 col form-control",domProps:{"value":(_vm.selected_place_edits.name)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.selected_place_edits, "name", $event.target.value)}}})]),_vm._v(" "),(! _vm.editing)?_c('button',{staticClass:"btn btn-outline-light col-auto ml-auto mr-1",on:{"click":_vm.enter_edit_selected_place_context}},[_vm._v("\n              Edit\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-danger col-auto ml-auto mr-1",attrs:{"data-toggle":"modal","data-target":"#confirm-delete-modal"}},[_vm._v("\n              Delete\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-secondary col-auto mr-1",on:{"click":_vm.exit_edit_context}},[_vm._v("\n              Cancel\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-success col-auto mr-1",on:{"click":_vm.exit_and_save_selected_place}},[_vm._v("\n              Save\n            ")]):_vm._e()])]),_vm._v(" "),_c('div',{staticClass:"card-body"},[(! _vm.editing)?[_vm._v(_vm._s(_vm.selected_place.description))]:[_c('label',{attrs:{"for":"selected-place-description"}},[_vm._v("Description: ")]),_vm._v(" "),_c('textarea',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.description),expression:"selected_place_edits.description"}],staticClass:"form-control",attrs:{"id":"selected-place-description"},domProps:{"value":(_vm.selected_place_edits.description)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.selected_place_edits, "description", $event.target.value)}}})]],2),_vm._v(" "),_c('hr'),_vm._v(" "),_vm._m(0),_vm._v(" "),_c('div',{staticClass:"card-footer"},[(! _vm.editing)?[_vm._v(_vm._s(_vm.place_types[_vm.selected_place.type]))]:[_c('label',{attrs:{"for":"selected-place-type"}},[_vm._v("Type: ")]),_vm._v(" "),_c('select',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.type),expression:"selected_place_edits.type"}],staticClass:"form-control",attrs:{"id":"selected-place-type"},on:{"change":function($event){var $$selectedVal = Array.prototype.filter.call($event.target.options,function(o){return o.selected}).map(function(o){var val = "_value" in o ? o._value : o.value;return val}); _vm.$set(_vm.selected_place_edits, "type", $event.target.multiple ? $$selectedVal : $$selectedVal[0])}}},[_vm._l((_vm.place_types),function(name,type){return [(_vm.have_same_dimensions(type, _vm.selected_place.type))?_c('option',{domProps:{"value":type}},[_vm._v("\n                  "+_vm._s(name)+"\n                ")]):_vm._e()]})],2)]],2)]):_vm._e()]),_vm._v(" "),_c('div',{staticClass:"col-auto ml-auto p-0"},[_c('svg',{attrs:{"id":"place-canvas"},on:{"click":function($event){_vm.generate_temp_point($event)}}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"5","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_vm._l((_vm.shapes),function(shape){return [(shape.id !== _vm.editing)?[(_vm.have_same_dimensions(shape.type, 200))?_c('g',[_c('polygon',{class:_vm.place_type_2_class(shape.type),attrs:{"points":_vm.points_to_pointstring(shape.points),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:[{ 'hoverable-place': _vm.hovering_enabled},
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"m-0 p-0"},[_c('div',{staticClass:"row container-fluid px-5"},[_c('div',{staticClass:"col"},[(_vm.selected_place)?_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white"},[_c('div',{staticClass:"row form-inline"},[(! _vm.editing)?_c('h4',{staticClass:"col"},[_vm._v(_vm._s(_vm.selected_place.name))]):_c('label',[_vm._v("\n              Name: "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.name),expression:"selected_place_edits.name"}],staticClass:"mx-1 col form-control",domProps:{"value":(_vm.selected_place_edits.name)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.selected_place_edits, "name", $event.target.value)}}})]),_vm._v(" "),(! _vm.editing)?_c('button',{staticClass:"btn btn-outline-light col-auto ml-auto mr-1",on:{"click":_vm.enter_edit_selected_place_context}},[_vm._v("\n              Edit\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-danger col-auto ml-auto mr-1",attrs:{"data-toggle":"modal","data-target":"#confirm-delete-modal"}},[_vm._v("\n              Delete\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-secondary col-auto mr-1",on:{"click":_vm.exit_edit_context}},[_vm._v("\n              Cancel\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-success col-auto mr-1",on:{"click":_vm.exit_and_save_selected_place}},[_vm._v("\n              Save\n            ")]):_vm._e()])]),_vm._v(" "),_c('div',{staticClass:"card-body"},[(! _vm.editing)?[_vm._v(_vm._s(_vm.selected_place.description))]:[_c('label',{attrs:{"for":"selected-place-description"}},[_vm._v("Description: ")]),_vm._v(" "),_c('textarea',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.description),expression:"selected_place_edits.description"}],staticClass:"form-control",attrs:{"id":"selected-place-description"},domProps:{"value":(_vm.selected_place_edits.description)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.selected_place_edits, "description", $event.target.value)}}})]],2),_vm._v(" "),(! _vm.editing)?[_c('hr'),_vm._v(" "),_c('div',{staticClass:"card-body"},[_vm._v("\n            Nearby places:\n            "),_c('ul',{staticClass:"list-inline"},_vm._l((_vm.selected_place.nearby_places),function(place){return _c('li',{staticClass:"list-inline-item"},[_c('button',{staticClass:"btn btn-outline-dark",on:{"click":function($event){_vm.select_place(parseInt(place.id))}}},[_vm._v("\n                  "+_vm._s(place.name)+"\n                ")])])}))])]:_vm._e(),_vm._v(" "),_c('div',{staticClass:"card-footer"},[(! _vm.editing)?[_vm._v(_vm._s(_vm.place_types[_vm.selected_place.type]))]:[_c('label',{attrs:{"for":"selected-place-type"}},[_vm._v("Type: ")]),_vm._v(" "),_c('select',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.type),expression:"selected_place_edits.type"}],staticClass:"form-control",attrs:{"id":"selected-place-type"},on:{"change":function($event){var $$selectedVal = Array.prototype.filter.call($event.target.options,function(o){return o.selected}).map(function(o){var val = "_value" in o ? o._value : o.value;return val}); _vm.$set(_vm.selected_place_edits, "type", $event.target.multiple ? $$selectedVal : $$selectedVal[0])}}},[_vm._l((_vm.place_types),function(name,type){return [(_vm.have_same_dimensions(type, _vm.selected_place.type))?_c('option',{domProps:{"value":type}},[_vm._v("\n                  "+_vm._s(name)+"\n                ")]):_vm._e()]})],2)]],2)],2):_vm._e()]),_vm._v(" "),_c('div',{staticClass:"col-auto ml-auto p-0"},[_c('svg',{attrs:{"id":"place-canvas"},on:{"click":function($event){_vm.generate_temp_point($event)}}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"5","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_vm._l((_vm.shapes),function(shape){return [(shape.id !== _vm.editing)?[(_vm.have_same_dimensions(shape.type, 200))?_c('g',[_c('polygon',{class:_vm.place_type_2_class(shape.type),attrs:{"points":_vm.points_to_pointstring(shape.points),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:[{ 'hoverable-place': _vm.hovering_enabled},
                                 _vm.is_active(shape.id) ? 'active' : '',
                                 'place-poly-outline',
                                 _vm.place_type_2_class(shape.type)],attrs:{"points":_vm.points_to_pointstring(shape.points),"id":_vm.pk_2_html_id(shape.id)},on:{"click":function($event){_vm.place_clicked($event)}}})]):(_vm.have_same_dimensions(shape.type, 100))?_c('g',[_c('polyline',{class:['line-expander', _vm.place_type_2_class(shape.type)],attrs:{"points":_vm.points_to_pointstring(shape.points)},on:{"click":function($event){_vm.place_clicked($event)}}}),_vm._v(" "),_c('polyline',{class:[{ 'hoverable-place': _vm.hovering_enabled},
@@ -682,8 +699,8 @@ __vue__options__.render = function render () {var _vm=this;var _h=_vm.$createEle
                             _vm.place_type_2_class(_vm.temp_type)],attrs:{"points":_vm.points_to_pointstring(_vm.temp_points)}})]):(100 <= _vm.temp_type)?_c('polyline',{class:_vm.place_type_2_class(_vm.temp_type),attrs:{"points":_vm.points_to_pointstring(_vm.temp_points)}}):_vm._l((_vm.temp_points),function(pt){return _c('circle',{class:_vm.place_type_2_class(_vm.temp_type),attrs:{"cx":pt.x,"cy":pt.y,"r":"5"}})}),_vm._v(" "),_vm._l((_vm.temp_points),function(pt,index){return (100 <= _vm.temp_type)?_c('circle',{class:{ 'place-temp-point': true,
                         'hoverable-place': true,
                         active: pt.selected },attrs:{"id":'temp-circle-' + index,"cx":pt.x,"cy":pt.y,"r":"5"},on:{"mousedown":function($event){_vm.temp_point_mousedown($event)},"click":function($event){_vm.temp_point_click($event)}}}):_vm._e()})],2)]),_vm._v(" "),_c('div',{staticClass:"col-auto ml-2"},[(_vm.editing)?_c('div',{staticClass:"mb-1"},[_c('button',{class:['btn', 'btn-danger',
-                         {'disabled': _vm.no_temp_points_selected}],on:{"click":_vm.delete_temp_points}},[_vm._v("\n          Delete point(s)\n        ")])]):_vm._e(),_vm._v(" "),(_vm.temp_type && !_vm.editing)?_c('div',{staticClass:"mb-1"},[_c('button',{staticClass:"btn btn-outline-success",on:{"click":_vm.exit_and_save_shape}},[_vm._v("\n          Save\n        ")]),_vm._v(" "),_c('button',{staticClass:"btn btn-outline-danger",on:{"click":_vm.exit_edit_shape_context}},[_vm._v("\n          Cancel\n        ")])]):_vm._e(),_vm._v(" "),_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white"},[_vm._v("\n          Key\n        ")]),_vm._v(" "),_c('ul',{staticClass:"list-group list-group-flush"},_vm._l((_vm.place_types),function(name,type){return _c('li',{staticClass:"list-group-item d-flex align-items-center px-3"},[_c('svg',{staticClass:"mr-1",attrs:{"width":"16","height":"16"}},[(type < 100)?_c('circle',{class:_vm.place_type_2_class(type),attrs:{"cx":"8","cy":"8","r":"5"}}):(type < 200)?_c('polyline',{class:_vm.place_type_2_class(type),attrs:{"points":"2,2 4,12 14,14"}}):_c('g',[_c('polygon',{class:_vm.place_type_2_class(type),attrs:{"points":"2,2 50,0 0,50","filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:['place-poly-outline', _vm.place_type_2_class(type)],attrs:{"points":"2,2 50,0 0,50"}})])]),_vm._v(" "),_c('span',{staticClass:"mr-1"},[_vm._v(_vm._s(name))]),_vm._v(" "),_c('button',{staticClass:"btn btn-sm btn-outline-dark ml-auto mr-1",staticStyle:{"position":"relative"},attrs:{"data-toggle":"button","aria-pressed":"false"},on:{"click":function($event){_vm.toggle_type_visibility(type)}}},[_c('svg',{staticStyle:{"position":"absolute","top":"7px","left":"8px"},attrs:{"width":"14","height":"14"}},[_c('polyline',{attrs:{"points":"14,0 0,14","stroke":"white","fill":"none","stroke-width":"2"}})]),_vm._v(" "),_c('span',{staticClass:"oi oi-eye",attrs:{"title":"visibility","aria-hidden":"true"}})]),_vm._v(" "),_c('button',{staticClass:"btn btn-sm btn-outline-dark",on:{"click":function($event){_vm.enter_create_shape_context(type)}}},[_vm._v("+")])])}))])])]),_vm._v(" "),(_vm.selected_place && _vm.editing)?_c('div',{staticClass:"modal fade",attrs:{"id":"confirm-delete-modal","tabindex":"-1","role":"dialog","aria-labelledby":"confirm-delete-title","aria-hidden":"true"}},[_c('div',{staticClass:"modal-dialog modal-dialog-centered",attrs:{"role":"document"}},[_c('div',{staticClass:"modal-content"},[_vm._m(1),_vm._v(" "),_c('div',{staticClass:"modal-body"},[_vm._v("\n          Are you sure you want to delete "+_vm._s(_vm.selected_place.name)+"? This cannot be undone.\n        ")]),_vm._v(" "),_c('div',{staticClass:"modal-footer"},[_c('button',{staticClass:"btn btn-secondary",attrs:{"type":"button","data-dismiss":"modal"}},[_vm._v("Cancel")]),_vm._v(" "),_c('button',{staticClass:"btn btn-danger",attrs:{"type":"button","data-dismiss":"modal"},on:{"click":_vm.delete_selected_place}},[_vm._v("\n            Yes, delete "+_vm._s(_vm.selected_place.name)+"\n          ")])])])])]):_vm._e()])}
-__vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"card-body"},[_vm._v("\n          Nearby places:\n          "),_c('ul',{staticClass:"list-inline"})])},function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"modal-header"},[_c('h5',{staticClass:"modal-title",attrs:{"id":"confirm-delete-title"}},[_vm._v("Confirm delete")]),_vm._v(" "),_c('button',{staticClass:"close",attrs:{"type":"button","data-dismiss":"modal","aria-label":"Close"}},[_c('span',{attrs:{"aria-hidden":"true"}},[_vm._v("×")])])])}]
+                         {'disabled': _vm.no_temp_points_selected}],on:{"click":_vm.delete_temp_points}},[_vm._v("\n          Delete point(s)\n        ")])]):_vm._e(),_vm._v(" "),(_vm.temp_type && !_vm.editing)?_c('div',{staticClass:"mb-1"},[_c('button',{staticClass:"btn btn-outline-success",on:{"click":_vm.exit_and_save_shape}},[_vm._v("\n          Save\n        ")]),_vm._v(" "),_c('button',{staticClass:"btn btn-outline-danger",on:{"click":_vm.exit_edit_shape_context}},[_vm._v("\n          Cancel\n        ")])]):_vm._e(),_vm._v(" "),_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white"},[_vm._v("\n          Key\n        ")]),_vm._v(" "),_c('ul',{staticClass:"list-group list-group-flush"},_vm._l((_vm.place_types),function(name,type){return _c('li',{staticClass:"list-group-item d-flex align-items-center px-3"},[_c('svg',{staticClass:"mr-1",attrs:{"width":"16","height":"16"}},[(type < 100)?_c('circle',{class:_vm.place_type_2_class(type),attrs:{"cx":"8","cy":"8","r":"5"}}):(type < 200)?_c('polyline',{class:_vm.place_type_2_class(type),attrs:{"points":"2,2 4,12 14,14"}}):_c('g',[_c('polygon',{class:_vm.place_type_2_class(type),attrs:{"points":"2,2 50,0 0,50","filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:['place-poly-outline', _vm.place_type_2_class(type)],attrs:{"points":"2,2 50,0 0,50"}})])]),_vm._v(" "),_c('span',{staticClass:"mr-1"},[_vm._v(_vm._s(name))]),_vm._v(" "),_c('button',{staticClass:"btn btn-sm btn-outline-dark ml-auto mr-1",staticStyle:{"position":"relative"},attrs:{"data-toggle":"button","aria-pressed":"false"},on:{"click":function($event){_vm.toggle_type_visibility(type)}}},[_c('svg',{staticStyle:{"position":"absolute","top":"7px","left":"8px"},attrs:{"width":"14","height":"14"}},[_c('polyline',{attrs:{"points":"14,0 0,14","stroke":"white","fill":"none","stroke-width":"2"}})]),_vm._v(" "),_c('span',{staticClass:"oi oi-eye",attrs:{"title":"visibility","aria-hidden":"true"}})]),_vm._v(" "),_c('button',{staticClass:"btn btn-sm btn-outline-dark",on:{"click":function($event){_vm.enter_create_shape_context(type)}}},[_vm._v("+")])])}))])])]),_vm._v(" "),(_vm.selected_place && _vm.editing)?_c('div',{staticClass:"modal fade",attrs:{"id":"confirm-delete-modal","tabindex":"-1","role":"dialog","aria-labelledby":"confirm-delete-title","aria-hidden":"true"}},[_c('div',{staticClass:"modal-dialog modal-dialog-centered",attrs:{"role":"document"}},[_c('div',{staticClass:"modal-content"},[_vm._m(0),_vm._v(" "),_c('div',{staticClass:"modal-body"},[_vm._v("\n          Are you sure you want to delete "+_vm._s(_vm.selected_place.name)+"? This cannot be undone.\n        ")]),_vm._v(" "),_c('div',{staticClass:"modal-footer"},[_c('button',{staticClass:"btn btn-secondary",attrs:{"type":"button","data-dismiss":"modal"}},[_vm._v("Cancel")]),_vm._v(" "),_c('button',{staticClass:"btn btn-danger",attrs:{"type":"button","data-dismiss":"modal"},on:{"click":_vm.delete_selected_place}},[_vm._v("\n            Yes, delete "+_vm._s(_vm.selected_place.name)+"\n          ")])])])])]):_vm._e()])}
+__vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"modal-header"},[_c('h5',{staticClass:"modal-title",attrs:{"id":"confirm-delete-title"}},[_vm._v("Confirm delete")]),_vm._v(" "),_c('button',{staticClass:"close",attrs:{"type":"button","data-dismiss":"modal","aria-label":"Close"}},[_c('span',{attrs:{"aria-hidden":"true"}},[_vm._v("×")])])])}]
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
@@ -691,7 +708,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-7661dca8", __vue__options__)
   } else {
-    hotAPI.rerender("data-v-7661dca8", __vue__options__)
+    hotAPI.reload("data-v-7661dca8", __vue__options__)
   }
 })()}
 });
@@ -746,6 +763,10 @@ var _axios = require('axios');
 
 var _axios2 = _interopRequireDefault(_axios);
 
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 var _vue = require('vue/dist/vue');
 
 var _vue2 = _interopRequireDefault(_vue);
@@ -787,6 +808,7 @@ new _vue2.default({
 });
 });
 
+require.alias("buffer/index.js", "buffer");
 require.alias("process/browser.js", "process");process = require('process');require.register("___globals___", function(exports, require, module) {
   
 

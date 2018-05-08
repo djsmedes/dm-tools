@@ -1,4 +1,5 @@
 import axios from 'axios'
+import _ from 'lodash'
 import Vue from 'vue/dist/vue'
 import Vuex from 'vuex'
 
