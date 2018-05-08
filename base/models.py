@@ -2,7 +2,7 @@ from django.db import models
 from django.forms import ModelForm
 from django.contrib.auth.models import User
 from django.urls import reverse
-from multiselectfield import MultiSelectField
+from django.utils.text import slugify
 
 
 class Profile(models.Model):
@@ -36,6 +36,10 @@ class BaseModel(models.Model):
     def url_prefix(cls):
         return cls._meta.verbose_name.replace(' ', '')
 
+    @classmethod
+    def class_slug(cls) -> str:
+        return slugify(cls._meta.verbose_name_plural)
+
     def get_absolute_url(self):
         return reverse('{}-view'.format(self.url_prefix()), kwargs={'pk': self.pk})
 
@@ -49,13 +53,13 @@ class BaseModel(models.Model):
     def get_delete_url(self):
         return reverse('{}-delete'.format(self.url_prefix()), kwargs={'pk': self.pk})
 
-    @property
-    def multiselect_field_names(self):
-        return [field.name for field in self._meta.fields if isinstance(field, MultiSelectField)]
-
     @classmethod
     def login_protected_field_names(cls) -> list:
         return []
+
+    @classmethod
+    def api_url(cls) -> str:
+        return 'api/{}/'.format(cls.class_slug())
 
 
 class TableMetaData(models.Model):

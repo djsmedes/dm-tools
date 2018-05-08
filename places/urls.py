@@ -1,16 +1,23 @@
 from django.urls import path, include, reverse_lazy
 
 from dmtools.urls import breadcrumbs as core_breadcrumbs
-from .views import CanvasView
+from .views import PlaceDetailAPI, PlaceListAPI, PlaceComboView
+from .models import Place
 
 breadcrumbs = core_breadcrumbs
 
 places_breadcrumbs = breadcrumbs + [{'href': reverse_lazy('places-home'), 'text': 'Places'}]
 
 places_patterns = [
-    path('', CanvasView.as_view(), name='places-home')
+    path('', PlaceComboView.as_view(), name='places-home')
+]
+
+api_patterns = [
+    path(Place.api_url(), PlaceListAPI.as_view()),
+    path(Place.api_url() + '<int:pk>/', PlaceDetailAPI.as_view()),
 ]
 
 urlpatterns = [
-    path('', include(places_patterns), {'base_breadcrumbs': places_breadcrumbs}),
+    path('places/', include(places_patterns), {'base_breadcrumbs': places_breadcrumbs}),
+    path('', include(api_patterns))
 ]

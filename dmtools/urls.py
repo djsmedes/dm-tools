@@ -41,13 +41,12 @@ accounts_patterns = [
 ]
 
 urlpatterns = [
-    path('api/', include('api.urls')),
     path('admin/', admin.site.urls),
     path('', HomepageView.as_view(extra_context={'breadcrumbs': breadcrumbs}), name='home'),
     path('', include('base.urls')),
     path('', include('people.urls')),
     path('', include('statblocks.urls')),
-    path('places/', include('places.urls')),
+    path('', include('places.urls')),
     path('plot/', include('plot.urls')),
     path('ajax/', include(ajax_patterns)),
     path('accounts/', include(accounts_patterns)),

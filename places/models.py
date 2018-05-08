@@ -100,8 +100,7 @@ class Place(BaseModel):
 
     @property
     def points(self):
-        dim = self.dimensions
-        if dim < 2:
+        if self.type < 200:
             # points or lines use attr .coords directly
             pts = list(self.shape.coords)
         else:
@@ -112,15 +111,15 @@ class Place(BaseModel):
 
     @points.setter
     def points(self, points: dict):
+        if not self.type and self.type != 0:
+            raise ValueError('Cannot set points on object until "type" attribute has been set.')
         coords = [(pt['x'], pt['y']) for pt in points]
-        if self.dimensions == self.POINT:
+        if self.type < 100:
             self.shape = Point(coords)
-        elif self.dimensions == self.LINE:
+        elif self.type < 200:
             self.shape = LineString(coords)
-        elif self.dimensions == self.POLYGON:
-            self.shape = Polygon(coords)
         else:
-            raise ValueError('cannot set points on object until "shape" attribute has been set')
+            self.shape = Polygon(coords)
 
     def __str__(self):
         return self.name

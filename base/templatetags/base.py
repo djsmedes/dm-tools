@@ -162,6 +162,9 @@ def user_props_json(user):
 @register.simple_tag(takes_context=True)
 def template_context_to_json(context):
     to_return = {}
+    api_url = context.get('api_url', None)
+    if api_url:
+        to_return['api_url'] = api_url
     user = context.get('user', None)
     profile = None
     if user:
