@@ -5,25 +5,8 @@
 
 {% block content %}
   <combo-list object_list_json='{{ object_list|place_list_json }}'
+              model_name="{{ model.meta.verbose_name }}"
+              model_name_plural="{{ model.meta.verbose_name_plural }}"
               class="container">
-    <div class="row">
-      <div class="col-auto">
-        <div class="card">
-          <h3 class="card-header bg-dark text-white">{{ model.meta.verbose_name_plural|capfirst }}</h3>
-          <div style="max-height: calc(100% - 300px); overflow-y: auto">
-            <div class="list-group list-group-flush">
-              {% for object in object_list %}
-                <button class="list-group-item list-group-item-action">
-                  {{ object.name }}
-                </button>
-              {% endfor %}
-            </div>
-          </div>
-          <div class="card-footer">
-            <button class="btn btn-outline-primary">Add a new {{ model.meta.verbose_name }}</button>
-          </div>
-        </div>
-      </div>
-    </div>
   </combo-list>
 {% endblock %}

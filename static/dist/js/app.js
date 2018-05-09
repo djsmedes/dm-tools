@@ -422,7 +422,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = {
     props: {
-        user_json: null,
+        model_name: '',
+        model_name_plural: '',
         object_list_json: null
     },
     data: function data() {
@@ -445,7 +446,6 @@ exports.default = {
             if (prop_name.includes('_json') && that[prop_name]) {
                 var data_name = prop_name.replace('_json', '');
                 that[data_name] = JSON.parse(that[prop_name]);
-                that[prop_name] = null;
             }
         });
     }
@@ -454,7 +454,7 @@ exports.default = {
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_vm._t("default")],2)}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticClass:"row"},[_c('div',{staticClass:"col-auto"},[_c('div',{staticClass:"card"},[_c('h3',{staticClass:"card-header bg-dark text-white",staticStyle:{"text-transform":"capitalize"}},[_vm._v("\n          "+_vm._s(_vm.model_name_plural)+"\n        ")]),_vm._v(" "),_c('div',{staticStyle:{"max-height":"calc(100% - 300px)","overflow-y":"auto"}},[_c('div',{staticClass:"list-group list-group-flush"},_vm._l((_vm.object_list),function(object){return _c('button',{staticClass:"list-group-item list-group-item-action"},[_vm._v("\n                "+_vm._s(object.name)+"\n              ")])}))]),_vm._v(" "),_c('div',{staticClass:"card-footer"},[_c('button',{staticClass:"btn btn-outline-primary"},[_vm._v("Add a new "+_vm._s(_vm.model_name))])])])])])])}
 __vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -681,7 +681,6 @@ exports.default = {
     created: function created() {
         if (this.place_list_json) {
             this.$store.commit('set_model_list', JSON.parse(this.place_list_json));
-            this.place_list_json = null;
         } else {
             this.$store.dispatch('get_model_list');
         }
@@ -711,7 +710,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-7661dca8", __vue__options__)
   } else {
-    hotAPI.rerender("data-v-7661dca8", __vue__options__)
+    hotAPI.reload("data-v-7661dca8", __vue__options__)
   }
 })()}
 });

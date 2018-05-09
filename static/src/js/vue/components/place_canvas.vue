@@ -424,7 +424,6 @@
         created() {
             if (this.place_list_json) {
                 this.$store.commit('set_model_list', JSON.parse(this.place_list_json));
-                this.place_list_json = null;
             } else {
                 this.$store.dispatch('get_model_list');
             }
