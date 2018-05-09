@@ -1,8 +1,7 @@
 <template>
   <div>
   <div v-if="object" class="card">
-    <h3 class="card-header bg-dark text-white"
-        style="text-transform: capitalize;">
+    <h3 class="card-header bg-dark text-white">
       {{ object.name }}
     </h3>
     <div class="card-body">

@@ -447,7 +447,7 @@ exports.default = {
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[(_vm.object)?_c('div',{staticClass:"card"},[_c('h3',{staticClass:"card-header bg-dark text-white",staticStyle:{"text-transform":"capitalize"}},[_vm._v("\n    "+_vm._s(_vm.object.name)+"\n  ")]),_vm._v(" "),_c('div',{staticClass:"card-body"},[_vm._v("\n    "+_vm._s(_vm.object.description)+"\n  ")]),_vm._v(" "),_c('div',{staticClass:"card-footer"},[_vm._v("\n    Some footer text\n  ")])]):_vm._e()])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[(_vm.object)?_c('div',{staticClass:"card"},[_c('h3',{staticClass:"card-header bg-dark text-white"},[_vm._v("\n    "+_vm._s(_vm.object.name)+"\n  ")]),_vm._v(" "),_c('div',{staticClass:"card-body"},[_vm._v("\n    "+_vm._s(_vm.object.description)+"\n  ")]),_vm._v(" "),_c('div',{staticClass:"card-footer"},[_vm._v("\n    Some footer text\n  ")])]):_vm._e()])}
 __vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
