@@ -183,7 +183,8 @@ def template_context_to_json(context):
         to_return['user'] = {
             'is_authenticated': user.is_authenticated
         }
-        profile = user.profile
+        if user.is_authenticated:
+            profile = user.profile
     # todo - alternative way of getting profile 
     if profile:
         campaign = profile.cur_campaign
