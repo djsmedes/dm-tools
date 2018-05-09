@@ -7,9 +7,13 @@ Vue.use(Vuex);
 
 import place_canvas from './components/place_canvas'
 import place_inclusion_distance from './components/place_inclusion_distance'
+import combo_list from './components/combo_list'
 
 Vue.component('place-canvas', require('./components/place_canvas'));
 Vue.component('place-inclusion-distance', require('./components/place_inclusion_distance'));
+Vue.component('combo-list', require('./components/combo_list'));
+
+const components = {place_canvas, place_inclusion_distance, combo_list};
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -104,5 +108,5 @@ store.state.refresh_model = _.debounce(function() {
 new Vue({
     el: '#app',
     store,
-    components: {place_canvas, place_inclusion_distance}
+    components: components
 });

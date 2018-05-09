@@ -1,7 +1,7 @@
 from typing import Type
 from shapely.wkb import loads as wkb_loads
 from shapely.geometry.base import BaseGeometry
-from shapely.geometry import Point, LineString, LinearRing, Polygon
+from shapely.geometry import Point, LineString, Polygon
 from django.db import models
 
 from base.models import BaseModel
@@ -65,10 +65,6 @@ class Place(BaseModel):
         through_fields=('place1', 'place2'),
         symmetrical=False,
     )
-
-
-    class Meta:
-        ordering = ['-_dimensions']
 
     @property
     def shape(self):

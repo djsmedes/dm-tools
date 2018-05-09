@@ -4,13 +4,32 @@ from rest_framework import status
 
 from base.views import BaseComboView
 from places.models import Place
-from places.utils import topological_sort_shapes
+from places.utils import get_topo_sorted_place_list
 from .serializers import PlaceSerializer, PlaceLiteSerializer
 
 
 class PlaceComboView(BaseComboView):
     model = Place
+
+    def get_queryset(self):
+        if not self.request:
+            return []
+        else:
+            owner = self.request.user.profile
+        return Place.objects.filter(owner=owner)
+
+
+class PlaceComboCanvasView(BaseComboView):
+    model = Place
     template_name = 'places/canvas.html'
+    extra_breadcrumbs = [{'text': 'Canvas'}]
+
+    def get_queryset(self):
+        if not self.request:
+            return []
+        else:
+            owner = self.request.user.profile
+        return get_topo_sorted_place_list(owner)
 
 
 class PlaceListAPI(APIView):
@@ -18,12 +37,7 @@ class PlaceListAPI(APIView):
     def get(self, request, format=None):
         # todo add ability to get other owners stuff somehow for non-logged-in users
         owner = request.user.profile
-        polygons = topological_sort_shapes(
-            Place.objects.filter(_dimensions=2).filter(owner=owner)
-        )
-        places = polygons + list(
-            Place.objects.filter(_dimensions__lt=2).filter(owner=owner)
-        )
+        places = get_topo_sorted_place_list(owner)
         serializer = PlaceLiteSerializer(places, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

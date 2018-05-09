@@ -413,7 +413,62 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 });
 
-require.register("js/vue/components/place_canvas.vue", function(exports, require, module) {
+require.register("js/vue/components/combo_list.vue", function(exports, require, module) {
+;(function(){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    props: {
+        user_json: null,
+        object_list_json: null
+    },
+    data: function data() {
+        return {
+            user: null,
+            object_list: null
+        };
+    },
+
+    computed: {},
+    watch: {},
+    methods: {
+        console_log: function console_log(msg) {
+            console.log(msg);
+        }
+    },
+    created: function created() {
+        var that = this;
+        Object.keys(this._props).forEach(function (prop_name) {
+            if (prop_name.includes('_json') && that[prop_name]) {
+                var data_name = prop_name.replace('_json', '');
+                that[data_name] = JSON.parse(that[prop_name]);
+                that[prop_name] = null;
+            }
+        });
+    }
+};
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_vm._t("default")],2)}
+__vue__options__.staticRenderFns = []
+if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-7799bb72", __vue__options__)
+  } else {
+    hotAPI.reload("data-v-7799bb72", __vue__options__)
+  }
+})()}
+});
+
+;require.register("js/vue/components/place_canvas.vue", function(exports, require, module) {
 ;(function(){
 'use strict';
 
@@ -428,6 +483,9 @@ var _axios2 = _interopRequireDefault(_axios);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
+    props: {
+        place_list_json: null
+    },
     data: function data() {
         return {
             temp_points: [],
@@ -621,7 +679,12 @@ exports.default = {
         }
     },
     created: function created() {
-        this.$store.dispatch('get_model_list');
+        if (this.place_list_json) {
+            this.$store.commit('set_model_list', JSON.parse(this.place_list_json));
+            this.place_list_json = null;
+        } else {
+            this.$store.dispatch('get_model_list');
+        }
     }
 };
 })()
@@ -648,7 +711,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-7661dca8", __vue__options__)
   } else {
-    hotAPI.reload("data-v-7661dca8", __vue__options__)
+    hotAPI.rerender("data-v-7661dca8", __vue__options__)
   }
 })()}
 });
@@ -691,7 +754,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-82b131f0", __vue__options__)
   } else {
-    hotAPI.reload("data-v-82b131f0", __vue__options__)
+    hotAPI.rerender("data-v-82b131f0", __vue__options__)
   }
 })()}
 });
@@ -723,12 +786,19 @@ var _place_inclusion_distance = require('./components/place_inclusion_distance')
 
 var _place_inclusion_distance2 = _interopRequireDefault(_place_inclusion_distance);
 
+var _combo_list = require('./components/combo_list');
+
+var _combo_list2 = _interopRequireDefault(_combo_list);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 _vue2.default.use(_vuex2.default);
 
 _vue2.default.component('place-canvas', require('./components/place_canvas'));
 _vue2.default.component('place-inclusion-distance', require('./components/place_inclusion_distance'));
+_vue2.default.component('combo-list', require('./components/combo_list'));
+
+var components = { place_canvas: _place_canvas2.default, place_inclusion_distance: _place_inclusion_distance2.default, combo_list: _combo_list2.default };
 
 _axios2.default.defaults.xsrfCookieName = 'csrftoken';
 _axios2.default.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -819,7 +889,7 @@ store.state.refresh_model = _lodash2.default.debounce(function () {
 new _vue2.default({
     el: '#app',
     store: store,
-    components: { place_canvas: _place_canvas2.default, place_inclusion_distance: _place_inclusion_distance2.default }
+    components: components
 });
 });
 

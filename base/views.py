@@ -37,6 +37,7 @@ class BaseComboView(BreadCrumbMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['api_url'] = '/' + self.model.api_url()  # can't start with / for urlconf, needs to for axios
+        context['model'] = self.model
         return context
 
 

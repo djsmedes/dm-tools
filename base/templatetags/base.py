@@ -1,11 +1,11 @@
 from json import dumps as json_dumps
-
+import markdown
 from django import template
 from django.utils.safestring import mark_safe
 
 from statblocks.models import Action, Monster, StatblockBit, AbilityScore
 from base.utils import Die
-import markdown
+from places.serializers import PlaceLiteSerializer
 
 register = template.Library()
 
@@ -157,6 +157,12 @@ def user_props_json(user):
     except AttributeError:
         props = {}
     return mark_safe(json_dumps(props))
+
+
+@register.filter
+def place_list_json(place_list):
+    serializer = PlaceLiteSerializer(place_list, many=True)
+    return mark_safe(json_dumps(serializer.data))
 
 
 @register.simple_tag(takes_context=True)
