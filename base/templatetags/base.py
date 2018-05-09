@@ -5,7 +5,8 @@ from django.utils.safestring import mark_safe
 
 from statblocks.models import Action, Monster, StatblockBit, AbilityScore
 from base.utils import Die
-from places.serializers import PlaceLiteSerializer
+from places.models import Place
+from places.serializers import PlaceLiteSerializer, PlaceSerializer
 
 register = template.Library()
 
@@ -160,8 +161,13 @@ def user_props_json(user):
 
 
 @register.filter
-def place_list_json(place_list):
-    serializer = PlaceLiteSerializer(place_list, many=True)
+def place_json(place):
+    if not place:
+        return ''
+    elif isinstance(place, Place):
+        serializer = PlaceSerializer(place)
+    else:
+        serializer = PlaceLiteSerializer(place, many=True)
     return mark_safe(json_dumps(serializer.data))
 
 

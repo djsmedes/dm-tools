@@ -8,12 +8,14 @@ Vue.use(Vuex);
 import place_canvas from './components/place_canvas'
 import place_inclusion_distance from './components/place_inclusion_distance'
 import combo_list from './components/combo_list'
+import combo_detail_place from './components/combo_detail_place'
 
 Vue.component('place-canvas', require('./components/place_canvas'));
 Vue.component('place-inclusion-distance', require('./components/place_inclusion_distance'));
 Vue.component('combo-list', require('./components/combo_list'));
+Vue.component('combo-detail-place', require('./components/combo_detail_place'));
 
-const components = {place_canvas, place_inclusion_distance, combo_list};
+const components = {place_canvas, place_inclusion_distance, combo_list, combo_detail_place};
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';

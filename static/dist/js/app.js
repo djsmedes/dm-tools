@@ -413,7 +413,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 });
 
-require.register("js/vue/components/combo_list.vue", function(exports, require, module) {
+require.register("js/vue/components/combo_detail_place.vue", function(exports, require, module) {
 ;(function(){
 'use strict';
 
@@ -424,37 +424,113 @@ exports.default = {
     props: {
         model_name: '',
         model_name_plural: '',
-        object_list_json: null
+        object_json: null
     },
     data: function data() {
-        return {
-            user: null,
-            object_list: null
-        };
+        return {};
     },
 
-    computed: {},
-    watch: {},
-    methods: {
-        console_log: function console_log(msg) {
-            console.log(msg);
+    computed: {
+        object: function object() {
+            return this.$store.state.model;
         }
     },
+    watch: {},
+    methods: {},
     created: function created() {
-        var that = this;
-        Object.keys(this._props).forEach(function (prop_name) {
-            if (prop_name.includes('_json') && that[prop_name]) {
-                var data_name = prop_name.replace('_json', '');
-                that[data_name] = JSON.parse(that[prop_name]);
-            }
-        });
+        if (this.object_json) {
+            this.$store.commit('set_model', JSON.parse(this.object_json));
+        }
     }
 };
 })()
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticClass:"row"},[_c('div',{staticClass:"col-auto"},[_c('div',{staticClass:"card"},[_c('h3',{staticClass:"card-header bg-dark text-white",staticStyle:{"text-transform":"capitalize"}},[_vm._v("\n          "+_vm._s(_vm.model_name_plural)+"\n        ")]),_vm._v(" "),_c('div',{staticStyle:{"max-height":"calc(100% - 300px)","overflow-y":"auto"}},[_c('div',{staticClass:"list-group list-group-flush"},_vm._l((_vm.object_list),function(object){return _c('button',{staticClass:"list-group-item list-group-item-action"},[_vm._v("\n                "+_vm._s(object.name)+"\n              ")])}))]),_vm._v(" "),_c('div',{staticClass:"card-footer"},[_c('button',{staticClass:"btn btn-outline-primary"},[_vm._v("Add a new "+_vm._s(_vm.model_name))])])])])])])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[(_vm.object)?_c('div',{staticClass:"card"},[_c('h3',{staticClass:"card-header bg-dark text-white",staticStyle:{"text-transform":"capitalize"}},[_vm._v("\n    "+_vm._s(_vm.object.name)+"\n  ")]),_vm._v(" "),_c('div',{staticClass:"card-body"},[_vm._v("\n    "+_vm._s(_vm.object.description)+"\n  ")]),_vm._v(" "),_c('div',{staticClass:"card-footer"},[_vm._v("\n    Some footer text\n  ")])]):_vm._e()])}
+__vue__options__.staticRenderFns = []
+if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-98f0227c", __vue__options__)
+  } else {
+    hotAPI.rerender("data-v-98f0227c", __vue__options__)
+  }
+})()}
+});
+
+;require.register("js/vue/components/combo_list.vue", function(exports, require, module) {
+;(function(){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    props: {
+        model_name: '',
+        model_name_plural: '',
+        object_list_json: null
+    },
+    data: function data() {
+        return {
+            search_bar: ''
+        };
+    },
+
+    computed: {
+        object_list: function object_list() {
+            return this.$store.state.model_list;
+        },
+        sorted_object_list: function sorted_object_list() {
+            if (this.object_list) {
+                return _lodash2.default.sortBy(this.object_list, function (model) {
+                    return model.name;
+                });
+            } else return [];
+        },
+        sorted_and_filtered_object_list: function sorted_and_filtered_object_list() {
+            var _this = this;
+
+            if (this.sorted_object_list) {
+                return this.sorted_object_list.filter(function (model) {
+                    return model.name.toLowerCase().includes(_this.search_bar.toLowerCase());
+                });
+            } else return [];
+        }
+    },
+    watch: {},
+    methods: {
+        set_object: function set_object(id) {
+            this.$store.dispatch('get_model', id);
+        },
+        is_active: function is_active(id) {
+            if (!this.$store.state.model) return false;
+            return id === this.$store.state.model.id;
+        }
+    },
+    created: function created() {
+        if (this.object_list_json) {
+            this.$store.commit('set_model_list', JSON.parse(this.object_list_json));
+        } else {
+            this.$store.dispatch('get_model_list');
+        }
+    }
+};
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticClass:"mb-1 form-group"},[_c('label',{attrs:{"for":"combo-list-filter"}},[_vm._v("Filter")]),_vm._v(" "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.search_bar),expression:"search_bar"}],staticClass:"form-control",attrs:{"id":"combo-list-filter"},domProps:{"value":(_vm.search_bar)},on:{"input":function($event){if($event.target.composing){ return; }_vm.search_bar=$event.target.value}}})]),_vm._v(" "),_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white",staticStyle:{"text-transform":"capitalize"}},[_c('h3',[_vm._v(_vm._s(_vm.model_name_plural))])]),_vm._v(" "),_c('div',{staticStyle:{"max-height":"calc(100% - 300px)","overflow-y":"auto"}},[_c('div',{staticClass:"list-group list-group-flush"},_vm._l((_vm.sorted_and_filtered_object_list),function(object){return _c('button',{staticClass:"list-group-item list-group-item-action",class:_vm.is_active(object.id) ? 'active' : '',on:{"click":function($event){_vm.set_object(object.id)}}},[_vm._v("\n          "+_vm._s(object.name)+"\n        ")])}))]),_vm._v(" "),_c('div',{staticClass:"card-footer"},[_c('button',{staticClass:"btn btn-outline-primary"},[_vm._v("Add a new "+_vm._s(_vm.model_name))])])])])}
 __vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -463,7 +539,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-7799bb72", __vue__options__)
   } else {
-    hotAPI.reload("data-v-7799bb72", __vue__options__)
+    hotAPI.rerender("data-v-7799bb72", __vue__options__)
   }
 })()}
 });
@@ -789,6 +865,10 @@ var _combo_list = require('./components/combo_list');
 
 var _combo_list2 = _interopRequireDefault(_combo_list);
 
+var _combo_detail_place = require('./components/combo_detail_place');
+
+var _combo_detail_place2 = _interopRequireDefault(_combo_detail_place);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 _vue2.default.use(_vuex2.default);
@@ -796,8 +876,9 @@ _vue2.default.use(_vuex2.default);
 _vue2.default.component('place-canvas', require('./components/place_canvas'));
 _vue2.default.component('place-inclusion-distance', require('./components/place_inclusion_distance'));
 _vue2.default.component('combo-list', require('./components/combo_list'));
+_vue2.default.component('combo-detail-place', require('./components/combo_detail_place'));
 
-var components = { place_canvas: _place_canvas2.default, place_inclusion_distance: _place_inclusion_distance2.default, combo_list: _combo_list2.default };
+var components = { place_canvas: _place_canvas2.default, place_inclusion_distance: _place_inclusion_distance2.default, combo_list: _combo_list2.default, combo_detail_place: _combo_detail_place2.default };
 
 _axios2.default.defaults.xsrfCookieName = 'csrftoken';
 _axios2.default.defaults.xsrfHeaderName = 'X-CSRFToken';
