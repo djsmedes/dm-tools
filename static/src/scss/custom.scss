@@ -5,6 +5,8 @@ $theme-colors: (
         "pink": #d84fc4,
 );
 
+$body-bg: #f4f4f4;
+
 @import "../node_modules/bootstrap/scss/bootstrap";
 
 @import "dmscreen_tables";

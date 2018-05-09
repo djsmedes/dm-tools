@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="mb-1 form-group">
+    <div class="mb-1 form-group bg-secondary text-white rounded py-2 px-3">
       <label for="combo-list-filter">Filter</label>
       <input id="combo-list-filter"
              class="form-control"
@@ -12,7 +12,7 @@
         <h3>{{ model_name_plural }}</h3>
 
       </div>
-      <div style="max-height: calc(100% - 300px); overflow-y: auto">
+      <div style="max-height: 500px; overflow-y: auto">
         <div class="list-group list-group-flush">
           <button v-for="object in sorted_and_filtered_object_list"
                   class="list-group-item list-group-item-action"

@@ -70,7 +70,7 @@
 
       <div class="col-auto ml-auto p-0">
 
-        <svg id="place-canvas" @click="generate_temp_point($event)">
+        <svg id="place-canvas" @click="generate_temp_point($event)" class="rounded">
           <defs>
             <filter id="innershadow">
               <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"></feGaussianBlur>
