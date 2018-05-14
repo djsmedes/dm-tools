@@ -33,6 +33,12 @@ class BaseModelManager(models.Manager):
     def owned_by(self, owner):
         return super().get_queryset().filter(owner=owner)
 
+    def requester_owns(self, request):
+        if request.user.is_authenticated:
+            return super().get_queryset().filter(owner=request.user.profile)
+        else:
+            return self.none()
+
 
 class BaseModel(models.Model):
     name = models.CharField(max_length=255)
