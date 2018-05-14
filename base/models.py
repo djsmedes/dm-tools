@@ -20,9 +20,10 @@ class BaseModelManager(models.Manager):
     def get_queryset(self):
         if settings.DEBUG:
             print(
-                "WARN:\n  '.all()' should be used with caution. Used by:\n  " +
-                self.model.__name__ +
-                "[research how to make this return stack trace]"
+                "WARN:\n" +
+                "  '.all()' should be used with caution. Used by:\n" +
+                "  " + self.model.__name__ + '\n' +
+                "  [research how to make this return stack trace]"
             )
         setattr(self, 'get_queryset', getattr(self, 'get_qs_prod'))
         return super().get_queryset()
@@ -35,8 +36,16 @@ class BaseModelManager(models.Manager):
 
     def requester_owns(self, request):
         if request.user.is_authenticated:
-            return super().get_queryset().filter(owner=request.user.profile)
+            return self.owned_by(owner=request.user.profile)
         else:
+            return self.none()
+
+    def request_can_access(self, request):
+        if request.user.is_authenticated:
+            # if request.user.has_perm()
+            return self.requester_owns(request)
+        else:
+            # todo - figure out how to check if an object requires no permission to view
             return self.none()
 
 
