@@ -413,7 +413,138 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 });
 
-require.register("js/vue/components/place_canvas.vue", function(exports, require, module) {
+require.register("js/vue/components/combo_detail_place.vue", function(exports, require, module) {
+;(function(){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    props: {
+        model_name: '',
+        model_name_plural: '',
+        object_json: null
+    },
+    data: function data() {
+        return {};
+    },
+
+    computed: {
+        object: function object() {
+            return this.$store.state.model;
+        }
+    },
+    watch: {},
+    methods: {},
+    created: function created() {
+        if (this.object_json) {
+            this.$store.commit('set_model', JSON.parse(this.object_json));
+        }
+    }
+};
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[(_vm.object)?_c('div',{staticClass:"card"},[_c('h3',{staticClass:"card-header bg-dark text-white"},[_vm._v("\n    "+_vm._s(_vm.object.name)+"\n  ")]),_vm._v(" "),_c('div',{staticClass:"card-body"},[_vm._v("\n    "+_vm._s(_vm.object.description)+"\n  ")]),_vm._v(" "),_c('div',{staticClass:"card-footer"},[_vm._v("\n    Some footer text\n  ")])]):_vm._e()])}
+__vue__options__.staticRenderFns = []
+if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-98f0227c", __vue__options__)
+  } else {
+    hotAPI.rerender("data-v-98f0227c", __vue__options__)
+  }
+})()}
+});
+
+;require.register("js/vue/components/combo_list.vue", function(exports, require, module) {
+;(function(){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    props: {
+        model_name: '',
+        model_name_plural: '',
+        object_list_json: null
+    },
+    data: function data() {
+        return {
+            search_bar: ''
+        };
+    },
+
+    computed: {
+        object_list: function object_list() {
+            return this.$store.state.model_list;
+        },
+        sorted_object_list: function sorted_object_list() {
+            if (this.object_list) {
+                return _lodash2.default.sortBy(this.object_list, function (model) {
+                    return model.name;
+                });
+            } else return [];
+        },
+        sorted_and_filtered_object_list: function sorted_and_filtered_object_list() {
+            var _this = this;
+
+            if (this.sorted_object_list) {
+                return this.sorted_object_list.filter(function (model) {
+                    return model.name.toLowerCase().includes(_this.search_bar.toLowerCase());
+                });
+            } else return [];
+        }
+    },
+    watch: {},
+    methods: {
+        set_object: function set_object(id) {
+            this.$store.dispatch('get_model', id);
+        },
+        is_active: function is_active(id) {
+            if (!this.$store.state.model) return false;
+            return id === this.$store.state.model.id;
+        }
+    },
+    created: function created() {
+        if (this.object_list_json) {
+            this.$store.commit('set_model_list', JSON.parse(this.object_list_json));
+        } else {
+            this.$store.dispatch('get_model_list');
+        }
+    }
+};
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticClass:"mb-1 form-group bg-secondary text-white rounded py-2 px-3"},[_c('label',{attrs:{"for":"combo-list-filter"}},[_vm._v("Filter")]),_vm._v(" "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.search_bar),expression:"search_bar"}],staticClass:"form-control",attrs:{"id":"combo-list-filter"},domProps:{"value":(_vm.search_bar)},on:{"input":function($event){if($event.target.composing){ return; }_vm.search_bar=$event.target.value}}})]),_vm._v(" "),_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white",staticStyle:{"text-transform":"capitalize"}},[_c('h3',[_vm._v(_vm._s(_vm.model_name_plural))])]),_vm._v(" "),_c('div',{staticStyle:{"max-height":"500px","overflow-y":"auto"}},[_c('div',{staticClass:"list-group list-group-flush"},_vm._l((_vm.sorted_and_filtered_object_list),function(object){return _c('button',{staticClass:"list-group-item list-group-item-action",class:_vm.is_active(object.id) ? 'active' : '',on:{"click":function($event){_vm.set_object(object.id)}}},[_vm._v("\n          "+_vm._s(object.name)+"\n        ")])}))]),_vm._v(" "),_c('div',{staticClass:"card-footer"},[_c('button',{staticClass:"btn btn-outline-primary"},[_vm._v("Add a new "+_vm._s(_vm.model_name))])])])])}
+__vue__options__.staticRenderFns = []
+if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-7799bb72", __vue__options__)
+  } else {
+    hotAPI.rerender("data-v-7799bb72", __vue__options__)
+  }
+})()}
+});
+
+;require.register("js/vue/components/place_canvas.vue", function(exports, require, module) {
 ;(function(){
 'use strict';
 
@@ -428,6 +559,9 @@ var _axios2 = _interopRequireDefault(_axios);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
+    props: {
+        place_list_json: null
+    },
     data: function data() {
         return {
             temp_points: [],
@@ -621,14 +755,18 @@ exports.default = {
         }
     },
     created: function created() {
-        this.$store.dispatch('get_model_list');
+        if (this.place_list_json) {
+            this.$store.commit('set_model_list', JSON.parse(this.place_list_json));
+        } else {
+            this.$store.dispatch('get_model_list');
+        }
     }
 };
 })()
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"m-0 p-0"},[_c('div',{staticClass:"row container-fluid px-5"},[_c('div',{staticClass:"col"},[(_vm.selected_place)?_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white"},[_c('div',{staticClass:"row form-inline"},[(! _vm.editing)?_c('h4',{staticClass:"col"},[_vm._v(_vm._s(_vm.selected_place.name))]):_c('label',[_vm._v("\n              Name: "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.name),expression:"selected_place_edits.name"}],staticClass:"mx-1 col form-control",domProps:{"value":(_vm.selected_place_edits.name)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.selected_place_edits, "name", $event.target.value)}}})]),_vm._v(" "),(! _vm.editing)?_c('button',{staticClass:"btn btn-outline-light col-auto ml-auto mr-1",on:{"click":_vm.enter_edit_selected_place_context}},[_vm._v("\n              Edit\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-danger col-auto ml-auto mr-1",attrs:{"data-toggle":"modal","data-target":"#confirm-delete-modal"}},[_vm._v("\n              Delete\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-secondary col-auto mr-1",on:{"click":_vm.exit_edit_context}},[_vm._v("\n              Cancel\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-success col-auto mr-1",on:{"click":_vm.exit_and_save_selected_place}},[_vm._v("\n              Save\n            ")]):_vm._e()])]),_vm._v(" "),_c('div',{staticClass:"card-body"},[(! _vm.editing)?[_vm._v(_vm._s(_vm.selected_place.description))]:[_c('label',{attrs:{"for":"selected-place-description"}},[_vm._v("Description: ")]),_vm._v(" "),_c('textarea',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.description),expression:"selected_place_edits.description"}],staticClass:"form-control",attrs:{"id":"selected-place-description"},domProps:{"value":(_vm.selected_place_edits.description)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.selected_place_edits, "description", $event.target.value)}}})]],2),_vm._v(" "),(! _vm.editing)?[_c('hr'),_vm._v(" "),_c('div',{staticClass:"card-body"},[_vm._v("\n            Nearby places:\n            "),_c('ul',{staticClass:"list-inline"},_vm._l((_vm.selected_place.nearby_places),function(place){return _c('li',{staticClass:"list-inline-item"},[_c('button',{staticClass:"btn btn-outline-dark",on:{"click":function($event){_vm.select_place(parseInt(place.id))}}},[_vm._v("\n                  "+_vm._s(place.name)+"\n                ")])])}))])]:_vm._e(),_vm._v(" "),_c('div',{staticClass:"card-footer"},[(! _vm.editing)?[_vm._v(_vm._s(_vm.place_types[_vm.selected_place.type]))]:[_c('label',{attrs:{"for":"selected-place-type"}},[_vm._v("Type: ")]),_vm._v(" "),_c('select',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.type),expression:"selected_place_edits.type"}],staticClass:"form-control",attrs:{"id":"selected-place-type"},on:{"change":function($event){var $$selectedVal = Array.prototype.filter.call($event.target.options,function(o){return o.selected}).map(function(o){var val = "_value" in o ? o._value : o.value;return val}); _vm.$set(_vm.selected_place_edits, "type", $event.target.multiple ? $$selectedVal : $$selectedVal[0])}}},[_vm._l((_vm.place_types),function(name,type){return [(_vm.have_same_dimensions(type, _vm.selected_place.type))?_c('option',{domProps:{"value":type}},[_vm._v("\n                  "+_vm._s(name)+"\n                ")]):_vm._e()]})],2)]],2)],2):_vm._e()]),_vm._v(" "),_c('div',{staticClass:"col-auto ml-auto p-0"},[_c('svg',{attrs:{"id":"place-canvas"},on:{"click":function($event){_vm.generate_temp_point($event)}}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"5","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_vm._l((_vm.places),function(place){return [(place.id !== _vm.editing)?[(_vm.have_same_dimensions(place.type, 200))?_c('g',[_c('polygon',{class:_vm.place_type_2_class(place.type),attrs:{"points":_vm.points_to_pointstring(place.points),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:[{ 'hoverable-place': _vm.hovering_enabled},
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"m-0 p-0"},[_c('div',{staticClass:"row container-fluid px-5"},[_c('div',{staticClass:"col"},[(_vm.selected_place)?_c('div',{staticClass:"card"},[_c('div',{staticClass:"card-header bg-dark text-white"},[_c('div',{staticClass:"row form-inline"},[(! _vm.editing)?_c('h4',{staticClass:"col"},[_vm._v(_vm._s(_vm.selected_place.name))]):_c('label',[_vm._v("\n              Name: "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.name),expression:"selected_place_edits.name"}],staticClass:"mx-1 col form-control",domProps:{"value":(_vm.selected_place_edits.name)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.selected_place_edits, "name", $event.target.value)}}})]),_vm._v(" "),(! _vm.editing)?_c('button',{staticClass:"btn btn-outline-light col-auto ml-auto mr-1",on:{"click":_vm.enter_edit_selected_place_context}},[_vm._v("\n              Edit\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-danger col-auto ml-auto mr-1",attrs:{"data-toggle":"modal","data-target":"#confirm-delete-modal"}},[_vm._v("\n              Delete\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-secondary col-auto mr-1",on:{"click":_vm.exit_edit_context}},[_vm._v("\n              Cancel\n            ")]):_vm._e(),_vm._v(" "),(_vm.editing)?_c('button',{staticClass:"btn btn-success col-auto mr-1",on:{"click":_vm.exit_and_save_selected_place}},[_vm._v("\n              Save\n            ")]):_vm._e()])]),_vm._v(" "),_c('div',{staticClass:"card-body"},[(! _vm.editing)?[_vm._v(_vm._s(_vm.selected_place.description))]:[_c('label',{attrs:{"for":"selected-place-description"}},[_vm._v("Description: ")]),_vm._v(" "),_c('textarea',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.description),expression:"selected_place_edits.description"}],staticClass:"form-control",attrs:{"id":"selected-place-description"},domProps:{"value":(_vm.selected_place_edits.description)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.selected_place_edits, "description", $event.target.value)}}})]],2),_vm._v(" "),(! _vm.editing)?[_c('hr'),_vm._v(" "),_c('div',{staticClass:"card-body"},[_vm._v("\n            Nearby places:\n            "),_c('ul',{staticClass:"list-inline"},_vm._l((_vm.selected_place.nearby_places),function(place){return _c('li',{staticClass:"list-inline-item"},[_c('button',{staticClass:"btn btn-outline-dark",on:{"click":function($event){_vm.select_place(parseInt(place.id))}}},[_vm._v("\n                  "+_vm._s(place.name)+"\n                ")])])}))])]:_vm._e(),_vm._v(" "),_c('div',{staticClass:"card-footer"},[(! _vm.editing)?[_vm._v(_vm._s(_vm.place_types[_vm.selected_place.type]))]:[_c('label',{attrs:{"for":"selected-place-type"}},[_vm._v("Type: ")]),_vm._v(" "),_c('select',{directives:[{name:"model",rawName:"v-model",value:(_vm.selected_place_edits.type),expression:"selected_place_edits.type"}],staticClass:"form-control",attrs:{"id":"selected-place-type"},on:{"change":function($event){var $$selectedVal = Array.prototype.filter.call($event.target.options,function(o){return o.selected}).map(function(o){var val = "_value" in o ? o._value : o.value;return val}); _vm.$set(_vm.selected_place_edits, "type", $event.target.multiple ? $$selectedVal : $$selectedVal[0])}}},[_vm._l((_vm.place_types),function(name,type){return [(_vm.have_same_dimensions(type, _vm.selected_place.type))?_c('option',{domProps:{"value":type}},[_vm._v("\n                  "+_vm._s(name)+"\n                ")]):_vm._e()]})],2)]],2)],2):_vm._e()]),_vm._v(" "),_c('div',{staticClass:"col-auto ml-auto p-0"},[_c('svg',{staticClass:"rounded",attrs:{"id":"place-canvas"},on:{"click":function($event){_vm.generate_temp_point($event)}}},[_c('defs',[_c('filter',{attrs:{"id":"innershadow"}},[_c('feGaussianBlur',{attrs:{"in":"SourceGraphic","stdDeviation":"5","result":"blur"}}),_vm._v(" "),_c('feComposite',{attrs:{"in2":"SourceGraphic","operator":"arithmetic","k2":"-1","k3":"1","result":"shadowDiff"}})],1)]),_vm._v(" "),_vm._l((_vm.places),function(place){return [(place.id !== _vm.editing)?[(_vm.have_same_dimensions(place.type, 200))?_c('g',[_c('polygon',{class:_vm.place_type_2_class(place.type),attrs:{"points":_vm.points_to_pointstring(place.points),"filter":"url(#innershadow)"}}),_vm._v(" "),_c('polygon',{class:[{ 'hoverable-place': _vm.hovering_enabled},
                                 _vm.is_active(place.id) ? 'active' : '',
                                 'place-poly-outline',
                                 _vm.place_type_2_class(place.type)],attrs:{"points":_vm.points_to_pointstring(place.points),"id":_vm.pk_2_html_id(place.id)},on:{"click":function($event){_vm.place_clicked($event)}}})]):(_vm.have_same_dimensions(place.type, 100))?_c('g',[_c('polyline',{class:['line-expander', _vm.place_type_2_class(place.type)],attrs:{"points":_vm.points_to_pointstring(place.points)},on:{"click":function($event){_vm.place_clicked($event)}}}),_vm._v(" "),_c('polyline',{class:[{ 'hoverable-place': _vm.hovering_enabled},
@@ -648,7 +786,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-7661dca8", __vue__options__)
   } else {
-    hotAPI.reload("data-v-7661dca8", __vue__options__)
+    hotAPI.rerender("data-v-7661dca8", __vue__options__)
   }
 })()}
 });
@@ -691,7 +829,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-82b131f0", __vue__options__)
   } else {
-    hotAPI.reload("data-v-82b131f0", __vue__options__)
+    hotAPI.rerender("data-v-82b131f0", __vue__options__)
   }
 })()}
 });
@@ -723,12 +861,24 @@ var _place_inclusion_distance = require('./components/place_inclusion_distance')
 
 var _place_inclusion_distance2 = _interopRequireDefault(_place_inclusion_distance);
 
+var _combo_list = require('./components/combo_list');
+
+var _combo_list2 = _interopRequireDefault(_combo_list);
+
+var _combo_detail_place = require('./components/combo_detail_place');
+
+var _combo_detail_place2 = _interopRequireDefault(_combo_detail_place);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 _vue2.default.use(_vuex2.default);
 
 _vue2.default.component('place-canvas', require('./components/place_canvas'));
 _vue2.default.component('place-inclusion-distance', require('./components/place_inclusion_distance'));
+_vue2.default.component('combo-list', require('./components/combo_list'));
+_vue2.default.component('combo-detail-place', require('./components/combo_detail_place'));
+
+var components = { place_canvas: _place_canvas2.default, place_inclusion_distance: _place_inclusion_distance2.default, combo_list: _combo_list2.default, combo_detail_place: _combo_detail_place2.default };
 
 _axios2.default.defaults.xsrfCookieName = 'csrftoken';
 _axios2.default.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -819,7 +969,7 @@ store.state.refresh_model = _lodash2.default.debounce(function () {
 new _vue2.default({
     el: '#app',
     store: store,
-    components: { place_canvas: _place_canvas2.default, place_inclusion_distance: _place_inclusion_distance2.default }
+    components: components
 });
 });
 

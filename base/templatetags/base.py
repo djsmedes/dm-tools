@@ -1,11 +1,12 @@
 from json import dumps as json_dumps
-
+import markdown
 from django import template
 from django.utils.safestring import mark_safe
 
 from statblocks.models import Action, Monster, StatblockBit, AbilityScore
 from base.utils import Die
-import markdown
+from places.models import Place
+from places.serializers import PlaceLiteSerializer, PlaceSerializer
 
 register = template.Library()
 
@@ -159,6 +160,17 @@ def user_props_json(user):
     return mark_safe(json_dumps(props))
 
 
+@register.filter
+def place_json(place):
+    if not place:
+        return ''
+    elif isinstance(place, Place):
+        serializer = PlaceSerializer(place)
+    else:
+        serializer = PlaceLiteSerializer(place, many=True)
+    return mark_safe(json_dumps(serializer.data))
+
+
 @register.simple_tag(takes_context=True)
 def template_context_to_json(context):
     to_return = {}
@@ -171,7 +183,8 @@ def template_context_to_json(context):
         to_return['user'] = {
             'is_authenticated': user.is_authenticated
         }
-        profile = user.profile
+        if user.is_authenticated:
+            profile = user.profile
     # todo - alternative way of getting profile 
     if profile:
         campaign = profile.cur_campaign

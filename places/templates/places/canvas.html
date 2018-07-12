@@ -1,7 +1,7 @@
 {% extends 'base/base.html' %}
+{% load base %}
 
 {% block content %}
-  <place-canvas>
-    slot content
+  <place-canvas place_list_json='{{ object_list|place_json }}'>
   </place-canvas>
 {% endblock %}

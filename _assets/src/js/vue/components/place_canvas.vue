@@ -70,7 +70,7 @@
 
       <div class="col-auto ml-auto p-0">
 
-        <svg id="place-canvas" @click="generate_temp_point($event)">
+        <svg id="place-canvas" @click="generate_temp_point($event)" class="rounded">
           <defs>
             <filter id="innershadow">
               <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"></feGaussianBlur>
@@ -225,6 +225,9 @@
     import axios from 'axios';
 
     export default {
+        props: {
+            place_list_json: null
+        },
         data() {
             return {
                 temp_points: [],
@@ -419,7 +422,11 @@
             }
         },
         created() {
-            this.$store.dispatch('get_model_list');
+            if (this.place_list_json) {
+                this.$store.commit('set_model_list', JSON.parse(this.place_list_json));
+            } else {
+                this.$store.dispatch('get_model_list');
+            }
         },
 
     }

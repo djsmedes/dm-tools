@@ -3,24 +3,49 @@ from django.forms import ModelForm
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.text import slugify
+from django.conf import settings
 
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', null=True)
-    cur_campaign = models.ForeignKey('base.Campaign', on_delete=models.SET_NULL, related_name='cur_campaign_of', null=True, blank=True)
+    cur_campaign = models.ForeignKey('base.Campaign', on_delete=models.SET_NULL, related_name='cur_campaign_of',
+                                     null=True, blank=True)
 
     def __str__(self):
         return self.user.__str__()
 
 
-class BaseModel(models.Model):
+class BaseModelManager(models.Manager):
 
+    def get_qs_prod(self):
+        return super().get_queryset()
+
+    def owned_by(self, owner):
+        return super().get_queryset().filter(owner=owner)
+
+    def requester_owns(self, request):
+        if request.user.is_authenticated:
+            return self.owned_by(owner=request.user.profile)
+        else:
+            return self.none()
+
+    def request_can_access(self, request):
+        if request.user.is_authenticated:
+            # if request.user.has_perm()
+            return self.requester_owns(request)
+        else:
+            # todo - figure out how to check if an object requires no permission to view
+            return self.none()
+
+
+class BaseModel(models.Model):
     name = models.CharField(max_length=255)
     owner = models.ForeignKey(
         'base.Profile',
         on_delete=models.CASCADE,
         related_name="%(app_label)s_%(class)s_owned_set"
     )
+    objects = BaseModelManager()
 
     def __str__(self):
         return self.name
@@ -63,13 +88,11 @@ class BaseModel(models.Model):
 
 
 class TableMetaData(models.Model):
-
     which_table = models.CharField(max_length=255, primary_key=True)
     last_updated = models.DateTimeField(null=True, blank=True)
 
 
 class DmScreenTab(BaseModel):
-
     name = models.CharField(max_length=50, verbose_name='tab title')
     sort_order = models.IntegerField(default=0)
     tab_contents = models.TextField(null=True, blank=True)

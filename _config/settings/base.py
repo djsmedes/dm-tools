@@ -12,16 +12,26 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 import dj_database_url
+from pathlib import Path
+from django.core.exceptions import ImproperlyConfigured
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Build paths inside the project like this: BASE_DIR / ... (overloaded '/' operator)
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
+
+def get_env_variable(var_name):
+    """Get environment variable or return exception."""
+    try:
+        return os.environ[var_name]
+    except KeyError:
+        error_msg = 'Set the {} environment variable'.format(var_name)
+        raise ImproperlyConfigured(error_msg)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'not-secure-default')
 
+SECRET_KEY = get_env_variable('DJANGO_SECRET_KEY')
 
 # Application definition
 
@@ -70,7 +80,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'dmtools.urls'
+ROOT_URLCONF = '_config.urls'
 
 TEMPLATES = [
     {
@@ -88,7 +98,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'dmtools.wsgi.application'
+WSGI_APPLICATION = '_config.wsgi.application'
 
 
 # Database
@@ -97,7 +107,7 @@ WSGI_APPLICATION = 'dmtools.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -141,12 +151,12 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATIC_URL = '/static/'
 
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static', 'dist'),
+    BASE_DIR / '_assets/static'
 ]
 
 # Simplified static file serving.
@@ -156,7 +166,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # fixtures
 # https://docs.djangoproject.com/en/2.0/howto/initial-data/#providing-data-with-fixtures
 FIXTURE_DIRS = [
-    os.path.join(BASE_DIR, 'fixtures')
+    BASE_DIR / 'fixtures'
 ]
 
 LOGIN_REDIRECT_URL = '/'

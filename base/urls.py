@@ -2,7 +2,7 @@ from django.urls import path, include, reverse_lazy
 
 from .views import DmScreenTabList, DmScreenTabAdd, DmScreenTabDetail, DmScreenTabEdit, DmScreenTabDelete
 
-from dmtools.urls import breadcrumbs
+from _config.urls import breadcrumbs
 
 dmscreen_breadcrumbs = breadcrumbs + [{'href': reverse_lazy('dmscreentabs-home'), 'text': 'DM Screen Tabs'}]
 

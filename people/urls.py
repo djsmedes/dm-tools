@@ -6,7 +6,7 @@ from .views import \
     PersonList, PersonAdd, PersonDetail, PersonEdit, PersonDelete,\
     RaceList, RaceAdd, RaceDetail, RaceEdit, RaceDelete, \
     CombatantAdd, CombatantEdit, CombatantDelete
-from dmtools.urls import breadcrumbs as core_breadcrumbs
+from _config.urls import breadcrumbs as core_breadcrumbs
 
 breadcrumbs = core_breadcrumbs
 

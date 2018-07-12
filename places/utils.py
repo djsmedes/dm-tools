@@ -1,5 +1,8 @@
 from collections import deque
 
+from base.models import Profile
+from .models import Place
+
 
 def topological_sort_shapes(places) -> list:
     # construct dependency graph
@@ -30,3 +33,12 @@ def topological_sort_shapes(places) -> list:
         dfs(enter.pop())
 
     return [index[pk] for pk in order]
+
+
+def get_topo_sorted_place_list(owner: Profile) -> list:
+    polygons = topological_sort_shapes(
+        Place.objects.filter(_dimensions=2).filter(owner=owner)
+    )
+    return polygons + list(
+        Place.objects.filter(_dimensions__lt=2).filter(owner=owner)
+    )

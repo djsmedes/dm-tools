@@ -1,0 +1,24 @@
+{% extends 'base/base.html' %}
+{% load base %}
+
+{% block title %}{{ model.meta.verbose_name_plural|title }}{% endblock %}
+
+{% block content %}
+  <div class="container mb-3">
+    <div class="row">
+      <div class="col-auto">
+        <combo-list
+{#            object_list_json='{{ object_list|place_json }}'#}
+                    model_name="{{ model.meta.verbose_name }}"
+                    model_name_plural="{{ model.meta.verbose_name_plural }}">
+        </combo-list>
+      </div>
+      <div class="col">
+        <combo-detail-place object_json='{{ object|place_json }}'
+                            model_name="{{ model.meta.verbose_name }}"
+                            model_name_plural="{{ model.meta.verbose_name_plural }}">
+        </combo-detail-place>
+      </div>
+    </div>
+  </div>
+{% endblock %}
