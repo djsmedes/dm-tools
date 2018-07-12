@@ -17,17 +17,6 @@ class Profile(models.Model):
 
 class BaseModelManager(models.Manager):
 
-    def get_queryset(self):
-        if settings.DEBUG:
-            print(
-                "WARN:\n" +
-                "  '.all()' should be used with caution. Used by:\n" +
-                "  " + self.model.__name__ + '\n' +
-                "  [research how to make this return stack trace]"
-            )
-        setattr(self, 'get_queryset', getattr(self, 'get_qs_prod'))
-        return super().get_queryset()
-
     def get_qs_prod(self):
         return super().get_queryset()
 

@@ -1,6 +1,6 @@
 from django.urls import path, include, reverse_lazy
 
-from dmtools.urls import breadcrumbs as core_breadcrumbs
+from _config.urls import breadcrumbs as core_breadcrumbs
 from .views import PlaceDetailAPI, PlaceListAPI, PlaceComboCanvasView, PlaceComboView
 from .models import Place
 
